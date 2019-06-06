@@ -19,7 +19,7 @@ public class RegisterLogin extends Application {
 	/*
 	 * Loads the registerLogin.fxml and displays it on the stage loads resource
 	 * bundle for javafx Strings and set RegisterLoginController as Controller
-	 * blablablablablablablablablablablablablablabla
+	 * 
 	 * @param primaryStage a Stage
 	 */
 	@Override
