@@ -25,6 +25,7 @@ public class WSAllChatEndpoint {
 	 */
 
 	public void getMessages() {
+		//RandomCode für merge
 		ChatMessage change;
 		/* Change Listener on the data model Observable List chat */
 		Model.getInstance().getApp.addPropertyChangeListener(App.PROPERTY_chat, new PropertyChangeListener() {
