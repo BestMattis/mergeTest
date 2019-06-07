@@ -1,6 +1,12 @@
 package lobby;
 
+import java.io.InputStream;
+import java.util.PropertyResourceBundle;
+import java.util.ResourceBundle;
+
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -34,6 +40,7 @@ public class ScreenCon {
         options.setOnAction(t -> optionsButton());
         logout.setOnAction(t -> logoutButton());
         logo.setOnMouseClicked(t -> infoImage());
+        loadGamelist();
     }
 
     /**
@@ -82,6 +89,15 @@ public class ScreenCon {
      * loads the gamelist-module into the lobbylayout
      */
     public void loadGamelist() {
-
+        try {
+            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+            InputStream inputStream = classLoader.getResource("en-US.properties").openStream();
+            ResourceBundle bundle = new PropertyResourceBundle(inputStream);
+            FXMLLoader fxmlLoader = new FXMLLoader(this.getClass().getClassLoader().getResource("gameList/GameList.fxml"),bundle);
+            Parent parent = fxmlLoader.load();
+            gamesview.getChildren().addAll(parent.getChildrenUnmodifiable());
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        }
     }
 }

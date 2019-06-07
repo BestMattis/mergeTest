@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import registerLogin.RegisterLoginController;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,6 +18,7 @@ public class AdvancedWarsApplication extends Application {
     static AdvancedWarsApplication advancedWarsApplication;
     public Stage primaryStage;
     private Scene lobbyScene;
+    private Scene registerLoginScene;
 
     /**
      * Method to start the app
@@ -43,6 +45,7 @@ public class AdvancedWarsApplication extends Application {
      */
     @Override
     public void start(Stage priStage) {
+
         advancedWarsApplication = this;
         primaryStage = priStage;
         primaryStage.setFullScreen(true);
@@ -50,7 +53,7 @@ public class AdvancedWarsApplication extends Application {
         try {
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
             InputStream inputStream = null;
-            inputStream = classLoader.getResource("lobby/en-US.properties").openStream();
+            inputStream = classLoader.getResource("en-US.properties").openStream();
             ResourceBundle bundle = new PropertyResourceBundle(inputStream);
             primaryStage.setTitle(bundle.getString("Applicationtitle"));
         } catch (IOException e) {
@@ -58,11 +61,37 @@ public class AdvancedWarsApplication extends Application {
         }
 
 
-        goToLobby();
+        goToRegisterLogin();
 
         primaryStage.show();
     }
-
+    
+    /**
+     * Loads the RegisterLogin.fxml and displays it on the stage given(the primaryStage)
+     */
+    public void goToRegisterLogin() {
+        if (registerLoginScene == null) {
+        	try {
+    			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+    			InputStream inputStream = classLoader.getResource("en-US.properties").openStream();
+    			ResourceBundle bundle = new PropertyResourceBundle(inputStream);
+    			FXMLLoader fxmlLoader = new FXMLLoader(RegisterLoginController.class.getResource("registerLogin.fxml"),
+    					bundle);
+    			RegisterLoginController regLogCont = new RegisterLoginController();
+    			fxmlLoader.setController(regLogCont);
+    			Parent parent = fxmlLoader.load();
+    			Scene scene = new Scene(parent);
+    			registerLoginScene = scene;
+    			primaryStage.setScene(registerLoginScene);
+    		} catch (IOException e) {
+    			e.printStackTrace();
+    		}
+        } else {
+            primaryStage.setScene(registerLoginScene);
+        }
+    }
+    
+    
     /**
      * Loads the LobbyScreen.fxml and displays it on the stage given(the primaryStage)
      */
@@ -70,7 +99,7 @@ public class AdvancedWarsApplication extends Application {
         if (lobbyScene == null) {
             try {
                 ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-                InputStream inputStream = classLoader.getResource("lobby/en-US.properties").openStream();
+                InputStream inputStream = classLoader.getResource("en-US.properties").openStream();
                 ResourceBundle bundle = new PropertyResourceBundle(inputStream);
                 URL loc = getClass().getResource("/lobby/LobbyScreen.fxml");
                 if (loc == null) {
@@ -80,12 +109,19 @@ public class AdvancedWarsApplication extends Application {
                 Parent parent = fxmlLoader.load();
                 Scene scene = new Scene(parent);
                 lobbyScene = scene;
+    			primaryStage.setTitle(bundle.getString("Applicationtitle"));
                 primaryStage.setScene(scene);
+                primaryStage.setFullScreen(true);
+                
+                primaryStage.show();
+                
             } catch (IOException e) {
                 e.printStackTrace();
             }
         } else {
             primaryStage.setScene(lobbyScene);
+            primaryStage.show();
+            
         }
     }
 
