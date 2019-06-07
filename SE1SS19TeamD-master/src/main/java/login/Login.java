@@ -19,5 +19,4 @@ public class Login {
         }
         return success;
     }
-    
 }
