@@ -1,16 +1,28 @@
 plugins {
-    id 'java'
+    id 'application'
 }
 
 group 'de.uniks.se.d'
-version '1.0-SNAPSHOT'
+version '2.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
 
-jar {
+application {
+    mainClassName 'main.AdvancedWarsApplication'
+}
+
+task fatJar(type: Jar) {
+    group 'build'
+    description 'Bundles the project as a fat jar.'
     manifest {
         attributes 'Main-Class': 'main.AdvancedWarsApplication'
     }
+    
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    
+    with jar
 }
 
 repositories {
