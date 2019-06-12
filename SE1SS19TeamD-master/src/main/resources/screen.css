@@ -1,0 +1,194 @@
+.root {
+    -fx-font-size: 16px;
+    -fx-font-family: sans-serif;
+    -fx-text-fill: #FFFFFF;
+    -fx-background-color: #FFFFFF;
+}
+
+.standart-text{
+    -fx-font-size: 16px;
+    -fx-font-family: sans-serif;
+    -fx-text-fill: #FFFFFF;
+}
+
+.standart-text-bigger{
+    -fx-font-size: 38px;
+    -fx-font-family: sans-serif;
+    -fx-text-fill: #FFFFFF;
+}
+
+.pane {
+    -fx-background-color: #201c22;
+}
+
+.button {
+    -fx-text-fill: white;
+    -fx-background-color: rgba(255,255,255,0.1);
+    -fx-background-radius: 0px;
+    -fx-border-color: #DEDDFF;
+    -fx-border-width: 1px;
+    -fx-border-radius: 0px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.6), 1, 0, 0.5, 1);
+}
+
+.button:hover {
+    -fx-border-width: 3px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.6), 1, 0, 3, 2);
+}
+
+.button:pressed {
+    -fx-background-color: rgba(255,255,255,0.3);
+}
+
+.split-pane {
+    -fx-background-color: transparent;
+}
+
+.split-pane:horizontal > .split-pane-divider {
+   -fx-background-color: #FFFFFF;
+}
+.split-pane:vertical > .split-pane-divider {
+   -fx-background-color: #FFFFFF;
+}
+
+.text-field {
+    -fx-text-fill: #FFFFFF;
+    -fx-background-color: rgba(255,255,255,0.1);
+    -fx-background-radius: 0px;
+    -fx-border-color: #DEDDFF;
+    -fx-border-radius: 0px;
+    -fx-border-width: 1px;
+}
+
+.progress-bar {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0px;
+    -fx-border-color: #DEDDFF;
+    -fx-border-width: 1px;
+}
+.progress-bar .track {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+    -fx-background-radius: 0px;
+}
+.progress-bar .bar {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 0px;
+}
+
+.label {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+}
+
+.scroll-pane {
+    -fx-background-color: transparent;
+}
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+.scroll-bar:vertical {
+    -fx-background-color: rgba(0,0,0,0.4);
+}
+.increment-button, .decrement-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+.scroll-bar:vertical .track{
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-background-radius: 0px;
+}
+.scroll-bar:vertical .thumb {
+    -fx-background-color: white;
+    -fx-background-radius: 0px;
+}
+
+.vbox {
+    -fx-background-color: transparent;
+}
+
+.tab {
+    -fx-background-color: rgba(255,255,255,0.1);
+    -fx-background-radius: 0px;
+}
+.tab .tab-label {
+    -fx-text-fill: #FFFFFF;
+}
+.tab:selected {
+    -fx-background-color: rgba(255,255,255,0.3);
+    -fx-focus-color: transparent;
+}
+
+.tab-pane .tab-header-background {
+    -fx-background-color: transparent;
+}
+
+.tab-pane .tab-header-area .control-buttons-tab .tab-down-button {
+    -fx-background-color: rgba(255, 255, 255, 0.2);
+    -fx-background-radius: 0px;
+}
+.tab-pane .tab-header-area .control-buttons-tab .tab-down-button:pressed {
+    -fx-background-color: rgba(255, 255, 255, 0.4);
+}
+.tab-pane .tab-header-area .control-buttons-tab .tab-down-button .arrow {
+    -fx-background-color: #FFFFFF;
+}
+
+.context-menu {
+    -fx-background-color: rgba(64, 64, 64, 0.75);
+}
+.menu-item:focused {
+    -fx-background-color: rgba(128, 128, 128, 0.75);
+}
+
+.gameBox{
+    -fx-background-color: #2f2c31;
+}
+
+.transparent-pane{
+    -fx-background-color: rgba(0,0,0,0.8);
+}
+
+.playerList{
+    -fx-border-color: #201c22;
+    -fx-border-width: 1px;
+}
+
+.background1{
+    -fx-background-color: rgba(32,28,34,0.9);
+}
+.background2{
+    -fx-background-color: rgba(41, 38, 43, 0.9);
+}
+
+.labelCreateGame{
+    -fx-text-fill: white;
+}
+.messageField{
+    -fx-text-fill: red;
+}
+
+#newGame {
+    -fx-background-color: rgba(0,255,0,0.1);
+}
+#newGame:pressed {
+    -fx-background-color: rgba(0,255,0,0.3);
+}
+
+#logout {
+    -fx-background-color: rgba(255,0,0,0.1);
+}
+#logout:pressed {
+    -fx-background-color: rgba(255,20,20,0.3);
+}
+
+#logo:hover {
+    -fx-effect: dropshadow(three-pass-box, rgba(128,128,128,0.6), 1, 0, 3, 2);
+}
+#logo:pressed {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.6), 1, 0, -0.5, -0.5);
+}
+
+#chatpane:horizontal > .split-pane-divider {
+    -fx-background-color: #000000;
+}

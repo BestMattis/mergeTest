@@ -1,33 +1,30 @@
 package syncCommunication;
 
+import org.json.JSONException;
 import syncCommunication.RESTExceptions.LoginFailedException;
 import syncCommunication.RESTExceptions.RegistrationFailedException;
-import org.json.JSONException;
 
 import java.util.ArrayList;
 
-public class SynchronousUserCommunicator extends SynchronousCommunicator{
+public class SynchronousUserCommunicator extends SynchronousCommunicator {
 
-    private UserHandler uHandler;
+    private HTTPUserHandler uHandler;
 
     /**
      * @param httpReq Used to assign the user. Same HttpRequests leads to the same logged in user.
      */
     public SynchronousUserCommunicator(HttpRequests httpReq) {
         super(httpReq);
-        uHandler = new UserHandler(httpReq);
+        uHandler = new HTTPUserHandler(httpReq);
     }
 
     /**
      * Register the user.
      *
      * @param username Username
-     *
      * @param password Password
-     *
      * @return Return true if successful.
-     *
-     * @exception RegistrationFailedException if the server can't perform the registration
+     * @throws RegistrationFailedException if the server can't perform the registration
      */
     public boolean register(String username, String password)
             throws RegistrationFailedException {
@@ -45,12 +42,9 @@ public class SynchronousUserCommunicator extends SynchronousCommunicator{
      * Log user in and save their userKey.
      *
      * @param username Username
-     *
      * @param password Password
-     *
      * @return Return true if the userKey changed.
-     *
-     * @exception LoginFailedException if the user was not logged in
+     * @throws LoginFailedException if the user was not logged in
      */
     public boolean logIn(String username, String password) throws LoginFailedException {
         String newUserKey = null;
@@ -68,8 +62,7 @@ public class SynchronousUserCommunicator extends SynchronousCommunicator{
      * Log user out and set userKey back to null.
      *
      * @return Return true if the userKey changed.
-     *
-     * @exception LoginFailedException if the user was not logged in
+     * @throws LoginFailedException if the user was not logged in
      */
     public boolean logOut() throws LoginFailedException {
         boolean loggedOut = false;
@@ -87,8 +80,7 @@ public class SynchronousUserCommunicator extends SynchronousCommunicator{
      * Get the list of all users currently logged in.
      *
      * @return Returns a list of Strings of userNames.
-     *
-     * @exception LoginFailedException if the user was not logged in
+     * @throws LoginFailedException if the user was not logged in
      */
     public ArrayList<String> getOnlineUsers() throws LoginFailedException {
         ArrayList<String> userList = null;
@@ -102,7 +94,7 @@ public class SynchronousUserCommunicator extends SynchronousCommunicator{
         return userList;
     }
 
-    public UserHandler getUserHandler() {
+    public HTTPUserHandler getUserHandler() {
         return uHandler;
     }
 

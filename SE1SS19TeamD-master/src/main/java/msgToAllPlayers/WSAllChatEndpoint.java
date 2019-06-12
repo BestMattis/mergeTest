@@ -3,8 +3,11 @@ package msgToAllPlayers;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import de.uniks.liverisk.model.Game;
-import javafx.collections.ListChangeListener;
+import lobby.LobbyChatController;
+import lobby.LobbyChatMessageListController;
+import model.App;
+import model.ChatMessage;
+import model.Model;
 
 public class WSAllChatEndpoint {
 	private static WSAllChatEndpoint instance;
@@ -20,20 +23,25 @@ public class WSAllChatEndpoint {
 	}
 
 	/**
-	 * This Method creats a changeListener on the observableList chat in the data
+	 * This Method creats a changeListener on the arrayList Messeges in the data
 	 * model and sends the new messages back
 	 */
 
+	@SuppressWarnings("static-access")
 	public void getMessages() {
-		ChatMessage change;
+		LobbyChatMessageListController lobChatCont = LobbyChatController.getAllController();
 		/* Change Listener on the data model Observable List chat */
-		Model.getInstance().getApp.addPropertyChangeListener(App.PROPERTY_chat, new PropertyChangeListener() {
+		App app = Model.getInstance().getApp();
+		app.addPropertyChangeListener(App.PROPERTY_allChatMessages, new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
-				change = evt.getNewValue();
-				if (change.getChannel() == "(all)"
-						&& change.getFrom() != Model.getApp().getCurrentPlayer().getUserName()) {
-					MsgToAllPlayers.addNewMsg(change.getMessage()); // send new message
+				ChatMessage change = (ChatMessage) evt.getNewValue();
+				/* for tests till WS is finished */
+				System.out.println("Sender: " +change.getSender().getName()+" Msg: "+ change.getMessage());
+				if (change.getSender().getName() != Model.getApp().getCurrentPlayer().getName()) {	// check if its your own message
+					lobChatCont.addMessage(change.getMessage()); // send new message to LobbyChatController
+				} else {
+					System.out.println("Message denied: Own Message");
 				}
 			}
 		});

@@ -1,19 +1,19 @@
 package syncCommunication;
 
-import syncCommunication.RESTExceptions.LoginFailedException;
-import syncCommunication.RESTExceptions.RegistrationFailedException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import syncCommunication.RESTExceptions.LoginFailedException;
+import syncCommunication.RESTExceptions.RegistrationFailedException;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
-public class UserHandler {
+public class HTTPUserHandler {
 
     private HttpRequests hr;
 
-    UserHandler(HttpRequests httpReq) {
+    HTTPUserHandler(HttpRequests httpReq) {
         hr = httpReq;
     }
 

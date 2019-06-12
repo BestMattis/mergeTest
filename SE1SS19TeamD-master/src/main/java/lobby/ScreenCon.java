@@ -1,9 +1,21 @@
 package lobby;
 
+import java.io.InputStream;
+import java.util.PropertyResourceBundle;
+import java.util.ResourceBundle;
+
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import main.AdvancedWarsApplication;
+import model.App;
+import model.Model;
+import syncCommunication.HttpRequests;
+import syncCommunication.SynchronousUserCommunicator;
+import syncCommunication.RESTExceptions.LoginFailedException;
 
 public class ScreenCon {
 
@@ -23,7 +35,9 @@ public class ScreenCon {
     private Button logout;
     @FXML
     private ImageView logo;
-
+    
+    @SuppressWarnings("static-access")
+	AdvancedWarsApplication app = AdvancedWarsApplication.getInstance();
 
     /**
      * called when the lobbyScreen scene is loaded.
@@ -34,6 +48,7 @@ public class ScreenCon {
         options.setOnAction(t -> optionsButton());
         logout.setOnAction(t -> logoutButton());
         logo.setOnMouseClicked(t -> infoImage());
+        loadGamelist();
     }
 
     /**
@@ -51,10 +66,27 @@ public class ScreenCon {
     }
 
     /**
-     * logout and showing the loginscreen again
+     * logout with clearing of the data model and changing to the loginscreen again
      */
     public void logoutButton() {
-        System.out.println("logout");
+    	boolean loggedOut = false;
+    	HttpRequests hr = Model.getInstance().getPlayerHttpRequestsHashMap().get(Model.getInstance().getApp().getCurrentPlayer());
+    	SynchronousUserCommunicator uComm = new SynchronousUserCommunicator(hr);
+    	System.out.println(uComm.getUserKey()+" from logoutMethod");
+    	try {
+            loggedOut = uComm.logOut();
+        } catch (LoginFailedException e) {
+            e.printStackTrace();
+        }
+    	System.out.println(loggedOut);
+    	if(loggedOut) {
+    		Model.getInstance().setApp(null); // clear data model on logout
+			if(app != null){
+				app.goToRegisterLogin();
+			} else {
+				System.out.println("failed showing LoginScreen");
+			}
+    	}
     }
 
     /**
@@ -82,6 +114,15 @@ public class ScreenCon {
      * loads the gamelist-module into the lobbylayout
      */
     public void loadGamelist() {
-
+        try {
+            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+            InputStream inputStream = classLoader.getResource("en-US.properties").openStream();
+            ResourceBundle bundle = new PropertyResourceBundle(inputStream);
+            FXMLLoader fxmlLoader = new FXMLLoader(this.getClass().getClassLoader().getResource("gameList/GameList.fxml"),bundle);
+            Parent parent = fxmlLoader.load();
+            gamesview.getChildren().addAll(parent.getChildrenUnmodifiable());
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        }
     }
 }

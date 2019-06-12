@@ -1,20 +1,20 @@
 package syncCommunication;
 
-import syncCommunication.RESTExceptions.GameIdNotFoundException;
-import syncCommunication.RESTExceptions.GameLobbyCreationFailedException;
-import syncCommunication.RESTExceptions.LoginFailedException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import syncCommunication.RESTExceptions.GameIdNotFoundException;
+import syncCommunication.RESTExceptions.GameLobbyCreationFailedException;
+import syncCommunication.RESTExceptions.LoginFailedException;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
-public class GameLobbyHandler {
+public class HTTPGameLobbyHandler {
 
     private HttpRequests hr;
 
-    GameLobbyHandler(HttpRequests httpReq) {
+    HTTPGameLobbyHandler(HttpRequests httpReq) {
         hr = httpReq;
     }
 

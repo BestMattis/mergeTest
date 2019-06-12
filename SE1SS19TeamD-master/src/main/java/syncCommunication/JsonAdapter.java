@@ -1,9 +1,9 @@
 package syncCommunication;
 
-import com.mashape.unirest.request.BaseRequest;
+import org.json.JSONObject;
 
-public interface JsonAdapter  {
+public interface JsonAdapter {
 
-    void onRequestSend(BaseRequest req);
+    void onRequestSend(JSONObject json);
 
 }
