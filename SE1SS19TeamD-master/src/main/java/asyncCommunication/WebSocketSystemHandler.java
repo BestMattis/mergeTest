@@ -21,7 +21,13 @@ public class WebSocketSystemHandler implements WebSocketHandler {
         // data contains the name of the user
         if (action.equals("userJoined")) {
 
-            Model.getApp().withAllPlayers(new Player().setName(data.getString("name").toString()));
+
+            String name = data.getString("name");
+            
+            if (!name.equals(Model.getApp().getCurrentPlayer().getName())) {
+                Model.getApp().withAllPlayers(new Player().setName(name));
+            }
+
         }
 
         // data contains the name of the user

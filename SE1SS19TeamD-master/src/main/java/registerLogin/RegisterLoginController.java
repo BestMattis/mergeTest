@@ -122,9 +122,9 @@ public class RegisterLoginController {
             msgLabel.setText(bundle.getString("regLog.FailedLogin"));
         }
         else {
-            Player currentPlayer = new Player().setApp(
-                    Model.getApp()).setName(username).setPassword(password);
-            Model.getApp().getAllPlayers().add(currentPlayer);
+            Player currentPlayer = new Player().setName(username)
+                    .setPassword(password).setApp(Model.getApp());
+
             Model.getApp().setCurrentPlayer(currentPlayer);
             Model.getPlayerHttpRequestsHashMap()
                 .put(currentPlayer, httpRequests);

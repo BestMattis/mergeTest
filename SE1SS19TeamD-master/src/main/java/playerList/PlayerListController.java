@@ -30,9 +30,12 @@ public class PlayerListController {
                 Model.getApp().getCurrentPlayer());
         SynchronousUserCommunicator userComm = 
                 new SynchronousUserCommunicator(httpReq);
-        for(String s : userComm.getOnlineUsers())
-        {
-            new Player().setApp(Model.getApp()).setName(s);
+
+        for(String s : userComm.getOnlineUsers()) {
+            if(!s.equals(Model.getApp().getCurrentPlayer().getName())) {
+                new Player().setName(s).setApp(Model.getApp());
+            }
+
         }
         Model.getApp().addPropertyChangeListener(evt -> update());
         update();
