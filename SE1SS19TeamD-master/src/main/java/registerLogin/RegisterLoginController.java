@@ -124,6 +124,7 @@ public class RegisterLoginController {
         else {
             Player currentPlayer = new Player().setName(username)
                     .setPassword(password).setApp(Model.getApp());
+
             Model.getApp().setCurrentPlayer(currentPlayer);
             Model.getPlayerHttpRequestsHashMap()
                 .put(currentPlayer, httpRequests);
