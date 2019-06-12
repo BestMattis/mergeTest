@@ -1,7 +1,5 @@
 package registerLogin;
 
-import registerLogin.RegisterLogin;
-
 /*
  * This Class is now only used for testing purposes
  */
@@ -11,12 +9,12 @@ import registerLogin.RegisterLogin;
  * @param args a Array of Strings
  */
 public class RegisterLoginStart {
-	public static void main(String[] args) {
-		new Thread() {
-			@Override
-			public void run() {
-				javafx.application.Application.launch(RegisterLogin.class);
-			}
-		}.start();
-	}
+    public static void main(String[] args) {
+        new Thread() {
+            @Override
+            public void run() {
+                javafx.application.Application.launch(RegisterLogin.class);
+            }
+        }.start();
+    }
 }

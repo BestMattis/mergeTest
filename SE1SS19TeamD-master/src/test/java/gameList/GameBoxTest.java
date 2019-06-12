@@ -20,7 +20,7 @@ public class GameBoxTest extends ApplicationTest {
     private GameBoxController gameBoxController;
 
     @Override
-    public void start (Stage stage) throws Exception {
+    public void start(Stage stage) throws Exception {
 
         App app = new App().withAllGames(new Game().setName("TestGame").setCapacity(4).withPlayers(new Player()));
 
@@ -44,27 +44,27 @@ public class GameBoxTest extends ApplicationTest {
     }
 
     @Test
-    public void gameToGameCard(){
+    public void gameToGameCard() {
         Assert.assertEquals(gameBoxController.getGame(), Model.getApp().getAllGames().get(0));
     }
 
     @Test
-    public void gameName(){
+    public void gameName() {
         Assert.assertEquals(gameBoxController.getGameName().getText(), Model.getApp().getAllGames().get(0).getName());
     }
 
     @Test
-    public void gameCapacity(){
+    public void gameCapacity() {
         Assert.assertEquals(Integer.parseInt(gameBoxController.getPlayerCounter().getText().split("/")[1]), Model.getApp().getAllGames().get(0).getCapacity());
     }
 
     @Test
-    public void gamePlayerCount(){
+    public void gamePlayerCount() {
         Assert.assertEquals(Integer.parseInt(gameBoxController.getPlayerCounter().getText().split("/")[0]), Model.getApp().getAllGames().get(0).getPlayers().size());
     }
 
     @Test
-    public void propertyChange(){
+    public void propertyChange() {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {

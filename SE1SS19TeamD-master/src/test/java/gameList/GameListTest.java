@@ -24,7 +24,7 @@ public class GameListTest extends ApplicationTest {
     private GameListController gameListController;
 
     @Override
-    public void start (Stage stage) throws Exception {
+    public void start(Stage stage) throws Exception {
 
         App app = new App();
 
@@ -32,17 +32,17 @@ public class GameListTest extends ApplicationTest {
         ArrayList<Player> players = new ArrayList<>();
 
         for (int i = 0; i < 20; i++) {
-            games.add(new Game().setName("Game"+(i+1)).setCapacity(4).setApp(app));
+            games.add(new Game().setName("Game" + (i + 1)).setCapacity(4).setApp(app));
         }
         for (int i = 0; i < 40; i++) {
-            players.add(new Player().setName("Player"+1).setApp(app));
+            players.add(new Player().setName("Player" + 1).setApp(app));
         }
         int index = 0;
-        for (Game game:games) {
-            for (int i = index; i < index+2; i++) {
+        for (Game game : games) {
+            for (int i = index; i < index + 2; i++) {
                 game.withPlayers(players.get(i));
             }
-            index = index+2;
+            index = index + 2;
         }
 
         Model.getInstance().setApp(app);
@@ -50,7 +50,7 @@ public class GameListTest extends ApplicationTest {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         InputStream inputStream = classLoader.getResource("en-US.properties").openStream();
         ResourceBundle bundle = new PropertyResourceBundle(inputStream);
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("gameList/gameList.fxml"),bundle);
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("gameList/gameList.fxml"), bundle);
 
         Parent mainNode = fxmlLoader.load();
         gameListController = fxmlLoader.getController();
@@ -66,15 +66,15 @@ public class GameListTest extends ApplicationTest {
     }
 
     @Test
-    public void numberOfGames(){
+    public void numberOfGames() {
         Assert.assertEquals(Integer.parseInt(gameListController.getNumberOfGames().getText()), Model.getApp().getAllGames().size());
     }
 
     @Test
-    public void numberOfOpenGames(){
+    public void numberOfOpenGames() {
         int numberOfOpenGames = 0;
-        for (Game game : Model.getApp().getAllGames()){
-            if(game.getPlayers().size()<game.getCapacity()) {
+        for (Game game : Model.getApp().getAllGames()) {
+            if (game.getPlayers().size() < game.getCapacity()) {
                 numberOfOpenGames++;
             }
         }
@@ -82,7 +82,7 @@ public class GameListTest extends ApplicationTest {
     }
 
     @Test
-    public void propertyChange(){
+    public void propertyChange() {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {

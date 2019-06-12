@@ -1,9 +1,10 @@
 package model;
 
-import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
-public class Player  
+import java.beans.PropertyChangeListener;
+
+public class Player 
 {
 
    public static final String PROPERTY_name = "name";
@@ -46,6 +47,176 @@ public class Player
       }
       return this;
    }
+
+
+   public static final String PROPERTY_game = "game";
+
+   private Game game = null;
+
+   public Game getGame()
+   {
+      return this.game;
+   }
+
+   public Player setGame(Game value)
+   {
+      if (this.game != value)
+      {
+         Game oldValue = this.game;
+         if (this.game != null)
+         {
+            this.game = null;
+            oldValue.withoutPlayers(this);
+         }
+         this.game = value;
+         if (value != null)
+         {
+            value.withPlayers(this);
+         }
+         firePropertyChange("game", oldValue, value);
+      }
+      return this;
+   }
+
+
+
+public static final java.util.ArrayList<ChatMessage> EMPTY_messages = new java.util.ArrayList<ChatMessage>()
+   { @Override public boolean add(ChatMessage value){ throw new UnsupportedOperationException("No direct add! Use xy.withMessages(obj)"); }};
+
+
+public static final String PROPERTY_messages = "messages";
+
+private java.util.ArrayList<ChatMessage> messages = null;
+
+public java.util.ArrayList<ChatMessage> getMessages()
+   {
+      if (this.messages == null)
+      {
+         return EMPTY_messages;
+      }
+
+      return this.messages;
+   }
+
+public Player withMessages(Object... value)
+   {
+      if(value==null) return this;
+      for (Object item : value)
+      {
+         if (item == null) continue;
+         if (item instanceof java.util.Collection)
+         {
+            for (Object i : (java.util.Collection) item)
+            {
+               this.withMessages(i);
+            }
+         }
+         else if (item instanceof ChatMessage)
+         {
+            if (this.messages == null)
+            {
+               this.messages = new java.util.ArrayList<ChatMessage>();
+            }
+            if ( ! this.messages.contains(item))
+            {
+               this.messages.add((ChatMessage)item);
+               ((ChatMessage)item).setSender(this);
+               firePropertyChange("messages", null, item);
+            }
+         }
+         else throw new IllegalArgumentException();
+      }
+      return this;
+   }
+
+
+public Player withoutMessages(Object... value)
+   {
+      if (this.messages == null || value==null) return this;
+      for (Object item : value)
+      {
+         if (item == null) continue;
+         if (item instanceof java.util.Collection)
+         {
+            for (Object i : (java.util.Collection) item)
+            {
+               this.withoutMessages(i);
+            }
+         }
+         else if (item instanceof ChatMessage)
+         {
+            if (this.messages.contains(item))
+            {
+               this.messages.remove((ChatMessage)item);
+               ((ChatMessage)item).setSender(null);
+               firePropertyChange("messages", item, null);
+            }
+         }
+      }
+      return this;
+   }
+
+
+   public static final String PROPERTY_app = "app";
+
+   private App app = null;
+
+   public App getApp()
+   {
+      return this.app;
+   }
+
+   public Player setApp(App value)
+   {
+      if (this.app != value)
+      {
+         App oldValue = this.app;
+         if (this.app != null)
+         {
+            this.app = null;
+            oldValue.withoutAllPlayers(this);
+         }
+         this.app = value;
+         if (value != null)
+         {
+            value.withAllPlayers(this);
+         }
+         firePropertyChange("app", oldValue, value);
+      }
+      return this;
+   }
+
+
+
+   public static final String PROPERTY_myApp = "myApp";
+
+   private App myApp = null;
+
+   public App getMyApp()
+   {
+      return this.myApp;
+   }
+
+   public Player setMyApp(App value)
+   {
+      if (this.myApp != value)
+      {
+         App oldValue = this.myApp;
+         if (this.myApp != null)
+         {
+            this.myApp = null;
+            oldValue.setCurrentPlayer(null);
+         }
+         this.myApp = value;
+         if (value != null)
+         {
+            value.setCurrentPlayer(this);
+         }
+         firePropertyChange("myApp", oldValue, value);
+      }
+      return this;
+   }
+
 
 
    protected PropertyChangeSupport listeners = null;
@@ -110,38 +281,6 @@ public class Player
       return result.substring(1);
    }
 
-
-   public static final String PROPERTY_game = "game";
-
-   private Game game = null;
-
-   public Game getGame()
-   {
-      return this.game;
-   }
-
-   public Player setGame(Game value)
-   {
-      if (this.game != value)
-      {
-         Game oldValue = this.game;
-         if (this.game != null)
-         {
-            this.game = null;
-            oldValue.withoutPlayers(this);
-         }
-         this.game = value;
-         if (value != null)
-         {
-            value.withPlayers(this);
-         }
-         firePropertyChange("game", oldValue, value);
-      }
-      return this;
-   }
-
-
-
    public void removeYou()
    {
       this.setGame(null);
@@ -151,146 +290,9 @@ public class Player
       this.withoutMessages(this.getMessages().clone());
 
 
-   }
+      this.withoutMessages(this.getMessages().clone());
 
 
-
-   public static final String PROPERTY_app = "app";
-
-   private App app = null;
-
-   public App getApp()
-   {
-      return this.app;
-   }
-
-   public Player setApp(App value)
-   {
-      if (this.app != value)
-      {
-         App oldValue = this.app;
-         if (this.app != null)
-         {
-            this.app = null;
-            oldValue.withoutAllPlayers(this);
-         }
-         this.app = value;
-         if (value != null)
-         {
-            value.withAllPlayers(this);
-         }
-         firePropertyChange("app", oldValue, value);
-      }
-      return this;
-   }
-
-
-
-   public static final String PROPERTY_myApp = "myApp";
-
-   private App myApp = null;
-
-   public App getMyApp()
-   {
-      return this.myApp;
-   }
-
-   public Player setMyApp(App value)
-   {
-      if (this.myApp != value)
-      {
-         App oldValue = this.myApp;
-         if (this.myApp != null)
-         {
-            this.myApp = null;
-            oldValue.setCurrentPlayer(null);
-         }
-         this.myApp = value;
-         if (value != null)
-         {
-            value.setCurrentPlayer(this);
-         }
-         firePropertyChange("myApp", oldValue, value);
-      }
-      return this;
-   }
-
-
-   public static final java.util.ArrayList<ChatMessage> EMPTY_messages = new java.util.ArrayList<ChatMessage>()
-   { @Override public boolean add(ChatMessage value){ throw new UnsupportedOperationException("No direct add! Use xy.withMessages(obj)"); }};
-
-
-   public static final String PROPERTY_messages = "messages";
-
-   private java.util.ArrayList<ChatMessage> messages = null;
-
-   public java.util.ArrayList<ChatMessage> getMessages()
-   {
-      if (this.messages == null)
-      {
-         return EMPTY_messages;
-      }
-
-      return this.messages;
-   }
-
-   public Player withMessages(Object... value)
-   {
-      if(value==null) return this;
-      for (Object item : value)
-      {
-         if (item == null) continue;
-         if (item instanceof java.util.Collection)
-         {
-            for (Object i : (java.util.Collection) item)
-            {
-               this.withMessages(i);
-            }
-         }
-         else if (item instanceof ChatMessage)
-         {
-            if (this.messages == null)
-            {
-               this.messages = new java.util.ArrayList<ChatMessage>();
-            }
-            if ( ! this.messages.contains(item))
-            {
-               this.messages.add((ChatMessage)item);
-               ((ChatMessage)item).setPlayer(this);
-               firePropertyChange("messages", null, item);
-            }
-         }
-         else throw new IllegalArgumentException();
-      }
-      return this;
-   }
-
-
-
-   public Player withoutMessages(Object... value)
-   {
-      if (this.messages == null || value==null) return this;
-      for (Object item : value)
-      {
-         if (item == null) continue;
-         if (item instanceof java.util.Collection)
-         {
-            for (Object i : (java.util.Collection) item)
-            {
-               this.withoutMessages(i);
-            }
-         }
-         else if (item instanceof ChatMessage)
-         {
-            if (this.messages.contains(item))
-            {
-               this.messages.remove((ChatMessage)item);
-               ((ChatMessage)item).setPlayer(null);
-               firePropertyChange("messages", item, null);
-            }
-         }
-      }
-      return this;
    }
 
 

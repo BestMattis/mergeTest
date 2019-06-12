@@ -26,12 +26,14 @@ public class GenModel {
                    .buildAttribute("channel", ClassModelBuilder.STRING)
                    .buildAttribute("date", ClassModelBuilder.STRING);
 
-        //Assoziations
+        //Associations
         game.buildAssociation(player, "players", ClassModelBuilder.MANY, "game", ClassModelBuilder.ONE);
-        chatMessage.buildAssociation(player, "player", ClassModelBuilder.ONE,"messages", ClassModelBuilder.MANY);
+        chatMessage.buildAssociation(player, "receiver", ClassModelBuilder.ONE,"messages", ClassModelBuilder.MANY);
+        chatMessage.buildAssociation(player, "sender", ClassModelBuilder.ONE,"messages", ClassModelBuilder.MANY);
         app.buildAssociation(player, "allPlayers", ClassModelBuilder.MANY, "app", ClassModelBuilder.ONE);
         app.buildAssociation(game,"allGames", ClassModelBuilder.MANY,"app", ClassModelBuilder.ONE);
         app.buildAssociation(player, "currentPlayer", ClassModelBuilder.ONE, "myApp", ClassModelBuilder.ONE);
+        app.buildAssociation(chatMessage, "allChatMessages", ClassModelBuilder.MANY, "app", ClassModelBuilder.ONE);
 
         ClassModel model = mb.getClassModel();
 

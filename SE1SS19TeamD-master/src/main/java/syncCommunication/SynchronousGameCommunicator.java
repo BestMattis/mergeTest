@@ -1,35 +1,33 @@
 package syncCommunication;
 
-import syncCommunication.RESTExceptions.*;
 import org.json.JSONException;
 import org.json.JSONObject;
+import syncCommunication.RESTExceptions.GameIdNotFoundException;
+import syncCommunication.RESTExceptions.GameLobbyCreationFailedException;
+import syncCommunication.RESTExceptions.LoginFailedException;
 
 import java.util.ArrayList;
 
-public class SynchronousGameCommunicator extends SynchronousCommunicator{
+public class SynchronousGameCommunicator extends SynchronousCommunicator {
 
-    private GameLobbyHandler gHandler;
+    private HTTPGameLobbyHandler gHandler;
 
     /**
      * @param httpReq Used to assign the user. Same HttpRequests leads to the same logged in user.
      */
     public SynchronousGameCommunicator(HttpRequests httpReq) {
         super(httpReq);
-        gHandler = new GameLobbyHandler(httpReq);
+        gHandler = new HTTPGameLobbyHandler(httpReq);
     }
 
     /**
      * Open a new game on the server.
      *
-     * @return Return true if successful.
-     *
-     * @param gameName Name of the game
-     *
+     * @param gameName  Name of the game
      * @param userCount Amount of users that are allowed. 2 or 4.
-     *
-     * @exception LoginFailedException if the user was not logged in
-     *
-     * @exception GameLobbyCreationFailedException if no game was created
+     * @return Return true if successful.
+     * @throws LoginFailedException             if the user was not logged in
+     * @throws GameLobbyCreationFailedException if no game was created
      */
     public boolean openGame(String gameName, int userCount)
             throws GameLobbyCreationFailedException, LoginFailedException {
@@ -46,13 +44,10 @@ public class SynchronousGameCommunicator extends SynchronousCommunicator{
     /**
      * Join a game by the ID given.
      *
-     * @return Returns true if successful.
-     *
      * @param gameID ID of the game on the server
-     *
-     * @exception LoginFailedException if the user was not logged in
-     *
-     * @exception GameIdNotFoundException if no game was found with that id
+     * @return Returns true if successful.
+     * @throws LoginFailedException    if the user was not logged in
+     * @throws GameIdNotFoundException if no game was found with that id
      */
     public boolean joinGame(String gameID)
             throws GameIdNotFoundException, LoginFailedException {
@@ -69,13 +64,10 @@ public class SynchronousGameCommunicator extends SynchronousCommunicator{
     /**
      * Delete a game by the ID given.
      *
-     * @return Return true if successful.
-     *
      * @param gameID ID of the game on the server
-     *
-     * @exception LoginFailedException if the user was not logged in
-     *
-     * @exception GameIdNotFoundException if no game was found with that id
+     * @return Return true if successful.
+     * @throws LoginFailedException    if the user was not logged in
+     * @throws GameIdNotFoundException if no game was found with that id
      */
     public boolean deleteGame(String gameID)
             throws GameIdNotFoundException, LoginFailedException {
@@ -93,8 +85,7 @@ public class SynchronousGameCommunicator extends SynchronousCommunicator{
      * Get the list of all games currently open.
      *
      * @return Return a list of JSOnObjects of all games.
-     *
-     * @exception LoginFailedException if the user was not logged in
+     * @throws LoginFailedException if the user was not logged in
      */
     public ArrayList<JSONObject> getAllGames() throws LoginFailedException {
         ArrayList<JSONObject> gamesList = null;
@@ -108,7 +99,7 @@ public class SynchronousGameCommunicator extends SynchronousCommunicator{
         return gamesList;
     }
 
-    public GameLobbyHandler getGameHandler() {
+    public HTTPGameLobbyHandler getGameHandler() {
         return gHandler;
     }
 

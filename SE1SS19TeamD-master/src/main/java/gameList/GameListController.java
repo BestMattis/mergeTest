@@ -1,5 +1,6 @@
 package gameList;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -29,7 +30,7 @@ public class GameListController {
      * Call setApp with the app from Model.
      */
     @FXML
-    public void initialize(){
+    public void initialize() {
         setApp(Model.getApp());
     }
 
@@ -38,11 +39,10 @@ public class GameListController {
      * Calls update().
      *
      * @param app to set Lister on
-     *
      */
-    public void setApp(App app){
+    public void setApp(App app) {
         this.app = app;
-        app.addPropertyChangeListener(App.PROPERTY_allPlayers, evt -> update());
+        app.addPropertyChangeListener(App.PROPERTY_allGames, evt -> update());
         update();
     }
 
@@ -52,36 +52,39 @@ public class GameListController {
      * Sets Listener on each game.
      * Sets numberOfGames and numberOfOpenGames.
      */
-    public void update(){
-        list.getChildren().clear();
-        numberOfGames.setText(""+app.getAllGames().size());
-        int openGameCounter = 0;
-        for (Game game:app.getAllGames()) {
-            if(game.getPlayers().size()<game.getCapacity()){
-                /*this game is open*/
-                openGameCounter++;
+    public void update() {
+        Platform.runLater(() ->
+        {
+            list.getChildren().clear();
+            numberOfGames.setText("" + app.getAllGames().size());
+            int openGameCounter = 0;
+            for (Game game : app.getAllGames()) {
+                if (game.getPlayers().size() < game.getCapacity()) {
+                    /*this game is open*/
+                    openGameCounter++;
+                }
+                FXMLLoader fxmlLoader = new FXMLLoader(
+                        getClass().getClassLoader().getResource("gameList/GameBox.fxml"));
+                try {
+                    Parent parent = fxmlLoader.load();
+                    GameBoxController gameBoxController = fxmlLoader.getController();
+                    gameBoxController.setGame(game);
+                    game.addPropertyChangeListener(Game.PROPERTY_players, evt -> {
+                        if (game.getPlayers().size() == game.getCapacity()) {
+                            /*game is full*/
+                            gameBoxController.setGame(game);
+                            numberOfOpenGames.setText("" + (Integer.parseInt(numberOfOpenGames.getText()) - 1));
+                            /*there is now one less open game*/
+                        }
+                    });
+                    list.getChildren().addAll(parent);
+                    gameBoxController.addWidthListener(scrollPane);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-            FXMLLoader fxmlLoader = new FXMLLoader(
-                    getClass().getClassLoader().getResource("gameList/GameBox.fxml"));
-            try {
-                Parent parent = fxmlLoader.load();
-                GameBoxController gameBoxController = fxmlLoader.getController();
-                gameBoxController.setGame(game);
-                game.addPropertyChangeListener(Game.PROPERTY_players, evt -> {
-                    if(game.getPlayers().size()==game.getCapacity()){
-                        /*game is full*/
-                        gameBoxController.setGame(game);
-                        numberOfOpenGames.setText(""+(Integer.parseInt(numberOfOpenGames.getText())-1));
-                        /*there is now one less open game*/
-                    }
-                });
-                list.getChildren().addAll(parent);
-                gameBoxController.addWidthListener(scrollPane);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
         numberOfOpenGames.setText(""+openGameCounter);
+        });
     }
 
     /**

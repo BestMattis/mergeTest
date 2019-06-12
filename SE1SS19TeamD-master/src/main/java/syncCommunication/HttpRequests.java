@@ -1,13 +1,13 @@
 package syncCommunication;
 
-import syncCommunication.RESTExceptions.LoginFailedException;
-import syncCommunication.RESTExceptions.TooManyRequestsPerSecondException;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.request.BaseRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
+import syncCommunication.RESTExceptions.LoginFailedException;
+import syncCommunication.RESTExceptions.TooManyRequestsPerSecondException;
 
 import java.util.concurrent.*;
 
@@ -25,13 +25,7 @@ public class HttpRequests {
     private JsonAdapter jAdapter;
 
     public HttpRequests() {
-        this(null);
-    }
-
-    public HttpRequests(String userKey) {
-        this.userKey = userKey;
-
-        ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
+                ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
         exec.scheduleAtFixedRate(() -> {
 
             if (!checkLastRequest() && userKey != null) {
@@ -53,11 +47,11 @@ public class HttpRequests {
     private boolean checkLastRequest() {
         long currentTime = System.currentTimeMillis();
 
-        // If last request was more than 10 or negative  many minutes ago
+        // If last request was more than 10 or negative many minutes ago
         // time that has to elapse (in minutes) before the userKey is refreshed by exec
         // Should always be lower than 15, since a userKey is only lost after 15 minutes
-        int REQUEST_REFRESH_THRESHLD = 10;
-        return !(lastRequestTimeMilliseconds - currentTime > REQUEST_REFRESH_THRESHLD * 60000
+        int REQUEST_REFRESH_THRESHOLD = 10;
+        return !(lastRequestTimeMilliseconds - currentTime > REQUEST_REFRESH_THRESHOLD * 60000
                 || lastRequestTimeMilliseconds - currentTime < 0);
     }
 
@@ -75,8 +69,8 @@ public class HttpRequests {
             e.printStackTrace();
             try {
                 TimeUnit.SECONDS.sleep(1);
-            } catch (InterruptedException ex) {
                 System.out.println("Delaying by one second");
+            } catch (InterruptedException ex) {
                 ex.printStackTrace();
             }
         }
@@ -98,10 +92,9 @@ public class HttpRequests {
      */
     JSONObject postJSON(JSONObject jsonObject, String postToURL) throws ExecutionException, InterruptedException, JSONException {
 
-        BaseRequest req = Unirest.post(BASE_URL + postToURL).body(jsonObject.toString());
 
         if (jAdapter != null) {
-            jAdapter.onRequestSend(req);
+            jAdapter.onRequestSend(jsonObject);
         }
 
         if (injection != null) {
@@ -111,6 +104,7 @@ public class HttpRequests {
         updateLastRequestTime();
         limitRequestsPerSecond();
 
+        BaseRequest req = Unirest.post(BASE_URL + postToURL).body(jsonObject.toString());
         Future<HttpResponse<JsonNode>> future = req.asJsonAsync();
         HttpResponse<JsonNode> response = future.get();
 
@@ -124,11 +118,9 @@ public class HttpRequests {
     JSONObject postJSONAs(String asUser, JSONObject jsonObject, String postToURL)
             throws ExecutionException, InterruptedException, JSONException {
 
-        BaseRequest req = Unirest.post(BASE_URL + postToURL)
-                .header("userKey", asUser).body(jsonObject.toString());
 
         if (jAdapter != null) {
-            jAdapter.onRequestSend(req);
+            jAdapter.onRequestSend(jsonObject);
         }
 
         if (injection != null) {
@@ -139,6 +131,8 @@ public class HttpRequests {
         limitRequestsPerSecond();
 
 
+        BaseRequest req = Unirest.post(BASE_URL + postToURL)
+                .header("userKey", asUser).body(jsonObject.toString());
         Future<HttpResponse<JsonNode>> future = req.asJsonAsync();
         HttpResponse<JsonNode> response = future.get();
 
@@ -153,10 +147,9 @@ public class HttpRequests {
     JSONObject getAsUser(String asUser, String getFromURL)
             throws ExecutionException, InterruptedException, JSONException {
 
-        BaseRequest req = Unirest.get(BASE_URL + getFromURL).header("userKey", asUser);
 
         if (jAdapter != null) {
-            jAdapter.onRequestSend(req);
+            jAdapter.onRequestSend(null);
         }
 
         if (injection != null) {
@@ -166,6 +159,7 @@ public class HttpRequests {
         updateLastRequestTime();
         limitRequestsPerSecond();
 
+        BaseRequest req = Unirest.get(BASE_URL + getFromURL).header("userKey", asUser);
         Future<HttpResponse<JsonNode>> future = req.asJsonAsync();
         HttpResponse<JsonNode> response = future.get();
 
@@ -179,10 +173,9 @@ public class HttpRequests {
     JSONObject deleteAsUser(String asUser, String deleteAtURL)
             throws ExecutionException, InterruptedException, JSONException {
 
-        BaseRequest req = Unirest.delete(BASE_URL + deleteAtURL).header("userKey", asUser);
 
         if (jAdapter != null) {
-            jAdapter.onRequestSend(req);
+            jAdapter.onRequestSend(null);
         }
 
         if (injection != null) {
@@ -192,6 +185,7 @@ public class HttpRequests {
         updateLastRequestTime();
         limitRequestsPerSecond();
 
+        BaseRequest req = Unirest.delete(BASE_URL + deleteAtURL).header("userKey", asUser);
         Future<HttpResponse<JsonNode>> future = req.asJsonAsync();
         HttpResponse<JsonNode> response = future.get();
 
@@ -248,7 +242,6 @@ public class HttpRequests {
     void setJsonAdapter(JsonAdapter jAdapter) {
         this.jAdapter = jAdapter;
     }
-
 
 
     String getUserKey() {

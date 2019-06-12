@@ -1,9 +1,10 @@
 package model;
 
-import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
-public class Game  
+import java.beans.PropertyChangeListener;
+
+public class Game 
 {
 
    public static final String PROPERTY_name = "name";
@@ -22,6 +23,48 @@ public class Game
          String oldValue = this.name;
          this.name = value;
          firePropertyChange("name", oldValue, value);
+      }
+      return this;
+   }
+
+
+   public static final String PROPERTY_capacity = "capacity";
+
+   private int capacity;
+
+   public int getCapacity()
+   {
+      return capacity;
+   }
+
+   public Game setCapacity(int value)
+   {
+      if (value != this.capacity)
+      {
+         int oldValue = this.capacity;
+         this.capacity = value;
+         firePropertyChange("capacity", oldValue, value);
+      }
+      return this;
+   }
+
+
+   public static final String PROPERTY_gameId = "gameId";
+
+   private String gameId;
+
+   public String getGameId()
+   {
+      return gameId;
+   }
+
+   public Game setGameId(String value)
+   {
+      if (value == null ? this.gameId != null : ! value.equals(this.gameId))
+      {
+         String oldValue = this.gameId;
+         this.gameId = value;
+         firePropertyChange("gameId", oldValue, value);
       }
       return this;
    }
@@ -105,6 +148,37 @@ public class Game
    }
 
 
+   public static final String PROPERTY_app = "app";
+
+   private App app = null;
+
+   public App getApp()
+   {
+      return this.app;
+   }
+
+   public Game setApp(App value)
+   {
+      if (this.app != value)
+      {
+         App oldValue = this.app;
+         if (this.app != null)
+         {
+            this.app = null;
+            oldValue.withoutAllGames(this);
+         }
+         this.app = value;
+         if (value != null)
+         {
+            value.withAllGames(this);
+         }
+         firePropertyChange("app", oldValue, value);
+      }
+      return this;
+   }
+
+
+
    protected PropertyChangeSupport listeners = null;
 
    public boolean firePropertyChange(String propertyName, Object oldValue, Object newValue)
@@ -155,37 +229,6 @@ public class Game
       return true;
    }
 
-   public void removeYou()
-   {
-      this.setApp(null);
-
-      this.withoutPlayers(this.getPlayers().clone());
-
-
-   }
-
-
-   public static final String PROPERTY_capacity = "capacity";
-
-   private int capacity;
-
-   public int getCapacity()
-   {
-      return capacity;
-   }
-
-   public Game setCapacity(int value)
-   {
-      if (value != this.capacity)
-      {
-         int oldValue = this.capacity;
-         this.capacity = value;
-         firePropertyChange("capacity", oldValue, value);
-      }
-      return this;
-   }
-
-
    @Override
    public String toString()
    {
@@ -198,57 +241,13 @@ public class Game
       return result.substring(1);
    }
 
-
-
-   public static final String PROPERTY_app = "app";
-
-   private App app = null;
-
-   public App getApp()
+   public void removeYou()
    {
-      return this.app;
-   }
+      this.setApp(null);
 
-   public Game setApp(App value)
-   {
-      if (this.app != value)
-      {
-         App oldValue = this.app;
-         if (this.app != null)
-         {
-            this.app = null;
-            oldValue.withoutAllGames(this);
-         }
-         this.app = value;
-         if (value != null)
-         {
-            value.withAllGames(this);
-         }
-         firePropertyChange("app", oldValue, value);
-      }
-      return this;
-   }
+      this.withoutPlayers(this.getPlayers().clone());
 
 
-
-   public static final String PROPERTY_gameId = "gameId";
-
-   private String gameId;
-
-   public String getGameId()
-   {
-      return gameId;
-   }
-
-   public Game setGameId(String value)
-   {
-      if (value == null ? this.gameId != null : ! value.equals(this.gameId))
-      {
-         String oldValue = this.gameId;
-         this.gameId = value;
-         firePropertyChange("gameId", oldValue, value);
-      }
-      return this;
    }
 
 

@@ -1,13 +1,11 @@
 package gameList;
 
 import model.App;
-import model.Game;
 import model.Model;
 import model.Player;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 
 public class GameListenerTest {
@@ -15,7 +13,7 @@ public class GameListenerTest {
     GameListener gameListener = new GameListener();
 
     @Test
-    public void createNewGameTest(){
+    public void createNewGameTest() {
         Model.getInstance().setApp(new App());
         ArrayList<Player> players = new ArrayList<>();
         players.add(new Player());
@@ -27,7 +25,7 @@ public class GameListenerTest {
     }
 
     @Test
-    public void addPlayersToGameTest(){
+    public void addPlayersToGameTest() {
         Model.getInstance().setApp(new App());
         ArrayList<Player> players = new ArrayList<>();
 
@@ -43,7 +41,7 @@ public class GameListenerTest {
     }
 
     @Test
-    public void deleteGameTest(){
+    public void deleteGameTest() {
         Model.getInstance().setApp(new App());
         ArrayList<Player> players = new ArrayList<>();
         players.add(new Player());
@@ -56,7 +54,7 @@ public class GameListenerTest {
     }
 
     @Test
-    public void findGame(){
+    public void findGame() {
         Model.getInstance().setApp(new App());
         ArrayList<Player> players = new ArrayList<>();
         players.add(new Player());

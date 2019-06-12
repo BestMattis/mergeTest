@@ -4,8 +4,28 @@ import java.beans.PropertyChangeSupport;
 
 import java.beans.PropertyChangeListener;
 
-public class ChatMessage  
+public class ChatMessage 
 {
+
+   public static final String PROPERTY_message = "message";
+
+   private String message;
+
+   public String getMessage()
+   {
+      return message;
+   }
+
+   public ChatMessage setMessage(String value)
+   {
+      if (value == null ? this.message != null : ! value.equals(this.message))
+      {
+         String oldValue = this.message;
+         this.message = value;
+         firePropertyChange("message", oldValue, value);
+      }
+      return this;
+   }
 
 
    public static final String PROPERTY_channel = "channel";
@@ -50,31 +70,93 @@ public class ChatMessage
    }
 
 
-   public static final String PROPERTY_player = "player";
+   public static final String PROPERTY_receiver = "receiver";
 
-   private Player player = null;
+   private Player receiver = null;
 
-   public Player getPlayer()
+   public Player getReceiver()
    {
-      return this.player;
+      return this.receiver;
    }
 
-   public ChatMessage setPlayer(Player value)
+   public ChatMessage setReceiver(Player value)
    {
-      if (this.player != value)
+      if (this.receiver != value)
       {
-         Player oldValue = this.player;
-         if (this.player != null)
+         Player oldValue = this.receiver;
+         if (this.receiver != null)
          {
-            this.player = null;
+            this.receiver = null;
             oldValue.withoutMessages(this);
          }
-         this.player = value;
+         this.receiver = value;
          if (value != null)
          {
             value.withMessages(this);
          }
-         firePropertyChange("player", oldValue, value);
+         firePropertyChange("receiver", oldValue, value);
+      }
+      return this;
+   }
+
+
+
+   public static final String PROPERTY_sender = "sender";
+
+   private Player sender = null;
+
+   public Player getSender()
+   {
+      return this.sender;
+   }
+
+   public ChatMessage setSender(Player value)
+   {
+      if (this.sender != value)
+      {
+         Player oldValue = this.sender;
+         if (this.sender != null)
+         {
+            this.sender = null;
+            oldValue.withoutMessages(this);
+         }
+         this.sender = value;
+         if (value != null)
+         {
+            value.withMessages(this);
+         }
+         firePropertyChange("sender", oldValue, value);
+      }
+      return this;
+   }
+
+
+
+   public static final String PROPERTY_app = "app";
+
+   private App app = null;
+
+   public App getApp()
+   {
+      return this.app;
+   }
+
+   public ChatMessage setApp(App value)
+   {
+      if (this.app != value)
+      {
+         App oldValue = this.app;
+         if (this.app != null)
+         {
+            this.app = null;
+            oldValue.withoutAllChatMessages(this);
+         }
+         this.app = value;
+         if (value != null)
+         {
+            value.withAllChatMessages(this);
+         }
+         firePropertyChange("app", oldValue, value);
       }
       return this;
    }
@@ -131,34 +213,6 @@ public class ChatMessage
       return true;
    }
 
-   public void removeYou()
-   {
-      this.setPlayer(null);
-
-   }
-
-
-   public static final String PROPERTY_message = "message";
-
-   private String message;
-
-   public String getMessage()
-   {
-      return message;
-   }
-
-   public ChatMessage setMessage(String value)
-   {
-      if (value == null ? this.message != null : ! value.equals(this.message))
-      {
-         String oldValue = this.message;
-         this.message = value;
-         firePropertyChange("message", oldValue, value);
-      }
-      return this;
-   }
-
-
    @Override
    public String toString()
    {
@@ -171,5 +225,14 @@ public class ChatMessage
 
       return result.substring(1);
    }
+
+   public void removeYou()
+   {
+      this.setReceiver(null);
+      this.setSender(null);
+      this.setApp(null);
+
+   }
+
 
 }
