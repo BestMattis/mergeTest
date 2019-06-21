@@ -26,6 +26,7 @@ public class HTTPArmyHandler {
      * Returns true if there is.
      * It relies on having grabbed all unit types at least once, if not
      * it will grab them itself.
+     * teste zeile command change
      */
     private boolean checkIfIncorrectUnitIDs(String[] units) throws LoginFailedException {
 
