@@ -1,4 +1,4 @@
-package waitingScreen;
+package gamelobby;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -10,8 +10,6 @@ import main.AdvancedWarsApplication;
 import model.Game;
 import model.Player;
 import syncCommunication.SynchronousGameCommunicator;
-
-import java.beans.PropertyChangeListener;
 
 
 public class WaitingScreenContoller {

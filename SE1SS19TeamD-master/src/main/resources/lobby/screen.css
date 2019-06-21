@@ -63,7 +63,7 @@
 }
 
 .transparent-pane {
-    -fx-background-color: rgba(0,0,0,0.8)
+    -fx-background-color: rgba(0,0,0,0.8);
 }
 
 .greenButton {
@@ -78,6 +78,12 @@
 }
 .redButton:pressed {
     -fx-background-color: rgba(255,20,20,0.3);
+}
+
+.pane-unit {
+    -fx-background-color: #201c22;
+    -fx-border-color: #FFFFFF;
+    -fx-border-width: 1px;
 }
 
 #logo:hover {

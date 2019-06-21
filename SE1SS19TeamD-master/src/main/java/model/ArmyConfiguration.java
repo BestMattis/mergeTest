@@ -4,7 +4,7 @@ import java.beans.PropertyChangeSupport;
 
 import java.beans.PropertyChangeListener;
 
-public class Game  
+public class ArmyConfiguration  
 {
 
    public static final String PROPERTY_name = "name";
@@ -16,7 +16,7 @@ public class Game
       return name;
    }
 
-   public Game setName(String value)
+   public ArmyConfiguration setName(String value)
    {
       if (value == null ? this.name != null : ! value.equals(this.name))
       {
@@ -28,67 +28,77 @@ public class Game
    }
 
 
-   public static final String PROPERTY_capacity = "capacity";
+   public static final String PROPERTY_id = "id";
 
-   private int capacity;
+   private String id;
 
-   public int getCapacity()
+   public String getId()
    {
-      return capacity;
+      return id;
    }
 
-   public Game setCapacity(int value)
+   public ArmyConfiguration setId(String value)
    {
-      if (value != this.capacity)
+      if (value == null ? this.id != null : ! value.equals(this.id))
       {
-         int oldValue = this.capacity;
-         this.capacity = value;
-         firePropertyChange("capacity", oldValue, value);
+         String oldValue = this.id;
+         this.id = value;
+         firePropertyChange("id", oldValue, value);
       }
       return this;
    }
 
 
-   public static final String PROPERTY_gameId = "gameId";
+   public static final String PROPERTY_player = "player";
 
-   private String gameId;
+   private Player player = null;
 
-   public String getGameId()
+   public Player getPlayer()
    {
-      return gameId;
+      return this.player;
    }
 
-   public Game setGameId(String value)
+   public ArmyConfiguration setPlayer(Player value)
    {
-      if (value == null ? this.gameId != null : ! value.equals(this.gameId))
+      if (this.player != value)
       {
-         String oldValue = this.gameId;
-         this.gameId = value;
-         firePropertyChange("gameId", oldValue, value);
+         Player oldValue = this.player;
+         if (this.player != null)
+         {
+            this.player = null;
+            oldValue.withoutArmyConfigurations(this);
+         }
+         this.player = value;
+         if (value != null)
+         {
+            value.withArmyConfigurations(this);
+         }
+         firePropertyChange("player", oldValue, value);
       }
       return this;
    }
 
 
-   public static final java.util.ArrayList<Player> EMPTY_players = new java.util.ArrayList<Player>()
-   { @Override public boolean add(Player value){ throw new UnsupportedOperationException("No direct add! Use xy.withPlayers(obj)"); }};
+
+   public static final java.util.ArrayList<Unit> EMPTY_units = new java.util.ArrayList<Unit>()
+   { @Override public boolean add(Unit value){ throw new UnsupportedOperationException("No direct add! Use xy.withUnits(obj)"); }};
 
 
-   public static final String PROPERTY_players = "players";
+   public static final String PROPERTY_units = "units";
 
-   private java.util.ArrayList<Player> players = null;
+   private java.util.ArrayList<Unit> units = null;
 
-   public java.util.ArrayList<Player> getPlayers()
+   public java.util.ArrayList<Unit> getUnits()
    {
-      if (this.players == null)
+      if (this.units == null)
       {
-         return EMPTY_players;
+         return EMPTY_units;
       }
 
-      return this.players;
+      return this.units;
    }
 
-   public Game withPlayers(Object... value)
+   public ArmyConfiguration withUnits(Object... value)
    {
       if(value==null) return this;
       for (Object item : value)
@@ -98,20 +108,20 @@ public class Game
          {
             for (Object i : (java.util.Collection) item)
             {
-               this.withPlayers(i);
+               this.withUnits(i);
             }
          }
-         else if (item instanceof Player)
+         else if (item instanceof Unit)
          {
-            if (this.players == null)
+            if (this.units == null)
             {
-               this.players = new java.util.ArrayList<Player>();
+               this.units = new java.util.ArrayList<Unit>();
             }
-            if ( ! this.players.contains(item))
+            if ( ! this.units.contains(item))
             {
-               this.players.add((Player)item);
-               ((Player)item).setGame(this);
-               firePropertyChange("players", null, item);
+               this.units.add((Unit)item);
+               ((Unit)item).setArmyConfiguration(this);
+               firePropertyChange("units", null, item);
             }
          }
          else throw new IllegalArgumentException();
@@ -121,9 +131,9 @@ public class Game
 
 
 
-   public Game withoutPlayers(Object... value)
+   public ArmyConfiguration withoutUnits(Object... value)
    {
-      if (this.players == null || value==null) return this;
+      if (this.units == null || value==null) return this;
       for (Object item : value)
       {
          if (item == null) continue;
@@ -131,52 +141,21 @@ public class Game
          {
             for (Object i : (java.util.Collection) item)
             {
-               this.withoutPlayers(i);
+               this.withoutUnits(i);
             }
          }
-         else if (item instanceof Player)
+         else if (item instanceof Unit)
          {
-            if (this.players.contains(item))
+            if (this.units.contains(item))
             {
-               this.players.remove((Player)item);
-               ((Player)item).setGame(null);
-               firePropertyChange("players", item, null);
+               this.units.remove((Unit)item);
+               ((Unit)item).setArmyConfiguration(null);
+               firePropertyChange("units", item, null);
             }
          }
       }
       return this;
    }
-
-
-   public static final String PROPERTY_app = "app";
-
-   private App app = null;
-
-   public App getApp()
-   {
-      return this.app;
-   }
-
-   public Game setApp(App value)
-   {
-      if (this.app != value)
-      {
-         App oldValue = this.app;
-         if (this.app != null)
-         {
-            this.app = null;
-            oldValue.withoutAllGames(this);
-         }
-         this.app = value;
-         if (value != null)
-         {
-            value.withAllGames(this);
-         }
-         firePropertyChange("app", oldValue, value);
-      }
-      return this;
-   }
-
 
 
    protected PropertyChangeSupport listeners = null;
@@ -235,7 +214,7 @@ public class Game
       StringBuilder result = new StringBuilder();
 
       result.append(" ").append(this.getName());
-      result.append(" ").append(this.getGameId());
+      result.append(" ").append(this.getId());
 
 
       return result.substring(1);
@@ -243,9 +222,9 @@ public class Game
 
    public void removeYou()
    {
-      this.setApp(null);
+      this.setPlayer(null);
 
-      this.withoutPlayers(this.getPlayers().clone());
+      this.withoutUnits(this.getUnits().clone());
 
 
    }

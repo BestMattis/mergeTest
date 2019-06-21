@@ -4,7 +4,7 @@ import java.beans.PropertyChangeSupport;
 
 import java.beans.PropertyChangeListener;
 
-public class ChatMessage 
+public class ChatMessage  
 {
 
    public static final String PROPERTY_message = "message";

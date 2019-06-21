@@ -4,7 +4,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.layout.AnchorPane;
-import waitingScreen.WaitingScreenContoller;
+import gamelobby.WaitingScreenContoller;
 
 import java.io.IOException;
 import java.io.InputStream;

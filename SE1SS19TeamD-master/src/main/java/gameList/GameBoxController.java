@@ -124,7 +124,7 @@ public class GameBoxController {
 
 
     /**
-     * call the methodes to show the waitingScreen and join the game
+     * call the methodes to show the gamelobby and join the game
      */
     public void nameClicked(){
         AdvancedWarsApplication.getInstance().goToGame(game);

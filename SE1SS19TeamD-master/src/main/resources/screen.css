@@ -168,6 +168,7 @@
     -fx-text-fill: red;
 }
 
+
 #newGame {
     -fx-background-color: rgba(0,255,0,0.1);
 }
@@ -191,4 +192,70 @@
 
 #chatpane:horizontal > .split-pane-divider {
     -fx-background-color: #000000;
+}
+
+.redButton {
+    -fx-background-color: rgba(255,0,0,0.1);
+}
+.redButton:pressed {
+    -fx-background-color: rgba(255,20,20,0.3);
+}
+
+.greenButton {
+    -fx-background-color: rgba(0,255,0,0.1);
+}
+.greenButton:pressed {
+    -fx-background-color: rgba(0,255,0,0.3);
+}
+
+.combo-box .list-cell
+{
+    -fx-background-color: transparent;
+}
+
+.combo-box-popup .list-view
+{
+    -fx-background-color: rgba(0,0,0,0.7);
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 8, 0.0 , 0 , 0 );
+}
+
+.combo-box-popup .list-view .list-cell:filled:hover
+{
+    -fx-background-color: grey;
+    -fx-text-fill: -fx-text-inner-color;
+}
+
+.combo-box-base
+{
+    -fx-background-color: black;
+    -fx-background-radius: 0px;
+}
+
+.combo-box-base:hover
+{
+    -fx-color: -fx-hover-base;
+}
+
+.combo-box-base:showing
+{
+    -fx-color: -fx-pressed-base;
+}
+
+.combo-box-base:focused {
+    -fx-background-radius: 0px;
+}
+
+.combo-box .arrow, .combo-box .arrow-button{
+    -fx-background-color: black;
+    -fx-border-radius: 0px;
+    -fx-border-width: 1px;
+    -fx-border-color: white;
+}
+
+.combo-box .arrow, .combo-box .arrow-button .arrow{
+    -fx-background-color: white;
+}
+
+.redVbox {
+    -fx-background-color: rgba(255, 0, 0, 0.3);
 }
