@@ -1,4 +1,4 @@
-package gamelobby;
+package waitingScreen;
 
 import javafx.application.Platform;
 import javafx.scene.Node;

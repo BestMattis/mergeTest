@@ -1,4 +1,4 @@
-package gamelobby;
+package waitingScreen;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -9,7 +9,11 @@ import javafx.scene.layout.VBox;
 import main.AdvancedWarsApplication;
 import model.Game;
 import model.Player;
+import syncCommunication.RESTExceptions.GameIdNotFoundException;
+import syncCommunication.RESTExceptions.LoginFailedException;
 import syncCommunication.SynchronousGameCommunicator;
+
+import java.beans.PropertyChangeListener;
 
 
 public class WaitingScreenContoller {
@@ -86,7 +90,11 @@ public class WaitingScreenContoller {
         boolean success = false;
 
         SynchronousGameCommunicator synchronousGameCommunicator = new SynchronousGameCommunicator(AdvancedWarsApplication.getInstance().getHttpRequests());
-        synchronousGameCommunicator.joinGame(game.getGameId());
+        try {
+            synchronousGameCommunicator.joinGame(game.getGameId());
+        } catch (GameIdNotFoundException | LoginFailedException e) {
+            e.printStackTrace();
+        }
 
         return success;
     }

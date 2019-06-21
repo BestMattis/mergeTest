@@ -17,7 +17,7 @@ public class TestREST {
 
     /*
      * Testing the endUser API. Not as extensive tests as the ones for the HTTPUserHandler
-     * and HTTPGameLobbyHandler classes, since SynchronousGameCommunicator is essentially just executing
+     * and HTTPGameHandler classes, since SynchronousGameCommunicator is essentially just executing
      * their methods but regulates them and stores information like the userKey for
      * easier and safer method calls.
      */
@@ -39,10 +39,14 @@ public class TestREST {
                         .put("userKey", "NoUserKey")
                         .put("message", "")));
 
-        boolean injectionTest;
+        boolean injectionTest = false;
 
-        injectionTest = uComm.logIn("UnRegisteredUser",
-                "APassWordWithoutAnyUse");
+        try {
+            injectionTest = uComm.logIn("UnRegisteredUser",
+                    "APassWordWithoutAnyUse");
+        } catch (LoginFailedException e) {
+            e.printStackTrace();
+        }
 
         Assert.assertTrue(injectionTest);
 
@@ -51,7 +55,7 @@ public class TestREST {
         uComm.injectResponse(null);
 
         // Forgetting to log in
-        boolean openGameWithoutLogIn = false;
+        String openGameWithoutLogIn = null;
         boolean joinGameWithoutLogIn = false;
         boolean deleteGameWithoutLogIn = false;
 
@@ -59,19 +63,19 @@ public class TestREST {
 
         try {
             openGameWithoutLogIn = gComm.openGame("Didn't log in", 2);
-        } catch (LoginFailedException e) {
+        } catch (LoginFailedException | GameLobbyCreationFailedException e) {
             e.printStackTrace();
         }
 
         try {
             joinGameWithoutLogIn = gComm.joinGame("Login is checked before GameID");
-        } catch (LoginFailedException e) {
+        } catch (LoginFailedException | GameIdNotFoundException e) {
             e.printStackTrace();
         }
 
         try {
             deleteGameWithoutLogIn = gComm.deleteGame("Login is checked before GameID");
-        } catch (LoginFailedException e) {
+        } catch (LoginFailedException | GameIdNotFoundException e) {
             e.printStackTrace();
         }
 
@@ -81,7 +85,7 @@ public class TestREST {
             e.printStackTrace();
         }
 
-        Assert.assertFalse(openGameWithoutLogIn);
+        Assert.assertNull(openGameWithoutLogIn);
         Assert.assertFalse(joinGameWithoutLogIn);
         Assert.assertFalse(deleteGameWithoutLogIn);
 
@@ -135,8 +139,8 @@ public class TestREST {
         System.out.println("Opening game");
 
         // Open two games, again, no userKey required
-        boolean gameOpenedCorrectly = false;
-        boolean gameOpenedWithIncorrectPlayerCount = false;
+        String gameOpenedCorrectly = null;
+        String gameOpenedWithIncorrectPlayerCount = null;
 
         try {
             gameOpenedCorrectly = gComm.openGame("The coolest game on the block", 2);
@@ -145,12 +149,12 @@ public class TestREST {
             e.printStackTrace();
         }
 
-        Assert.assertTrue(gameOpenedCorrectly);
-        Assert.assertFalse(gameOpenedWithIncorrectPlayerCount);
+        Assert.assertNotNull(gameOpenedCorrectly);
+        Assert.assertNull(gameOpenedWithIncorrectPlayerCount);
 
         // List all games and get ID of first one
         ArrayList<JSONObject> gamesList = null;
-        String gameID = null;
+        String gameID = gameOpenedCorrectly;
         System.out.println("Getting games list");
 
         try {
@@ -160,16 +164,6 @@ public class TestREST {
         }
 
         Assert.assertNotNull(gamesList);
-
-        if (gamesList.size() > 0) {
-
-            try {
-                System.out.println(gamesList);
-                gameID = gamesList.get(0).getString("id");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
 
         if (gameID != null) {
 
@@ -328,7 +322,7 @@ public class TestREST {
         SynchronousGameCommunicator gComm = new SynchronousGameCommunicator(hr);
         SynchronousUserCommunicator uComm = new SynchronousUserCommunicator(hr);
 
-        HTTPGameLobbyHandler gHandler = gComm.getGameHandler();
+        HTTPGameHandler gHandler = gComm.getGameHandler();
         HTTPUserHandler uHandler = uComm.getUserHandler();
 
         // Random username or else we can't test if a name has been taken or not
@@ -348,9 +342,9 @@ public class TestREST {
 
         // Creating three games, one correctly, one with an incorrect amount of players.
         // Third one has an incorrect userKey
-        boolean firstGame = false;
-        boolean secondGame = false;
-        boolean thirdGame = false;
+        String firstGame = null;
+        String secondGame = null;
+        String thirdGame = null;
         System.out.println("Creating games:");
 
         String gameName = "Game Lobby" + rng.nextInt();
@@ -360,6 +354,7 @@ public class TestREST {
             secondGame = gHandler.openGameLobby(userKey, gameName, 3);
 
         } catch (JSONException | GameLobbyCreationFailedException | LoginFailedException e) {
+            System.out.println(e.getClass());
             Assert.assertTrue(e instanceof GameLobbyCreationFailedException);
             e.printStackTrace();
         }
@@ -372,9 +367,9 @@ public class TestREST {
             e.printStackTrace();
         }
 
-        Assert.assertTrue(firstGame);
-        Assert.assertFalse(secondGame);
-        Assert.assertFalse(thirdGame);
+        Assert.assertNotNull(firstGame);
+        Assert.assertNull(secondGame);
+        Assert.assertNull(thirdGame);
 
         // Two attempts to get all games, one as it should be, the other without a userKey
         ArrayList<JSONObject> lobbyList1 = null;
