@@ -16,6 +16,8 @@ import javafx.stage.Stage;
 import model.App;
 import model.Model;
 import syncCommunication.HttpRequests;
+import syncCommunication.RESTExceptions.LoginFailedException;
+import syncCommunication.RESTExceptions.RegistrationFailedException;
 import syncCommunication.SynchronousUserCommunicator;
 
 public class LogoutTest extends ApplicationTest {
@@ -32,6 +34,7 @@ public class LogoutTest extends ApplicationTest {
 		stage.setScene(scene);
 		stage.show();
 		stage.toFront();
+		inputStream.close();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -47,8 +50,12 @@ public class LogoutTest extends ApplicationTest {
 		SynchronousUserCommunicator uComm = new SynchronousUserCommunicator(hr);
 		String username = "RandomUserName51595";
 		String password = "RandomUserName12";
-		uComm.register(username, password);
-		uComm.logIn(username, password);
+		try {
+			uComm.register(username, password);
+			uComm.logIn(username, password);
+		} catch (RegistrationFailedException | LoginFailedException e) {
+			e.printStackTrace();
+		}
 		Model.getInstance().getPlayerHttpRequestsHashMap().put(app.getCurrentPlayer(), hr);
 
 		Assert.assertNotNull(uComm.getUserKey());

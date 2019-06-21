@@ -90,7 +90,7 @@ public class HttpRequests {
      * POST HTTP request, transmitting a json to a specific URL
      * Throws ExecutionException, InterruptedException and JSONException.
      */
-    JSONObject postJSON(JSONObject jsonObject, String postToURL) throws ExecutionException, InterruptedException, JSONException {
+    JSONObject postJson(JSONObject jsonObject, String postToURL) throws ExecutionException, InterruptedException, JSONException {
 
 
         if (jAdapter != null) {
@@ -115,7 +115,7 @@ public class HttpRequests {
      * POST HTTP request, transmitting a json to a specific URL as a user via userKey.
      * Throws ExecutionException, InterruptedException and JSONException.
      */
-    JSONObject postJSONAs(String asUser, JSONObject jsonObject, String postToURL)
+    JSONObject postJsonAs(String userKey, JSONObject jsonObject, String postToURL)
             throws ExecutionException, InterruptedException, JSONException {
 
 
@@ -132,7 +132,7 @@ public class HttpRequests {
 
 
         BaseRequest req = Unirest.post(BASE_URL + postToURL)
-                .header("userKey", asUser).body(jsonObject.toString());
+                .header("userKey", userKey).body(jsonObject.toString());
         Future<HttpResponse<JsonNode>> future = req.asJsonAsync();
         HttpResponse<JsonNode> response = future.get();
 
@@ -144,7 +144,7 @@ public class HttpRequests {
      * GET HTTP request from a URL as a user via userKey.
      * Throws ExecutionException, InterruptedException and JSONException.
      */
-    JSONObject getAsUser(String asUser, String getFromURL)
+    JSONObject getAsUser(String userKey, String getFromURL)
             throws ExecutionException, InterruptedException, JSONException {
 
 
@@ -159,7 +159,7 @@ public class HttpRequests {
         updateLastRequestTime();
         limitRequestsPerSecond();
 
-        BaseRequest req = Unirest.get(BASE_URL + getFromURL).header("userKey", asUser);
+        BaseRequest req = Unirest.get(BASE_URL + getFromURL).header("userKey", userKey);
         Future<HttpResponse<JsonNode>> future = req.asJsonAsync();
         HttpResponse<JsonNode> response = future.get();
 
@@ -170,7 +170,7 @@ public class HttpRequests {
      * DELETE HTTP request from a URL as a user via userKey.
      * Throws ExecutionException, InterruptedException and JSONException.
      */
-    JSONObject deleteAsUser(String asUser, String deleteAtURL)
+    JSONObject deleteAsUser(String userKey, String deleteAtURL)
             throws ExecutionException, InterruptedException, JSONException {
 
 
@@ -185,7 +185,35 @@ public class HttpRequests {
         updateLastRequestTime();
         limitRequestsPerSecond();
 
-        BaseRequest req = Unirest.delete(BASE_URL + deleteAtURL).header("userKey", asUser);
+        BaseRequest req = Unirest.delete(BASE_URL + deleteAtURL).header("userKey", userKey);
+        Future<HttpResponse<JsonNode>> future = req.asJsonAsync();
+        HttpResponse<JsonNode> response = future.get();
+
+        return new JSONObject(response.getBody().toString());
+    }
+
+    /*
+     * POST HTTP request, transmitting a json to a specific URL as a user via userKey.
+     * Throws ExecutionException, InterruptedException and JSONException.
+     */
+    JSONObject putJsonAs(String userKey, JSONObject jsonObject, String postToURL)
+            throws ExecutionException, InterruptedException, JSONException {
+
+
+        if (jAdapter != null) {
+            jAdapter.onRequestSend(jsonObject);
+        }
+
+        if (injection != null) {
+            return injection;
+        }
+
+        updateLastRequestTime();
+        limitRequestsPerSecond();
+
+
+        BaseRequest req = Unirest.put(BASE_URL + postToURL)
+                .header("userKey", userKey).body(jsonObject.toString());
         Future<HttpResponse<JsonNode>> future = req.asJsonAsync();
         HttpResponse<JsonNode> response = future.get();
 
@@ -202,7 +230,7 @@ public class HttpRequests {
         userData.put("password", password);
 
         try {
-            JSONObject response = postJSON(userData, "/user/login");
+            JSONObject response = postJson(userData, "/user/login");
             if (response.getString("status").equals("success")) {
                 userKey = response.getJSONObject("data").getString("userKey");
             } else {

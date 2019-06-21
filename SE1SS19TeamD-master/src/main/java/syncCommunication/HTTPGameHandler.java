@@ -10,20 +10,20 @@ import syncCommunication.RESTExceptions.LoginFailedException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
-public class HTTPGameLobbyHandler {
+public class HTTPGameHandler {
 
     private HttpRequests hr;
 
-    HTTPGameLobbyHandler(HttpRequests httpReq) {
+    HTTPGameHandler(HttpRequests httpReq) {
         hr = httpReq;
     }
 
     /*
      * Opens a game on the server as the user via the userKey.
-     * Returns true if successful.
+     * Returns the String of the id, once it was opened correctly.
      * Throws JSONException, GameLobbyCreationFailedException and LoginFailedException
      */
-    public boolean openGameLobby(String userKey, String name, int playerCount)
+    public String openGameLobby(String userKey, String name, int playerCount)
             throws JSONException, GameLobbyCreationFailedException, LoginFailedException {
 
         if (userKey == null) {
@@ -35,9 +35,9 @@ public class HTTPGameLobbyHandler {
         gameData.put("neededPlayer", playerCount);
 
         try {
-            JSONObject response = hr.postJSONAs(userKey, gameData, "/game");
+            JSONObject response = hr.postJsonAs(userKey, gameData, "/game");
             if (response.getString("status").equals("success")) {
-                return true;
+                return response.getJSONObject("data").getString("gameId");
             } else {
 
                 String error = response.getString("message");
@@ -51,7 +51,7 @@ public class HTTPGameLobbyHandler {
 
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
-            return false;
+            return null;
         }
     }
 

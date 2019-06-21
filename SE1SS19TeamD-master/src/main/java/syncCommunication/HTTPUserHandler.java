@@ -30,7 +30,7 @@ public class HTTPUserHandler {
         userData.put("password", password);
 
         try {
-            JSONObject response = hr.postJSON(userData, "/user");
+            JSONObject response = hr.postJson(userData, "/user");
             if (response.getString("status").equals("success")) {
                 return true;
             } else {
