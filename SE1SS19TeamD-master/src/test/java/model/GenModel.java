@@ -29,13 +29,8 @@ public class GenModel {
 
         //Associations
         game.buildAssociation(player, "players", ClassModelBuilder.MANY, "game", ClassModelBuilder.ONE);
-<<<<<<< HEAD
-        chatMessage.buildAssociation(player, "receiver", ClassModelBuilder.ONE,"messages", ClassModelBuilder.MANY);
-        chatMessage.buildAssociation(player, "sender", ClassModelBuilder.ONE,"messages", ClassModelBuilder.MANY);
-=======
         chatMessage.buildAssociation(player, "receiver", ClassModelBuilder.ONE, "receivedMessages", ClassModelBuilder.MANY);
         chatMessage.buildAssociation(player, "sender", ClassModelBuilder.ONE, "sentMessages", ClassModelBuilder.MANY);
->>>>>>> master
         app.buildAssociation(player, "allPlayers", ClassModelBuilder.MANY, "app", ClassModelBuilder.ONE);
         app.buildAssociation(game,"allGames", ClassModelBuilder.MANY,"app", ClassModelBuilder.ONE);
         app.buildAssociation(player, "currentPlayer", ClassModelBuilder.ONE, "myApp", ClassModelBuilder.ONE);

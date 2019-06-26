@@ -29,16 +29,6 @@ public class PlayerListController {
      */
     @FXML
     public void initialize() {
-<<<<<<< HEAD
-        HttpRequests httpReq = Model.getPlayerHttpRequestsHashMap().get(
-                Model.getApp().getCurrentPlayer());
-        SynchronousUserCommunicator userComm = 
-                new SynchronousUserCommunicator(httpReq);
-        for(String s : userComm.getOnlineUsers()) {
-            if(!s.equals(Model.getApp().getCurrentPlayer().getName())) {
-                new Player().setName(s).setApp(Model.getApp());
-=======
-
         HttpRequests httpReq = Model.getPlayerHttpRequestsHashMap()
                 .get(Model.getApp().getCurrentPlayer());
         SynchronousUserCommunicator userComm = new SynchronousUserCommunicator(httpReq);
@@ -48,9 +38,11 @@ public class PlayerListController {
                 if(!s.equals(Model.getApp().getCurrentPlayer().getName())) {
                     new Player().setName(s).setApp(Model.getApp());
                 }
->>>>>>> master
             }
+        } finally{
+        	
         }
+        
         Model.getApp().addPropertyChangeListener(App.PROPERTY_allPlayers, e -> {
             if (e.getNewValue() != null) {
                 // new Player logged on
@@ -76,14 +68,8 @@ public class PlayerListController {
         String selectedName = playerList.getSelectionModel().getSelectedItem();
         playerList.getSelectionModel().clearSelection();
         Player selectedPlayer = null;
-<<<<<<< HEAD
-        for (Player player:Model.getApp().getAllPlayers()){
-            if (player.getName() == selectedName){
-=======
-
         for (Player player : Model.getApp().getAllPlayers()) {
             if (player.getName().equals(selectedName)) {
->>>>>>> master
                 selectedPlayer = player;
                 break;
             }
