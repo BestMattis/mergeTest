@@ -1,5 +1,8 @@
 package asyncCommunication;
 
+import model.ChatMessage;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -14,6 +17,13 @@ public class WebSocketComponent {
     private WebSocketRequests systemClient;
     private WebSocketRequests gameClient;
 
+    /**
+     * creates a websocket component that starts a chat- and a system-client
+     *
+     * @param userName the username of the user
+     * @param userKey  the user-key of the user
+     */
+
     public WebSocketComponent(String userName, String userKey) {
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -21,13 +31,21 @@ public class WebSocketComponent {
             WebSocketConfigurator.userKey = userKey;
             startChatSocket(userName);
             startSystemSocket();
+            while (this.chatClient.isOpen() && this.systemClient.isOpen()) {
+            }
         });
     }
+
+    /**
+     * stops the whole websocket components.
+     */
 
     public void stopComponent() {
         stopChatSocket();
         stopSystemSocket();
+        stopGameSocket();
     }
+
 
     private void startChatSocket(String userName) {
 
@@ -69,28 +87,84 @@ public class WebSocketComponent {
         }
     }
 
-    public void startGameSocket(String gameID) {
+    /**
+     * starts a connection with an endpoint of a game that the user wants to join.
+     *
+     * @param gameID is the id of the game
+     * @param armyID is the id of the army
+     */
+    public void joinGame(String gameID, String armyID) {
 
         if (this.gameClient == null || !this.gameClient.isOpen()) {
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            executor.execute(() -> {
+
+                try {
+                    this.gameClient = new WebSocketRequests(new URI(BS_WS_URI + GAME_WS + gameID + "&" + armyID));
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                }
+
+                while (this.gameClient.isOpen()) {
+                }
+            });
+        }
+    }
+
+    /**
+     * sends a command to the server to let it know that the user wants to leave the game.
+     * closes the game-client and the connection.
+     */
+    public void leaveGame() {
+
+        if (this.gameClient != null && this.gameClient.isOpen()) {
+
+            JSONObject jsonObject = new JSONObject().put("messageType", "Command").put("action", "leaveGame");
+            gameClient.sendGameMessage(jsonObject);
             try {
-                ExecutorService executor = Executors.newSingleThreadExecutor();
-                executor.execute(() -> {
-                    while (this.gameClient.isOpen()) {
-                    }
-                });
-                this.gameClient = new WebSocketRequests(new URI(BS_WS_URI + GAME_WS + gameID));
-            } catch (URISyntaxException e) {
+                this.gameClient.stop();
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    public void stopGameSocket() {
+    private void stopGameSocket() {
 
-        try {
-            gameClient.stop();
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (this.gameClient != null) {
+
+            try {
+                gameClient.stop();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+    }
+
+    /**
+     * tests first if the message has the necessary attributes and sends it afterwards.
+     *
+     * @param message is the message that has to be sent
+     */
+
+    public void sendChatmessage(ChatMessage message) {
+
+        if (this.chatClient != null && this.chatClient.isOpen()) {
+            if (testMessage(message)) {
+                this.chatClient.sendChatMessage(message);
+            }
+        }
+    }
+
+    private boolean testMessage(ChatMessage msg) {
+
+        if (msg.getMessage() != null && msg.getChannel() != null && msg.getSender() != null) {
+            if (msg.getChannel().equals("all")) {
+                return true;
+            } else if (msg.getChannel().equals("private") && msg.getReceiver() != null) {
+                return true;
+            }
+        }
+        return false;
     }
 }

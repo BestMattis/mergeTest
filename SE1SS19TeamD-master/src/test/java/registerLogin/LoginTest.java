@@ -15,7 +15,7 @@ public class LoginTest extends ApplicationTest {
 
     static Stage pri;
 
-    public void start (Stage stage) throws Exception {
+    public void start(Stage stage) throws Exception {
         new AdvancedWarsApplication().start(stage);
         pri = stage;
     }
@@ -26,7 +26,7 @@ public class LoginTest extends ApplicationTest {
     }
 
     @Test
-    public void loginTest(){
+    public void loginTest() {
         clickOn("#nameTextfield");
         write("testname");
         clickOn("#pwTextfield");

@@ -19,9 +19,9 @@ public class CreateGameTestApp extends Application {
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
             InputStream inputStream = classLoader.getResource("en-US.properties").openStream();
             ResourceBundle bundle = new PropertyResourceBundle(inputStream);
-            FXMLLoader fxmlLoader = new FXMLLoader(this.getClass().getClassLoader().getResource("createGame/CreateGame.fxml"),bundle);
+            FXMLLoader fxmlLoader = new FXMLLoader(this.getClass().getClassLoader().getResource("createGame/CreateGame.fxml"), bundle);
             Parent parent = fxmlLoader.load();
-            Scene scene = new Scene(parent,600,400);
+            Scene scene = new Scene(parent, 600, 400);
             primaryStage.setScene(scene);
             primaryStage.show();
         } catch (Exception e1) {
