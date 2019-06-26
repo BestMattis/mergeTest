@@ -11,7 +11,6 @@ import main.AdvancedWarsApplication;
 import model.Model;
 import model.Player;
 import syncCommunication.HttpRequests;
-import syncCommunication.RESTExceptions.LoginFailedException;
 import syncCommunication.SynchronousUserCommunicator;
 
 
@@ -31,14 +30,10 @@ public class PlayerListController {
                 Model.getApp().getCurrentPlayer());
         SynchronousUserCommunicator userComm = 
                 new SynchronousUserCommunicator(httpReq);
-        try {
-            for(String s : userComm.getOnlineUsers()) {
-                if(!s.equals(Model.getApp().getCurrentPlayer().getName())) {
-                    new Player().setName(s).setApp(Model.getApp());
-                }
+        for(String s : userComm.getOnlineUsers()) {
+            if(!s.equals(Model.getApp().getCurrentPlayer().getName())) {
+                new Player().setName(s).setApp(Model.getApp());
             }
-        } catch (LoginFailedException e) {
-            e.printStackTrace();
         }
         Model.getApp().addPropertyChangeListener(evt -> update());
         update();
@@ -50,7 +45,7 @@ public class PlayerListController {
         playerList.getSelectionModel().clearSelection();
         Player selectedPlayer = null;
         for (Player player:Model.getApp().getAllPlayers()){
-            if (player.getName().equals(selectedName)){
+            if (player.getName() == selectedName){
                 selectedPlayer = player;
             }
         }

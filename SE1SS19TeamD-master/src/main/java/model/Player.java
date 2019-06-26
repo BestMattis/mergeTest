@@ -4,7 +4,7 @@ import java.beans.PropertyChangeSupport;
 
 import java.beans.PropertyChangeListener;
 
-public class Player  
+public class Player 
 {
 
    public static final String PROPERTY_name = "name";
@@ -293,87 +293,6 @@ public Player withoutMessages(Object... value)
       this.withoutMessages(this.getMessages().clone());
 
 
-      this.withoutArmyConfigurations(this.getArmyConfigurations().clone());
-
-
-   }
-
-
-   public static final java.util.ArrayList<ArmyConfiguration> EMPTY_armyConfigurations = new java.util.ArrayList<ArmyConfiguration>()
-   { @Override public boolean add(ArmyConfiguration value){ throw new UnsupportedOperationException("No direct add! Use xy.withArmyConfigurations(obj)"); }};
-
-
-   public static final String PROPERTY_armyConfigurations = "armyConfigurations";
-
-   private java.util.ArrayList<ArmyConfiguration> armyConfigurations = null;
-
-   public java.util.ArrayList<ArmyConfiguration> getArmyConfigurations()
-   {
-      if (this.armyConfigurations == null)
-      {
-         return EMPTY_armyConfigurations;
-      }
-
-      return this.armyConfigurations;
-   }
-
-   public Player withArmyConfigurations(Object... value)
-   {
-      if(value==null) return this;
-      for (Object item : value)
-      {
-         if (item == null) continue;
-         if (item instanceof java.util.Collection)
-         {
-            for (Object i : (java.util.Collection) item)
-            {
-               this.withArmyConfigurations(i);
-            }
-         }
-         else if (item instanceof ArmyConfiguration)
-         {
-            if (this.armyConfigurations == null)
-            {
-               this.armyConfigurations = new java.util.ArrayList<ArmyConfiguration>();
-            }
-            if ( ! this.armyConfigurations.contains(item))
-            {
-               this.armyConfigurations.add((ArmyConfiguration)item);
-               ((ArmyConfiguration)item).setPlayer(this);
-               firePropertyChange("armyConfigurations", null, item);
-            }
-         }
-         else throw new IllegalArgumentException();
-      }
-      return this;
-   }
-
-
-
-   public Player withoutArmyConfigurations(Object... value)
-   {
-      if (this.armyConfigurations == null || value==null) return this;
-      for (Object item : value)
-      {
-         if (item == null) continue;
-         if (item instanceof java.util.Collection)
-         {
-            for (Object i : (java.util.Collection) item)
-            {
-               this.withoutArmyConfigurations(i);
-            }
-         }
-         else if (item instanceof ArmyConfiguration)
-         {
-            if (this.armyConfigurations.contains(item))
-            {
-               this.armyConfigurations.remove((ArmyConfiguration)item);
-               ((ArmyConfiguration)item).setPlayer(null);
-               firePropertyChange("armyConfigurations", item, null);
-            }
-         }
-      }
-      return this;
    }
 
 

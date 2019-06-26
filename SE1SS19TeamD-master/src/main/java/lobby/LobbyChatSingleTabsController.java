@@ -31,7 +31,7 @@ public class LobbyChatSingleTabsController {
                 playerTab = chatTab.getTab();
             }
         }
-        if (notopened && player != null) {
+        if (notopened) {
             Tab tab = new Tab(player.getName());
             ChatTab chattab = new ChatTab(tab, player);
             tab.setOnCloseRequest(t -> chatTabs.remove(chattab));

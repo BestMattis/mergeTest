@@ -9,8 +9,6 @@ import javafx.scene.layout.VBox;
 import main.AdvancedWarsApplication;
 import model.Game;
 import model.Player;
-import syncCommunication.RESTExceptions.GameIdNotFoundException;
-import syncCommunication.RESTExceptions.LoginFailedException;
 import syncCommunication.SynchronousGameCommunicator;
 
 import java.beans.PropertyChangeListener;
@@ -90,11 +88,7 @@ public class WaitingScreenContoller {
         boolean success = false;
 
         SynchronousGameCommunicator synchronousGameCommunicator = new SynchronousGameCommunicator(AdvancedWarsApplication.getInstance().getHttpRequests());
-        try {
-            synchronousGameCommunicator.joinGame(game.getGameId());
-        } catch (GameIdNotFoundException | LoginFailedException e) {
-            e.printStackTrace();
-        }
+        synchronousGameCommunicator.joinGame(game.getGameId());
 
         return success;
     }
