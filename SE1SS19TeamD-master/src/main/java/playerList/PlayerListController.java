@@ -1,20 +1,23 @@
 package playerList;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import main.AdvancedWarsApplication;
+import model.App;
 import model.Model;
 import model.Player;
 import syncCommunication.HttpRequests;
 import syncCommunication.SynchronousUserCommunicator;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class PlayerListController {
+
+    private int playerCount = 0;
 
     @FXML
     private ListView<String> playerList;
@@ -26,6 +29,7 @@ public class PlayerListController {
      */
     @FXML
     public void initialize() {
+<<<<<<< HEAD
         HttpRequests httpReq = Model.getPlayerHttpRequestsHashMap().get(
                 Model.getApp().getCurrentPlayer());
         SynchronousUserCommunicator userComm = 
@@ -33,9 +37,37 @@ public class PlayerListController {
         for(String s : userComm.getOnlineUsers()) {
             if(!s.equals(Model.getApp().getCurrentPlayer().getName())) {
                 new Player().setName(s).setApp(Model.getApp());
+=======
+
+        HttpRequests httpReq = Model.getPlayerHttpRequestsHashMap()
+                .get(Model.getApp().getCurrentPlayer());
+        SynchronousUserCommunicator userComm = new SynchronousUserCommunicator(httpReq);
+
+        try {
+            for(String s : userComm.getOnlineUsers()) {
+                if(!s.equals(Model.getApp().getCurrentPlayer().getName())) {
+                    new Player().setName(s).setApp(Model.getApp());
+                }
+>>>>>>> master
             }
         }
-        Model.getApp().addPropertyChangeListener(evt -> update());
+        Model.getApp().addPropertyChangeListener(App.PROPERTY_allPlayers, e -> {
+            if (e.getNewValue() != null) {
+                // new Player logged on
+                Platform.runLater(() ->
+                {
+                    playerList.getItems().addAll(((Player)e.getNewValue()).getName());
+                    numberOfPlayers.setText("" + (++playerCount));
+                });
+            } else {
+                // Player logged off
+                Platform.runLater(() ->
+                {
+                    playerList.getItems().removeAll(((Player) e.getOldValue()).getName());
+                    numberOfPlayers.setText("" + (--playerCount));
+                });
+            }
+        });
         update();
         playerList.setOnMouseClicked(t -> openPlayerChat());
     }
@@ -44,26 +76,32 @@ public class PlayerListController {
         String selectedName = playerList.getSelectionModel().getSelectedItem();
         playerList.getSelectionModel().clearSelection();
         Player selectedPlayer = null;
+<<<<<<< HEAD
         for (Player player:Model.getApp().getAllPlayers()){
             if (player.getName() == selectedName){
+=======
+
+        for (Player player : Model.getApp().getAllPlayers()) {
+            if (player.getName().equals(selectedName)) {
+>>>>>>> master
                 selectedPlayer = player;
+                break;
             }
         }
-        if (selectedPlayer == Model.getApp().getCurrentPlayer()){
+        if (selectedPlayer == Model.getApp().getCurrentPlayer()) {
             return;
         }
-        AdvancedWarsApplication.getInstance().getLobbyCon().getChatCon().getSingleController().newTab(selectedPlayer);
+        AdvancedWarsApplication.getInstance().getLobbyCon()
+                .getChatCon().getSingleController().newTab(selectedPlayer);
 
     }
 
     /**
      * Clears list and adds allPlayers in app.
      */
-    public void update() {
-        Platform.runLater(() ->
-        {
-            playerList.getItems().clear();
-        });
+    private void update() {
+        Platform.runLater(() -> playerList.getItems().clear());
+
         List<String> names = new ArrayList<>();
         for (Player player : Model.getApp().getAllPlayers()) {
             names.add(player.getName());
@@ -71,7 +109,8 @@ public class PlayerListController {
         Platform.runLater(() ->
         {
             playerList.getItems().addAll(names);
-            numberOfPlayers.setText("" + Model.getApp().getAllPlayers().size()); 
+            playerCount = Model.getApp().getAllPlayers().size();
+            numberOfPlayers.setText("" + playerCount);
         });
     }
 

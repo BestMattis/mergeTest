@@ -18,6 +18,15 @@ public class FXMLLoad {
     private Scene scene = null;
     private FXMLLoader fxmlLoader = null;
     private Parent parent;
+    private String path;
+
+
+    public FXMLLoad(String fxmlpath, Object controller, boolean list){
+        loadFXML(fxmlpath, defaultprop, controller);
+        if (list) {
+            fxmlLoads.add(this);
+        }
+    }
 
 
     /**
@@ -27,7 +36,9 @@ public class FXMLLoad {
      */
     public FXMLLoad(String fxmlpath) {
         loadFXML(fxmlpath, defaultprop, null);
-        fxmlLoads.add(this);
+        if (getController() != null) {
+            fxmlLoads.add(this);
+        }
     }
 
     /**
@@ -38,7 +49,9 @@ public class FXMLLoad {
      */
     public FXMLLoad(String fxmlpath, String propertiespath) {
         loadFXML(fxmlpath, propertiespath, null);
-        fxmlLoads.add(this);
+        if (getController() != null) {
+            fxmlLoads.add(this);
+        }
     }
 
     /**
@@ -125,7 +138,7 @@ public class FXMLLoad {
             success = false;
         }
         scene = new Scene(parent);
-
+        path = fxmlpath;
         return success;
     }
 
@@ -159,8 +172,15 @@ public class FXMLLoad {
         fxmlLoads.remove(ind);
     }
 
-    public Parent getParent(){
+    public Parent getParent() {
         return parent;
+    }
+
+    /**
+     * @return the fxmlpath
+     */
+    public String getPath(){
+        return path;
     }
 
 

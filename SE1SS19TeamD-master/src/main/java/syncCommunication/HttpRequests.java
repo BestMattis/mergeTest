@@ -25,7 +25,7 @@ public class HttpRequests {
     private JsonAdapter jAdapter;
 
     public HttpRequests() {
-                ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
+        ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
         exec.scheduleAtFixedRate(() -> {
 
             if (!checkLastRequest() && userKey != null) {

@@ -15,9 +15,9 @@ public class GameListener {
      * @return Game or null(if gameName not found).
      */
     public static Game getGameByName(String gameName) {
-        for (int i = 0; i < Model.getApp().getAllGames().size(); i++) {
-            if (Model.getApp().getAllGames().get(i).getName().equals(gameName)) {
-                return Model.getApp().getAllGames().get(i);
+        for (int i = 0; i < Model.getInstance().getApp().getAllGames().size(); i++) {
+            if (Model.getInstance().getApp().getAllGames().get(i).getName().equals(gameName)) {
+                return Model.getInstance().getApp().getAllGames().get(i);
             }
         }
         return null;
@@ -30,9 +30,9 @@ public class GameListener {
      * @return Game or null(if gameID not found).
      */
     public static Game getGameByID(String gameID) {
-        for (int i = 0; i < Model.getApp().getAllGames().size(); i++) {
-            if (Model.getApp().getAllGames().get(i).getGameId().equals(gameID)) {
-                return Model.getApp().getAllGames().get(i);
+        for (int i = 0; i < Model.getInstance().getApp().getAllGames().size(); i++) {
+            if (Model.getInstance().getApp().getAllGames().get(i).getGameId().equals(gameID)) {
+                return Model.getInstance().getApp().getAllGames().get(i);
             }
         }
         return null;
@@ -59,7 +59,7 @@ public class GameListener {
      */
     public void createNewGame(String gameName, int capacity, ArrayList<Player> players) {
         Game game = new Game().setName(gameName).setCapacity(capacity).withPlayers(players);
-        Model.getApp().withAllGames(game);
+        Model.getInstance().getApp().withAllGames(game);
     }
 
     /**
@@ -68,7 +68,7 @@ public class GameListener {
      * @param gameName
      */
     public void deleteGame(String gameName) {
-        Model.getApp().withoutAllGames(getGameByName(gameName));
+        Model.getInstance().getApp().withoutAllGames(getGameByName(gameName));
     }
 
 }

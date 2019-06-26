@@ -49,7 +49,7 @@ public class PlayerListTest extends ApplicationTest {
     }
 
     @Test
-    public void numberOfPlayers(){
+    public void numberOfPlayers() {
         Assert.assertEquals(Model.getApp().getAllPlayers().size(), Integer.parseInt(playerListController.getNumberOfPlayers().getText()));
     }
 

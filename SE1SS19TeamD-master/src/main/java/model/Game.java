@@ -251,4 +251,25 @@ public class Game
    }
 
 
+   public static final String PROPERTY_joinedPlayers = "joinedPlayers";
+
+   private int joinedPlayers;
+
+   public int getJoinedPlayers()
+   {
+      return joinedPlayers;
+   }
+
+   public Game setJoinedPlayers(int value)
+   {
+      if (value != this.joinedPlayers)
+      {
+         int oldValue = this.joinedPlayers;
+         this.joinedPlayers = value;
+         firePropertyChange("joinedPlayers", oldValue, value);
+      }
+      return this;
+   }
+
+
 }

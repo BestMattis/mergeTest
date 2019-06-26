@@ -70,67 +70,6 @@ public class ChatMessage
    }
 
 
-   public static final String PROPERTY_receiver = "receiver";
-
-   private Player receiver = null;
-
-   public Player getReceiver()
-   {
-      return this.receiver;
-   }
-
-   public ChatMessage setReceiver(Player value)
-   {
-      if (this.receiver != value)
-      {
-         Player oldValue = this.receiver;
-         if (this.receiver != null)
-         {
-            this.receiver = null;
-            oldValue.withoutMessages(this);
-         }
-         this.receiver = value;
-         if (value != null)
-         {
-            value.withMessages(this);
-         }
-         firePropertyChange("receiver", oldValue, value);
-      }
-      return this;
-   }
-
-
-
-   public static final String PROPERTY_sender = "sender";
-
-   private Player sender = null;
-
-   public Player getSender()
-   {
-      return this.sender;
-   }
-
-   public ChatMessage setSender(Player value)
-   {
-      if (this.sender != value)
-      {
-         Player oldValue = this.sender;
-         if (this.sender != null)
-         {
-            this.sender = null;
-            oldValue.withoutMessages(this);
-         }
-         this.sender = value;
-         if (value != null)
-         {
-            value.withMessages(this);
-         }
-         firePropertyChange("sender", oldValue, value);
-      }
-      return this;
-   }
-
-
 
    public static final String PROPERTY_app = "app";
 
@@ -233,6 +172,68 @@ public class ChatMessage
       this.setApp(null);
 
    }
+
+
+   public static final String PROPERTY_receiver = "receiver";
+
+   private Player receiver = null;
+
+   public Player getReceiver()
+   {
+      return this.receiver;
+   }
+
+   public ChatMessage setReceiver(Player value)
+   {
+      if (this.receiver != value)
+      {
+         Player oldValue = this.receiver;
+         if (this.receiver != null)
+         {
+            this.receiver = null;
+            oldValue.withoutReceivedMessages(this);
+         }
+         this.receiver = value;
+         if (value != null)
+         {
+            value.withReceivedMessages(this);
+         }
+         firePropertyChange("receiver", oldValue, value);
+      }
+      return this;
+   }
+
+
+
+   public static final String PROPERTY_sender = "sender";
+
+   private Player sender = null;
+
+   public Player getSender()
+   {
+      return this.sender;
+   }
+
+   public ChatMessage setSender(Player value)
+   {
+      if (this.sender != value)
+      {
+         Player oldValue = this.sender;
+         if (this.sender != null)
+         {
+            this.sender = null;
+            oldValue.withoutSentMessages(this);
+         }
+         this.sender = value;
+         if (value != null)
+         {
+            value.withSentMessages(this);
+         }
+         firePropertyChange("sender", oldValue, value);
+      }
+      return this;
+   }
+
 
 
 }

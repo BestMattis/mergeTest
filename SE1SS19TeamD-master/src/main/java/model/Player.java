@@ -79,84 +79,6 @@ public class Player
    }
 
 
-
-public static final java.util.ArrayList<ChatMessage> EMPTY_messages = new java.util.ArrayList<ChatMessage>()
-   { @Override public boolean add(ChatMessage value){ throw new UnsupportedOperationException("No direct add! Use xy.withMessages(obj)"); }};
-
-
-public static final String PROPERTY_messages = "messages";
-
-private java.util.ArrayList<ChatMessage> messages = null;
-
-public java.util.ArrayList<ChatMessage> getMessages()
-   {
-      if (this.messages == null)
-      {
-         return EMPTY_messages;
-      }
-
-      return this.messages;
-   }
-
-public Player withMessages(Object... value)
-   {
-      if(value==null) return this;
-      for (Object item : value)
-      {
-         if (item == null) continue;
-         if (item instanceof java.util.Collection)
-         {
-            for (Object i : (java.util.Collection) item)
-            {
-               this.withMessages(i);
-            }
-         }
-         else if (item instanceof ChatMessage)
-         {
-            if (this.messages == null)
-            {
-               this.messages = new java.util.ArrayList<ChatMessage>();
-            }
-            if ( ! this.messages.contains(item))
-            {
-               this.messages.add((ChatMessage)item);
-               ((ChatMessage)item).setSender(this);
-               firePropertyChange("messages", null, item);
-            }
-         }
-         else throw new IllegalArgumentException();
-      }
-      return this;
-   }
-
-
-public Player withoutMessages(Object... value)
-   {
-      if (this.messages == null || value==null) return this;
-      for (Object item : value)
-      {
-         if (item == null) continue;
-         if (item instanceof java.util.Collection)
-         {
-            for (Object i : (java.util.Collection) item)
-            {
-               this.withoutMessages(i);
-            }
-         }
-         else if (item instanceof ChatMessage)
-         {
-            if (this.messages.contains(item))
-            {
-               this.messages.remove((ChatMessage)item);
-               ((ChatMessage)item).setSender(null);
-               firePropertyChange("messages", item, null);
-            }
-         }
-      }
-      return this;
-   }
-
-
    public static final String PROPERTY_app = "app";
 
    private App app = null;
@@ -287,12 +209,168 @@ public Player withoutMessages(Object... value)
       this.setApp(null);
       this.setMyApp(null);
 
-      this.withoutMessages(this.getMessages().clone());
+      this.withoutReceivedMessages(this.getReceivedMessages().clone());
 
 
-      this.withoutMessages(this.getMessages().clone());
+      this.withoutSentMessages(this.getSentMessages().clone());
 
 
+   }
+
+
+   public static final java.util.ArrayList<ChatMessage> EMPTY_receivedMessages = new java.util.ArrayList<ChatMessage>()
+   { @Override public boolean add(ChatMessage value){ throw new UnsupportedOperationException("No direct add! Use xy.withReceivedMessages(obj)"); }};
+
+
+   public static final String PROPERTY_receivedMessages = "receivedMessages";
+
+   private java.util.ArrayList<ChatMessage> receivedMessages = null;
+
+   public java.util.ArrayList<ChatMessage> getReceivedMessages()
+   {
+      if (this.receivedMessages == null)
+      {
+         return EMPTY_receivedMessages;
+      }
+
+      return this.receivedMessages;
+   }
+
+   public Player withReceivedMessages(Object... value)
+   {
+      if(value==null) return this;
+      for (Object item : value)
+      {
+         if (item == null) continue;
+         if (item instanceof java.util.Collection)
+         {
+            for (Object i : (java.util.Collection) item)
+            {
+               this.withReceivedMessages(i);
+            }
+         }
+         else if (item instanceof ChatMessage)
+         {
+            if (this.receivedMessages == null)
+            {
+               this.receivedMessages = new java.util.ArrayList<ChatMessage>();
+            }
+            if ( ! this.receivedMessages.contains(item))
+            {
+               this.receivedMessages.add((ChatMessage)item);
+               ((ChatMessage)item).setReceiver(this);
+               firePropertyChange("receivedMessages", null, item);
+            }
+         }
+         else throw new IllegalArgumentException();
+      }
+      return this;
+   }
+
+
+
+   public Player withoutReceivedMessages(Object... value)
+   {
+      if (this.receivedMessages == null || value==null) return this;
+      for (Object item : value)
+      {
+         if (item == null) continue;
+         if (item instanceof java.util.Collection)
+         {
+            for (Object i : (java.util.Collection) item)
+            {
+               this.withoutReceivedMessages(i);
+            }
+         }
+         else if (item instanceof ChatMessage)
+         {
+            if (this.receivedMessages.contains(item))
+            {
+               this.receivedMessages.remove((ChatMessage)item);
+               ((ChatMessage)item).setReceiver(null);
+               firePropertyChange("receivedMessages", item, null);
+            }
+         }
+      }
+      return this;
+   }
+
+
+   public static final java.util.ArrayList<ChatMessage> EMPTY_sentMessages = new java.util.ArrayList<ChatMessage>()
+   { @Override public boolean add(ChatMessage value){ throw new UnsupportedOperationException("No direct add! Use xy.withSentMessages(obj)"); }};
+
+
+   public static final String PROPERTY_sentMessages = "sentMessages";
+
+   private java.util.ArrayList<ChatMessage> sentMessages = null;
+
+   public java.util.ArrayList<ChatMessage> getSentMessages()
+   {
+      if (this.sentMessages == null)
+      {
+         return EMPTY_sentMessages;
+      }
+
+      return this.sentMessages;
+   }
+
+   public Player withSentMessages(Object... value)
+   {
+      if(value==null) return this;
+      for (Object item : value)
+      {
+         if (item == null) continue;
+         if (item instanceof java.util.Collection)
+         {
+            for (Object i : (java.util.Collection) item)
+            {
+               this.withSentMessages(i);
+            }
+         }
+         else if (item instanceof ChatMessage)
+         {
+            if (this.sentMessages == null)
+            {
+               this.sentMessages = new java.util.ArrayList<ChatMessage>();
+            }
+            if ( ! this.sentMessages.contains(item))
+            {
+               this.sentMessages.add((ChatMessage)item);
+               ((ChatMessage)item).setSender(this);
+               firePropertyChange("sentMessages", null, item);
+            }
+         }
+         else throw new IllegalArgumentException();
+      }
+      return this;
+   }
+
+
+
+   public Player withoutSentMessages(Object... value)
+   {
+      if (this.sentMessages == null || value==null) return this;
+      for (Object item : value)
+      {
+         if (item == null) continue;
+         if (item instanceof java.util.Collection)
+         {
+            for (Object i : (java.util.Collection) item)
+            {
+               this.withoutSentMessages(i);
+            }
+         }
+         else if (item instanceof ChatMessage)
+         {
+            if (this.sentMessages.contains(item))
+            {
+               this.sentMessages.remove((ChatMessage)item);
+               ((ChatMessage)item).setSender(null);
+               firePropertyChange("sentMessages", item, null);
+            }
+         }
+      }
+      return this;
    }
 
 

@@ -27,7 +27,7 @@ public class PlayerListener {
      * @param playerName name of Player to add.
      */
     public void addPlayer(String playerName) {
-        Model.getApp().withAllPlayers(new Player().setName(playerName));
+        Model.getInstance().getApp().withAllPlayers(new Player().setName(playerName));
     }
 
     /**
@@ -36,7 +36,7 @@ public class PlayerListener {
      * @param playerName name of Player to delete.
      */
     public void deletePlayer(String playerName) {
-        Model.getApp().withoutAllPlayers(getPlayerByName(playerName));
+        Model.getInstance().getApp().withoutAllPlayers(getPlayerByName(playerName));
     }
 
 }
