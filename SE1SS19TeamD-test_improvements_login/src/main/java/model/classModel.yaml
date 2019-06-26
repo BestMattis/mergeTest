@@ -1,0 +1,235 @@
+- c1: 	ClassModel
+  classes: 	player2 	game3 	app4 	chatMessage5 	
+  defaultPropertyStyle: 	POJO
+  defaultRoleType: 	"java.util.ArrayList<%s>"
+  mainJavaDir: 	"src/main/java"
+  packageName: 	model
+  packageSrcFolder: 	"src/main/java/model"
+
+- player2: 	Clazz
+  attributes: 	name6 	password7 	
+  model: 	c1
+  modified: 	false
+  name: 	Player
+  propertyStyle: 	POJO
+  roles: 	game8 	messages9 	messages10 	app11 	myApp12 	
+
+- game3: 	Clazz
+  attributes: 	name13 	capacity14 	gameId15 	
+  model: 	c1
+  modified: 	false
+  name: 	Game
+  propertyStyle: 	POJO
+  roles: 	players16 	app17 	
+
+- app4: 	Clazz
+  model: 	c1
+  modified: 	false
+  name: 	App
+  propertyStyle: 	POJO
+  roles: 	allPlayers18 	allGames19 	currentPlayer20 	allChatMessages21 	
+
+- chatMessage5: 	Clazz
+  attributes: 	message22 	channel23 	date24 	
+  model: 	c1
+  modified: 	false
+  name: 	ChatMessage
+  propertyStyle: 	POJO
+  roles: 	receiver25 	sender26 	app27 	
+
+- name6: 	Attribute
+  clazz: 	player2
+  modified: 	false
+  name: 	name
+  propertyStyle: 	POJO
+  type: 	String
+
+- password7: 	Attribute
+  clazz: 	player2
+  modified: 	false
+  name: 	password
+  propertyStyle: 	POJO
+  type: 	String
+
+- game8: 	AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	player2
+  modified: 	false
+  name: 	game
+  other: 	players16
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- messages9: 	AssocRole
+  aggregation: 	false
+  cardinality: 	42
+  clazz: 	player2
+  modified: 	false
+  name: 	messages
+  other: 	receiver25
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- messages10: 	AssocRole
+  aggregation: 	false
+  cardinality: 	42
+  clazz: 	player2
+  modified: 	false
+  name: 	messages
+  other: 	sender26
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- app11: 	AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	player2
+  modified: 	false
+  name: 	app
+  other: 	allPlayers18
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- myApp12: 	AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	player2
+  modified: 	false
+  name: 	myApp
+  other: 	currentPlayer20
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- name13: 	Attribute
+  clazz: 	game3
+  modified: 	false
+  name: 	name
+  propertyStyle: 	POJO
+  type: 	String
+
+- capacity14: 	Attribute
+  clazz: 	game3
+  modified: 	false
+  name: 	capacity
+  propertyStyle: 	POJO
+  type: 	int
+
+- gameId15: 	Attribute
+  clazz: 	game3
+  modified: 	false
+  name: 	gameId
+  propertyStyle: 	POJO
+  type: 	String
+
+- players16: 	AssocRole
+  aggregation: 	false
+  cardinality: 	42
+  clazz: 	game3
+  modified: 	false
+  name: 	players
+  other: 	game8
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- app17: 	AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	game3
+  modified: 	false
+  name: 	app
+  other: 	allGames19
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- allPlayers18: 	AssocRole
+  aggregation: 	false
+  cardinality: 	42
+  clazz: 	app4
+  modified: 	false
+  name: 	allPlayers
+  other: 	app11
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- allGames19: 	AssocRole
+  aggregation: 	false
+  cardinality: 	42
+  clazz: 	app4
+  modified: 	false
+  name: 	allGames
+  other: 	app17
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- currentPlayer20: 	AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	app4
+  modified: 	false
+  name: 	currentPlayer
+  other: 	myApp12
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- allChatMessages21: 	AssocRole
+  aggregation: 	false
+  cardinality: 	42
+  clazz: 	app4
+  modified: 	false
+  name: 	allChatMessages
+  other: 	app27
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- message22: 	Attribute
+  clazz: 	chatMessage5
+  modified: 	false
+  name: 	message
+  propertyStyle: 	POJO
+  type: 	String
+
+- channel23: 	Attribute
+  clazz: 	chatMessage5
+  modified: 	false
+  name: 	channel
+  propertyStyle: 	POJO
+  type: 	String
+
+- date24: 	Attribute
+  clazz: 	chatMessage5
+  modified: 	false
+  name: 	date
+  propertyStyle: 	POJO
+  type: 	String
+
+- receiver25: 	AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	chatMessage5
+  modified: 	false
+  name: 	receiver
+  other: 	messages9
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- sender26: 	AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	chatMessage5
+  modified: 	false
+  name: 	sender
+  other: 	messages10
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- app27: 	AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	chatMessage5
+  modified: 	false
+  name: 	app
+  other: 	allChatMessages21
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
