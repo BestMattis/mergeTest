@@ -24,7 +24,7 @@ public class FXMLLoadTest extends ApplicationTest {
     }
 
     @Test
-    public void testFull() {
+    public void testFull(){
         Platform.runLater(new Runnable() {
             @Override
             public void run() {

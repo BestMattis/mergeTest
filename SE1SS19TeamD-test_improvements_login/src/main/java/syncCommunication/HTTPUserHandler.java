@@ -30,7 +30,7 @@ public class HTTPUserHandler {
         userData.put("password", password);
 
         try {
-            JSONObject response = hr.postJson(userData, "/user");
+            JSONObject response = hr.postJSON(userData, "/user");
             if (response.getString("status").equals("success")) {
                 return true;
             } else {
@@ -49,9 +49,6 @@ public class HTTPUserHandler {
      * Throws JSONException and LoginFailedException
      */
     public ArrayList<String> getAllUsers(String userKey) throws LoginFailedException, JSONException {
-        if (userKey == null) {
-            throw new LoginFailedException("Log in first");
-        }
         try {
             JSONObject response = hr.getAsUser(userKey, "/user");
 

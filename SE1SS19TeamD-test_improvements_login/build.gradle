@@ -17,11 +17,11 @@ task fatJar(type: Jar) {
     manifest {
         attributes 'Main-Class': 'main.AdvancedWarsApplication'
     }
-
+    
     from {
         configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
     }
-
+    
     with jar
 }
 

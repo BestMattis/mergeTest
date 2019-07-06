@@ -5,7 +5,8 @@
 <ScrollPane xmlns:fx="http://javafx.com/fxml/1" fx:id="scrollhistory" hbarPolicy="NEVER"
             maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
             minWidth="-Infinity"
-            stylesheets="@../screen.css" vbarPolicy="ALWAYS" xmlns="http://javafx.com/javafx/8">
+            stylesheets="@../screen.css" vbarPolicy="ALWAYS" xmlns="http://javafx.com/javafx/8"
+            fx:controller="lobby.LobbyChatMessageListController">
     <content>
         <VBox fx:id="history"/>
     </content>

@@ -1,6 +1,5 @@
 package gameList;
 
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -35,7 +34,7 @@ public class GameBoxController {
     @FXML
     public void initialize() {
         gameCard.addEventHandler(MouseEvent.ANY, event -> {
-            if (game.getCapacity() > game.getJoinedPlayers()) {
+            if (game.getCapacity() > game.getPlayers().size()) {
                 /*game is not full*/
                 if (event.getEventType().equals(MouseEvent.MOUSE_ENTERED)) {
                     /*Mouse entered -> setBorder*/
@@ -57,11 +56,11 @@ public class GameBoxController {
      */
     public void update() {
         gameName.setText(game.getName());
-        playerCount = game.getJoinedPlayers();
+        playerCount = game.getPlayers().size();
         maxPlayers = game.getCapacity();
         playerCounter.setText(playerCount + "/" + maxPlayers);
         progressBar.setProgress((double) playerCount / maxPlayers);
-        if (game.getJoinedPlayers() == game.getCapacity()) {
+        if (game.getPlayers().size() == game.getCapacity()) {
             /*Game is full -> set Disable true*/
             gameCard.setDisable(true);
             gameCard.setStyle("-fx-background-color: #972805");
@@ -70,6 +69,7 @@ public class GameBoxController {
             gameCard.setDisable(false);
             gameCard.setStyle("-fx-background-color: #2f2c31");
         }
+
     }
 
     /**
@@ -78,7 +78,7 @@ public class GameBoxController {
      *
      * @param scrollPane ScrollPane to set Listener on.
      */
-    public void addWidthListener(ScrollPane scrollPane) {
+    public void addWidthListener(ScrollPane scrollPane){
         gameCard.setMinWidth(scrollPane.getWidth());
         scrollPane.widthProperty().addListener((observable, oldValue, newValue) -> gameCard.setMinWidth(newValue.doubleValue()));
     }
@@ -109,7 +109,7 @@ public class GameBoxController {
      */
     public void setGame(Game game) {
         this.game = game;
-        game.addPropertyChangeListener(evt -> Platform.runLater(() -> update()));
+        game.addPropertyChangeListener(evt -> update());
         update();
     }
 
@@ -124,14 +124,14 @@ public class GameBoxController {
 
 
     /**
-     * call the methodes to show the gameLobby and join the game
+     * call the methodes to show the waitingScreen and join the game
      */
-    public void nameClicked() {
+    public void nameClicked(){
         AdvancedWarsApplication.getInstance().goToGame(game);
-        AdvancedWarsApplication.getInstance().getGameScreenCon().getGameLobbyController().update(game);
-        AdvancedWarsApplication.getInstance().getGameScreenCon().getGameLobbyController().show();
+        AdvancedWarsApplication.getInstance().getGameScreenCon().getWaitingScreenContoller().update(game);
+        AdvancedWarsApplication.getInstance().getGameScreenCon().getWaitingScreenContoller().show();
         if (!AdvancedWarsApplication.getInstance().offtesting) {
-            AdvancedWarsApplication.getInstance().getGameScreenCon().getGameLobbyController().joinGame(game);
+            AdvancedWarsApplication.getInstance().getGameScreenCon().getWaitingScreenContoller().joinGame(game);
         }
     }
 }

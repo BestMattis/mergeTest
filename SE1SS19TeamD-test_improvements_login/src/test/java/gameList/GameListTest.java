@@ -45,7 +45,7 @@ public class GameListTest extends ApplicationTest {
             index = index + 2;
         }
 
-        Model.setApp(app);
+        Model.getInstance().setApp(app);
 
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         InputStream inputStream = classLoader.getResource("en-US.properties").openStream();

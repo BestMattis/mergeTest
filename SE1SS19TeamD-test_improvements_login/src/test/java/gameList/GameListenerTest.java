@@ -14,7 +14,7 @@ public class GameListenerTest {
 
     @Test
     public void createNewGameTest() {
-        Model.setApp(new App());
+        Model.getInstance().setApp(new App());
         ArrayList<Player> players = new ArrayList<>();
         players.add(new Player());
 
@@ -26,7 +26,7 @@ public class GameListenerTest {
 
     @Test
     public void addPlayersToGameTest() {
-        Model.setApp(new App());
+        Model.getInstance().setApp(new App());
         ArrayList<Player> players = new ArrayList<>();
 
         gameListener.createNewGame("TestGame", 4, players);
@@ -42,7 +42,7 @@ public class GameListenerTest {
 
     @Test
     public void deleteGameTest() {
-        Model.setApp(new App());
+        Model.getInstance().setApp(new App());
         ArrayList<Player> players = new ArrayList<>();
         players.add(new Player());
 
@@ -55,7 +55,7 @@ public class GameListenerTest {
 
     @Test
     public void findGame() {
-        Model.setApp(new App());
+        Model.getInstance().setApp(new App());
         ArrayList<Player> players = new ArrayList<>();
         players.add(new Player());
 
