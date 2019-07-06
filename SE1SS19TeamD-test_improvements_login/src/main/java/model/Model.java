@@ -28,7 +28,7 @@ public class Model {
         return app;
     }
 
-    public void setApp(App app) {
+    public static void setApp(App app) {
         Model.app = app;
     }
 

@@ -19,7 +19,7 @@ public class MsgToAllPlayers {
     @SuppressWarnings("static-access")
     public void sendToAll(String text) {
 
-        App app = Model.getInstance().getApp();
+        App app = Model.getApp();
         ChatMessage chatToSend = new ChatMessage().setChannel("all").setMessage(text)
                 .setSender(app.getCurrentPlayer());
         app.withAllChatMessages(chatToSend); // add message to data model

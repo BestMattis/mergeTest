@@ -13,7 +13,7 @@ public class PlayerListenerTest {
 
     @Test
     public void getPlayerByName() {
-        Model.getInstance().setApp(new App());
+        Model.setApp(new App());
         Player player = new Player().setName("TestPlayer");
         Model.getApp().withAllPlayers(player);
 
@@ -22,7 +22,7 @@ public class PlayerListenerTest {
 
     @Test
     public void addPlayer() {
-        Model.getInstance().setApp(new App());
+        Model.setApp(new App());
         playerListener.addPlayer("TestPlayer");
 
         Assert.assertNotNull(PlayerListener.getPlayerByName("TestPlayer"));
@@ -30,7 +30,7 @@ public class PlayerListenerTest {
 
     @Test
     public void deletePlayer() {
-        Model.getInstance().setApp(new App());
+        Model.setApp(new App());
         playerListener.addPlayer("TestPlayer");
         playerListener.deletePlayer("TestPlayer");
 

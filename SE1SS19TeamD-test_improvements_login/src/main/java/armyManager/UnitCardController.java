@@ -25,6 +25,7 @@ public class UnitCardController {
 
     private String id;
     private Parent parent;
+    private ArmyManagerController parentCon;
 
     /**
      * initialize the dragdrop
@@ -45,7 +46,9 @@ public class UnitCardController {
      * @param event of the dragged unitcard
      */
     private void dragdone(DragEvent event) {
-
+        if (event.isDropCompleted() == false){
+            base.setVisible(true);
+        }
         event.consume();
     }
 
@@ -68,17 +71,17 @@ public class UnitCardController {
 
         id = unitID;
         String name = "unknown Unit: " + unitID;
-        if (unitID == "5cc051bd62083600017db3b7") {
+        if (unitID.equals("5cc051bd62083600017db3b7")) {
             name = bundle.getString("unit.bazTrooper");
-        } else if (unitID == "5cc051bd62083600017db3bb") {
+        } else if (unitID.equals("5cc051bd62083600017db3bb")) {
             name = bundle.getString("unit.chopper");
-        } else if (unitID == "5cc051bd62083600017db3ba") {
+        } else if (unitID.equals("5cc051bd62083600017db3ba")) {
             name = bundle.getString("unit.heavyT");
-        } else if (unitID == "5cc051bd62083600017db3b6") {
+        } else if (unitID.equals("5cc051bd62083600017db3b6")) {
             name = bundle.getString("unit.Infantry");
-        } else if (unitID == "5cc051bd62083600017db3b8") {
+        } else if (unitID.equals("5cc051bd62083600017db3b8")) {
             name = bundle.getString("unit.jeep");
-        } else if (unitID == "5cc051bd62083600017db3b9") {
+        } else if (unitID.equals("5cc051bd62083600017db3b9")) {
             name = bundle.getString("unit.lightTy");
         }
         unitname.setText(name);
@@ -108,5 +111,9 @@ public class UnitCardController {
      */
     public void setParent(Parent parent) {
         this.parent = parent;
+    }
+
+    public void setParentCon(ArmyManagerController con) {
+        this.parentCon = con;
     }
 }

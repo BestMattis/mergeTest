@@ -66,7 +66,7 @@ public class HttpRequests {
         try {
             checkIfOverRequestLimit();
         } catch (TooManyRequestsPerSecondException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             try {
                 TimeUnit.SECONDS.sleep(1);
                 System.out.println("Delaying by one second");

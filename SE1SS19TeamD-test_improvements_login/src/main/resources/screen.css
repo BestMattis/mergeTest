@@ -66,10 +66,25 @@
     -fx-border-color: #DEDDFF;
     -fx-border-width: 1px;
 }
+
+.progress-bar-borderless {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0px;
+    -fx-border-color: transparent;
+    -fx-border-width: 0px;
+}
+
 .progress-bar .track {
     -fx-background-color: rgba(255, 255, 255, 0.1);
     -fx-background-radius: 0px;
 }
+
+.progress-bar-borderless .track {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0px;
+}
+
+
 .progress-bar .bar {
     -fx-background-color: #FFFFFF;
     -fx-background-radius: 0px;
@@ -147,6 +162,14 @@
 
 .transparent-pane{
     -fx-background-color: rgba(0,0,0,0.8);
+}
+
+.moretransparent-pane{
+    -fx-background-color: rgba(0,0,0,0.2);
+}
+
+.compltransparent-pane{
+        -fx-background-color: rgba(0,0,0,0);
 }
 
 .playerList{
@@ -320,4 +343,19 @@
 #creditText {
     -fx-font: 24px Helvetica;
     -fx-fill: #FFFFFF;
+}
+
+.progress-indicator .percentage {
+    -fx-fill:null;
+}
+
+.progress-indicator  {
+    -fx-padding: 0 0 -16 0;
+}
+
+#back {
+    -fx-background-color: rgba(255,0,0,0.1);
+}
+#back:pressed {
+    -fx-background-color: rgba(255,20,20,0.3);
 }

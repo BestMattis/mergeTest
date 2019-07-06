@@ -8,6 +8,9 @@ import model.ChatMessage;
 import model.Model;
 import model.Player;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class WSChatEndpoint {
     private static WSChatEndpoint instance;
 
@@ -22,8 +25,8 @@ public class WSChatEndpoint {
     }
 
     /**
-     * This Method creates a changeListener on the arrayList Messeges in the data
-     * model and sends the new messages back
+     * This Method creates listeners for incoming/outgoing allchat-messages and for outgoing private messages.
+     * The listeners for incoming private messages are already set in the class "ChatTab"
      */
 
     @SuppressWarnings("static-access")
@@ -52,7 +55,8 @@ public class WSChatEndpoint {
                         .getCurrentPlayer().getName())) {
 
                     LobbyChatMessageListController lobChatCont = LobbyChatController.getAllController();
-                    Platform.runLater(() -> lobChatCont.displayMessage("[" + message.getSender().getName() + "] "
+                    Platform.runLater(() -> lobChatCont.displayMessage("[" + message.getDate() + "] " + "["
+                            + message.getSender().getName() + "] "
                             + message.getMessage()));
                 }
             }
@@ -62,20 +66,23 @@ public class WSChatEndpoint {
     private void setPrivateChatListeners() {
 
         //send messages from sentMessages
-        Model.getApp().getCurrentPlayer()
-                .addPropertyChangeListener(Player.PROPERTY_sentMessages, evt -> {
+        Model.getApp().getCurrentPlayer().addPropertyChangeListener(Player.PROPERTY_sentMessages, evt -> {
 
-            ChatMessage message = (ChatMessage) evt.getNewValue();
-            if (message.getReceiver() != null && message.getChannel() != null && message.getSender() != null
-                    && message.getMessage() != null) {
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            executor.execute(() -> {
+                ChatMessage message = (ChatMessage) evt.getNewValue();
+                while (message.getReceiver() == null || message.getSender() == null);
+                if ( message.getChannel() != null && message.getMessage() != null) {
 
-                Player currentPlayer = Model.getInstance().getApp().getCurrentPlayer();
-                Player sender = message.getSender();
-                if (sender.getName().equals(currentPlayer.getName()) &&
-                        message.getReceiver() != null) {
-                    Platform.runLater(() -> Model.getWebSocketComponent().sendChatmessage(message));
+                    Player currentPlayer = Model.getApp().getCurrentPlayer();
+                    Player sender = message.getSender();
+
+                    if (sender.getName().equals(currentPlayer.getName())) {
+                        Platform.runLater(() -> Model.getWebSocketComponent().sendChatmessage(message));
+                    }
                 }
-            }
+            });
+            executor.shutdown();
         });
     }
 }

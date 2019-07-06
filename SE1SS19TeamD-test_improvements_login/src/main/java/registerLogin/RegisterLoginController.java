@@ -1,11 +1,14 @@
 package registerLogin;
 
 import asyncCommunication.WebSocketComponent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import main.AdvancedWarsApplication;
@@ -67,6 +70,15 @@ public class RegisterLoginController {
                 e1.printStackTrace();
             }
         });
+
+        pwTextfield.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent ke) {
+                if (ke.getCode().equals(KeyCode.ENTER)) {
+                    loginUser();
+                }
+            }
+        });
     }
 
     /*
@@ -106,7 +118,6 @@ public class RegisterLoginController {
         }
 
         String userKey = synchronousUserCommunicator.getUserKey();
-        Model.setWebSocketComponent(new WebSocketComponent(username, userKey));
 
         nameTextfield.clear();
         pwTextfield.clear();
@@ -117,11 +128,13 @@ public class RegisterLoginController {
             msgLabel.setText(bundle.getString("regLog.FailedLogin"));
         } else {
             Player currentPlayer = new Player().setName(username)
-                    .setPassword(password).setApp(Model.getInstance().getApp());
-            Model.getInstance().getApp().setCurrentPlayer(currentPlayer);
+                    .setPassword(password).setApp(Model.getApp());
+            Model.getApp().setCurrentPlayer(currentPlayer);
             Model.getPlayerHttpRequestsHashMap()
                     .put(currentPlayer, httpRequests);
             AdvancedWarsApplication.getInstance().goToLobby();
+            //start WS-component
+            Model.setWebSocketComponent(new WebSocketComponent(username, userKey));
         }
     }
 

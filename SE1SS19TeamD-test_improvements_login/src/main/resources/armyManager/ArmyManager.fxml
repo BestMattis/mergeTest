@@ -124,7 +124,7 @@
             </SplitPane>
          </children>
       </AnchorPane>
-      <VBox fx:id="errorbox" alignment="CENTER" GridPane.columnIndex="1">
+      <VBox fx:id="errorbox" alignment="BOTTOM_CENTER" GridPane.columnIndex="1">
          <children>
             <Label fx:id="except" styleClass="redText" text="Label" textFill="#ec3737">
                <font>

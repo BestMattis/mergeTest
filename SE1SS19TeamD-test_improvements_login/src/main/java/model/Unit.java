@@ -1,10 +1,9 @@
 package model;
 
+import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
-import java.beans.PropertyChangeListener;
-
-public class Unit  
+public class Unit
 {
 
 

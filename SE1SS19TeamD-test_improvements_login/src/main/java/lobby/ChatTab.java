@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ChatTab {
 
@@ -46,12 +48,6 @@ public class ChatTab {
             Platform.runLater(() -> printMessage(evt));
         });
 
-        for (ChatMessage chatMessage : player.getSentMessages()) {
-            if (AllController != null && chatMessage != null) {
-                AllController.displayMessage("[" + player.getName() + "] " + chatMessage.getMessage());
-            }
-        }
-
     }
 
     /**
@@ -74,8 +70,13 @@ public class ChatTab {
     }
 
     public void printMessage(PropertyChangeEvent t) {
-        ChatMessage message = (ChatMessage) t.getNewValue();
-        AllController.displayMessage("[" + message.getSender().getName() + "] " + message.getMessage());
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(() -> {
+            ChatMessage message = (ChatMessage) t.getNewValue();
+            while (message.getReceiver() == null || message.getSender() == null);
+            Platform.runLater(() -> AllController.displayMessage("[" + message.getDate() + "] " + "[" + message.getSender().getName() + "] " + message.getMessage()));
+        });
+        executor.shutdown();
     }
 
     public Player getPlayer() {

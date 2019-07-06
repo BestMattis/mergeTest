@@ -29,7 +29,7 @@ import java.util.ResourceBundle;
 public class GameLobbyController_v2 {
 
     @FXML
-    private AnchorPane base;
+    public AnchorPane base;
     @FXML
     private AnchorPane playersBase;
     @FXML
@@ -204,7 +204,8 @@ public class GameLobbyController_v2 {
      * @param shownGame the game displayed at the moment
      */
     private void testFull(Game shownGame) {
-        if (shownGame.getCapacity() == shownGame.getPlayers().size()){
+        if (shownGame.getCapacity() == shownGame.getJoinedPlayers()){
+          hide();
             //go to game
         }
     }
@@ -292,12 +293,18 @@ public class GameLobbyController_v2 {
      * loads the ArmyManager
      */
     public void loadManager(){
-        armymanagerFXML = new FXMLLoad("/armyManager/ArmyManager.fxml", new ArmyManagerController());
-        base.getChildren().add(armymanagerFXML.getParent());
-        AnchorPane.setRightAnchor(armymanagerFXML.getParent(), 0d);
-        AnchorPane.setBottomAnchor(armymanagerFXML.getParent(), 0d);
-        AnchorPane.setLeftAnchor(armymanagerFXML.getParent(), 0d);
-        AnchorPane.setTopAnchor(armymanagerFXML.getParent(), 0d);
+        if (AdvancedWarsApplication.getInstance() != null) {
+            armymanagerFXML = AdvancedWarsApplication.getInstance().getLobbyCon().armymanagerFXML;
+            base.getChildren().add(armymanagerFXML.getParent());
+        } else {
+            armymanagerFXML = new FXMLLoad("/armyManager/ArmyManager.fxml", "en-US.properties", new ArmyManagerController());
+            base.getChildren().add(armymanagerFXML.getParent());
+            AnchorPane.setRightAnchor(armymanagerFXML.getParent(), 0d);
+            AnchorPane.setBottomAnchor(armymanagerFXML.getParent(), 0d);
+            AnchorPane.setLeftAnchor(armymanagerFXML.getParent(), 0d);
+            AnchorPane.setTopAnchor(armymanagerFXML.getParent(), 0d);
+            armymanagerFXML.getController(ArmyManagerController.class).hide();
+        }
     }
 
     /**

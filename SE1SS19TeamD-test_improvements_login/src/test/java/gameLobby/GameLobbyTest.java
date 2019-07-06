@@ -46,7 +46,7 @@ public class GameLobbyTest extends ApplicationTest {
             index = index + 2;
         }
 
-        Model.getInstance().setApp(app);
+        Model.setApp(app);
         new AdvancedWarsApplication().start(stage);
         AdvancedWarsApplication.getInstance().offtesting = true;
         pri = stage;

@@ -1,5 +1,6 @@
 package createGame;
 
+import gameList.GameListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -10,6 +11,14 @@ import javafx.scene.layout.AnchorPane;
 import main.AdvancedWarsApplication;
 import model.Game;
 import model.Model;
+import org.json.JSONObject;
+import syncCommunication.HttpRequests;
+import syncCommunication.RESTExceptions.GameIdNotFoundException;
+import syncCommunication.RESTExceptions.GameLobbyCreationFailedException;
+import syncCommunication.RESTExceptions.LoginFailedException;
+import syncCommunication.SynchronousGameCommunicator;
+
+import java.util.concurrent.TimeUnit;
 
 public class CreateGameController {
 
@@ -62,16 +71,49 @@ public class CreateGameController {
                 messageField.setText(playerNumber + " number must be 2 or 4");
                 return;
             }
-            for (Game game : Model.getInstance().getApp().getAllGames()) {
+            for (Game game : Model.getApp().getAllGames()) {
                 if (game.getName().equals(gameName)) {
                     messageField.setText("The Name " + gameName + " is already taken!");
                     return;
                 }
             }
-            Game game = new Game();
-            Model.getInstance().getApp().withAllGames(game.setCapacity(playerNumber).setName(gameName)
-                    .withPlayers(Model.getInstance().getApp().getCurrentPlayer()));
-            System.out.println("Game: " + gameName + " was created! Maximal amount of Players: " + playerNumber);
+            HttpRequests httpReq = Model.getPlayerHttpRequestsHashMap().get(
+                    Model.getApp().getCurrentPlayer());
+            SynchronousGameCommunicator gameComm = new SynchronousGameCommunicator(httpReq);
+            String gameID = null;
+            boolean successfull = false;
+            try {
+               gameID = gameComm.openGame(gameName, playerNumber);
+            } catch (GameLobbyCreationFailedException | LoginFailedException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                successfull = gameComm.joinGame(gameID);
+            } catch (GameIdNotFoundException | LoginFailedException e) {
+                e.printStackTrace();
+            }
+
+            Game game = null;
+            if (successfull) {
+                for (int i = 0; i < 10; ++i) {
+                    game = GameListener.getGameByID(gameID);
+                    if (game != null) {
+                        break;
+                    }
+                    Thread.sleep(1);
+                }
+            }
+
+            if (game == null) {
+                System.out.println("Game was not found in time");
+                return;
+            }
+
+            game.withPlayers(Model.getApp().getCurrentPlayer());
+
+
+            System.out.println("Game: " + gameName + " was created. Maximal amount of Players: " + playerNumber);
 
             //showGameLobby();
             AdvancedWarsApplication.getInstance().goToGame(game);
@@ -80,7 +122,7 @@ public class CreateGameController {
 
             cancelAction(evt);
 
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException | InterruptedException e) {
             messageField.setText(playerNumberField.getText() + " is not an integer!");
         }
     }
@@ -93,8 +135,9 @@ public class CreateGameController {
     private void cancelAction(ActionEvent evt) {
         Node node = base.getChildren().get(0);
         Node node1 = base.getChildren().get(1);
+        Node node2 = base.getChildren().get(2);
         base.getChildren().clear();
-        base.getChildren().addAll(node, node1);
+        base.getChildren().addAll(node, node1, node2);
     }
 
     public void setBase(AnchorPane base) {

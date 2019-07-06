@@ -24,7 +24,7 @@ public class GameBoxTest extends ApplicationTest {
 
         App app = new App().withAllGames(new Game().setName("TestGame").setCapacity(4).withPlayers(new Player()));
 
-        Model.getInstance().setApp(app);
+        Model.setApp(app);
 
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("gameList/GameBox.fxml"));
 

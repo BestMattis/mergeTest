@@ -11,7 +11,7 @@ public class msgToAllPlayersTest {
     @Test
     public void addMsgToModel() {
         MsgToAllPlayers msgTAP = new MsgToAllPlayers();
-        App app = Model.getInstance().getApp();
+        App app = Model.getApp();
         String msg = "testMsg";
         app.setCurrentPlayer(new Player());
 
@@ -24,7 +24,7 @@ public class msgToAllPlayersTest {
     @Test
     public void getMsgFromAllChat() {
         MsgToAllPlayers msgTAP = new MsgToAllPlayers();
-        App app = Model.getInstance().getApp();
+        App app = Model.getApp();
         Player testPlayer = new Player().setName("TestPlayer");
         String msg = "testMsg";
         app.setCurrentPlayer(testPlayer);

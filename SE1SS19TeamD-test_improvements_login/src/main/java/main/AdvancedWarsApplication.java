@@ -21,7 +21,7 @@ import java.util.ResourceBundle;
 
 public class AdvancedWarsApplication extends Application {
 
-    static AdvancedWarsApplication advancedWarsApplication;
+    public static AdvancedWarsApplication advancedWarsApplication;
     public Stage primaryStage;
     public boolean offtesting = false;
     private Scene gameScene;
@@ -101,6 +101,7 @@ public class AdvancedWarsApplication extends Application {
     public void goToGame(Game game){
         if(gameFXML == null) {
             gameFXML = new FXMLLoad("/gameScreen/gameScreen.fxml");
+            gameFXML.getController(GameScreenController.class).addScene(gameFXML.getScene());
         }
         primaryStage.setScene(gameFXML.getScene());
 		gameScene = gameFXML.getScene();
@@ -112,7 +113,7 @@ public class AdvancedWarsApplication extends Application {
      * @return to get the httprequests with the user
      */
     public HttpRequests getHttpRequests() {
-        return Model.getInstance().getPlayerHttpRequestsHashMap().get(Model.getInstance().getApp().getCurrentPlayer());
+        return Model.getPlayerHttpRequestsHashMap().get(Model.getApp().getCurrentPlayer());
     }
 
     /**
@@ -133,7 +134,7 @@ public class AdvancedWarsApplication extends Application {
      * @return the syncUserCom to always have the Userkey
      */
     public SynchronousUserCommunicator getsynchronousUserCommunicator() {
-        return new SynchronousUserCommunicator(Model.getInstance().getPlayerHttpRequestsHashMap().get(Model.getInstance().getApp().getCurrentPlayer()));
+        return new SynchronousUserCommunicator(Model.getPlayerHttpRequestsHashMap().get(Model.getApp().getCurrentPlayer()));
     }
 
     public Scene getLobbyScene() {

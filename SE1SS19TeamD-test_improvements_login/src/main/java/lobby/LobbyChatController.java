@@ -9,6 +9,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
+import main.AdvancedWarsApplication;
 import main.FXMLLoad;
 import model.App;
 import model.ChatMessage;
@@ -17,6 +18,8 @@ import msgToAllPlayers.WSChatEndpoint;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
@@ -51,7 +54,9 @@ public class LobbyChatController {
     public void initialize() {
         loadAll();
         loadPlayers();
-        WSChatEndpoint.getInstance().setListeners();
+        if (!AdvancedWarsApplication.getInstance().offtesting) {
+            WSChatEndpoint.getInstance().setListeners();
+        }
         chatAll.setOnAction(t -> setToAll());
         chatPlayers.setOnAction(t -> setToPlayers());
         send.setOnAction(t -> sendMessage());
@@ -150,12 +155,13 @@ public class LobbyChatController {
      */
     @SuppressWarnings("static-access")
     public void sendToAll(String text) {
-        App app = Model.getInstance().getApp();
+        App app = Model.getApp();
         ChatMessage chatToSend = new ChatMessage().setChannel("all").setMessage(text)
                 .setSender(app.getCurrentPlayer());
+        chatToSend.setDate(new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime()));
         app.withAllChatMessages(chatToSend); // add message to data model
 
-        allController.displayMessage("[" + app.getCurrentPlayer().getName() + "] " + text); // show your own message in chatbox
+        allController.displayMessage("[" + chatToSend.getDate() + "] " + "[" + app.getCurrentPlayer().getName() + "] " + text); // show your own message in chatbox
     }
 
     /**

@@ -35,7 +35,7 @@ public class GameBoxController {
     @FXML
     public void initialize() {
         gameCard.addEventHandler(MouseEvent.ANY, event -> {
-            if (game.getCapacity() > game.getPlayers().size()) {
+            if (game.getCapacity() > game.getJoinedPlayers()) {
                 /*game is not full*/
                 if (event.getEventType().equals(MouseEvent.MOUSE_ENTERED)) {
                     /*Mouse entered -> setBorder*/
@@ -57,11 +57,11 @@ public class GameBoxController {
      */
     public void update() {
         gameName.setText(game.getName());
-        playerCount = game.getPlayers().size();
+        playerCount = game.getJoinedPlayers();
         maxPlayers = game.getCapacity();
         playerCounter.setText(playerCount + "/" + maxPlayers);
         progressBar.setProgress((double) playerCount / maxPlayers);
-        if (game.getPlayers().size() == game.getCapacity()) {
+        if (game.getJoinedPlayers() == game.getCapacity()) {
             /*Game is full -> set Disable true*/
             gameCard.setDisable(true);
             gameCard.setStyle("-fx-background-color: #972805");

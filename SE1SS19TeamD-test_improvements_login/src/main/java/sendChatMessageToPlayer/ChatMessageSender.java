@@ -19,7 +19,7 @@ public class ChatMessageSender {
 
         ChatMessage chatMessage = new ChatMessage();
 
-        Player sender = Model.getInstance().getApp().getCurrentPlayer();
+        Player sender = Model.getApp().getCurrentPlayer();
 
         if (receivingPlayer == null || sender == null || message == null) {
             System.out.println("Message was not sent.");

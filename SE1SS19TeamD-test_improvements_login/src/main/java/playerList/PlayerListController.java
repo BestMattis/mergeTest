@@ -47,17 +47,21 @@ public class PlayerListController {
         Model.getApp().addPropertyChangeListener(App.PROPERTY_allPlayers, e -> {
             if (e.getNewValue() != null) {
                 // new Player logged on
+
+                playerCount = Model.getApp().getAllPlayers().size();
                 Platform.runLater(() ->
                 {
                     playerList.getItems().addAll(((Player)e.getNewValue()).getName());
-                    numberOfPlayers.setText("" + (++playerCount));
+                    numberOfPlayers.setText("" + playerCount);
                 });
             } else {
                 // Player logged off
+
+                playerCount = Model.getApp().getAllPlayers().size();
                 Platform.runLater(() ->
                 {
-                    playerList.getItems().removeAll(((Player) e.getOldValue()).getName());
-                    numberOfPlayers.setText("" + (--playerCount));
+                    playerList.getItems().remove(((Player) e.getOldValue()).getName());
+                    numberOfPlayers.setText("" + playerCount);
                 });
             }
         });

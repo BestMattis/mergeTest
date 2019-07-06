@@ -1,5 +1,6 @@
 package lobby;
 
+import armyManager.ArmyManagerController;
 import createGame.CreateGameController;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -22,7 +23,7 @@ import java.util.ResourceBundle;
 public class LobbyScreenController {
 
     @SuppressWarnings("static-access")
-    App app = Model.getInstance().getApp();
+    App app = Model.getApp();
     AdvancedWarsApplication application = AdvancedWarsApplication.getInstance();
     @FXML
     private AnchorPane chat;
@@ -40,8 +41,12 @@ public class LobbyScreenController {
     private Button logout;
     @FXML
     private ImageView logo;
+    @FXML
+    private Button manager;
+
     private FXMLLoad infoFXML;
     private FXMLLoad chatFXML;
+    public FXMLLoad armymanagerFXML;
 
     /**
      * called when the lobbyScreen scene is loaded.
@@ -52,10 +57,12 @@ public class LobbyScreenController {
         options.setOnAction(t -> optionsButtonClicked());
         logout.setOnAction(t -> logoutButtonClicked());
         logo.setOnMouseClicked(t -> infoImageClicked());
+        manager.setOnAction(t -> managerButtonclicked() );
         loadChat();
         loadGamelist();
         loadPlayerlist();
         loadInfo();
+        loadManager();
     }
 
     /**
@@ -178,5 +185,19 @@ public class LobbyScreenController {
      */
     public LobbyChatController getChatCon() {
         return chatFXML.getController(LobbyChatController.class);
+    }
+
+    public void loadManager(){
+        armymanagerFXML = new FXMLLoad("/armyManager/ArmyManager.fxml","en-US.properties", new ArmyManagerController());
+        base.getChildren().add(armymanagerFXML.getParent());
+        AnchorPane.setRightAnchor(armymanagerFXML.getParent(), 0d);
+        AnchorPane.setBottomAnchor(armymanagerFXML.getParent(), 0d);
+        AnchorPane.setLeftAnchor(armymanagerFXML.getParent(), 0d);
+        AnchorPane.setTopAnchor(armymanagerFXML.getParent(), 0d);
+        armymanagerFXML.getController(ArmyManagerController.class).hide();
+    }
+
+    public void managerButtonclicked(){
+        armymanagerFXML.getController(ArmyManagerController.class).show();
     }
 }

@@ -68,7 +68,7 @@ public class ScreenCon {
      */
     public void logoutButton() {
         boolean loggedOut = false;
-        HttpRequests hr = Model.getInstance().getPlayerHttpRequestsHashMap().get(Model.getInstance().getApp().getCurrentPlayer());
+        HttpRequests hr = Model.getPlayerHttpRequestsHashMap().get(Model.getApp().getCurrentPlayer());
         SynchronousUserCommunicator uComm = new SynchronousUserCommunicator(hr);
         System.out.println(uComm.getUserKey() + " from logoutMethod");
         try {
@@ -78,7 +78,7 @@ public class ScreenCon {
         }
         System.out.println(loggedOut);
         if (loggedOut) {
-            Model.getInstance().setApp(null); // clear data model on logout
+            Model.setApp(null); // clear data model on logout
             if (app != null) {
                 app.goToRegisterLogin();
             } else {

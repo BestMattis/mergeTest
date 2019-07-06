@@ -1,8 +1,7 @@
 package model;
 
-import java.beans.PropertyChangeSupport;
-
 import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 
 public class App  
 {
