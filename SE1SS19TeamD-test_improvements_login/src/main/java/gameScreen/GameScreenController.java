@@ -1,36 +1,57 @@
 package gameScreen;
 
-import gameLobby.GameLobbyController_v2;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.layout.AnchorPane;
-import main.FXMLLoad;
+import waitingScreen.WaitingScreenContoller;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.PropertyResourceBundle;
+import java.util.ResourceBundle;
 
 public class GameScreenController {
 
     @FXML
     AnchorPane base;
 
-    private FXMLLoad gameLobbyFXML;
+    private WaitingScreenContoller waitingScreenContoller;
 
     @FXML
-    public void initialize() {
+    public void initialize(){
         System.out.println("gameScreenLoaded");
         loadWaiting();
     }
 
     private void loadWaiting(){
-        gameLobbyFXML = new FXMLLoad("/gameLobby/GameLobbyScreen_v2.fxml", new GameLobbyController_v2());
-        AnchorPane.setTopAnchor(gameLobbyFXML.getParent(), 0d);
-        AnchorPane.setRightAnchor(gameLobbyFXML.getParent(), 0d);
-        AnchorPane.setBottomAnchor(gameLobbyFXML.getParent(), 0d);
-        AnchorPane.setLeftAnchor(gameLobbyFXML.getParent(), 0d);
-        base.getChildren().add(gameLobbyFXML.getParent());
+        try {
+            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+            InputStream inputStream = classLoader.getResource("en-US.properties").openStream();
+            ResourceBundle bundle = new PropertyResourceBundle(inputStream);
+            URL loc = getClass().getResource("/waitingScreen/WaitingScreen.fxml");
+            if (loc == null) {
+                System.out.println("loc null");
+            }
+            FXMLLoader fxmlLoader = new FXMLLoader(loc, bundle);
+            waitingScreenContoller = new WaitingScreenContoller();
+            fxmlLoader.setController(waitingScreenContoller);
+            Parent parent = fxmlLoader.load();
+            AnchorPane.setTopAnchor(parent, 0d);
+            AnchorPane.setRightAnchor(parent, 0d);
+            AnchorPane.setBottomAnchor(parent, 0d);
+            AnchorPane.setLeftAnchor(parent, 0d);
+            base.getChildren().add(parent);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
      * @return the controller of the waiting Screen
      */
-    public GameLobbyController_v2 getGameLobbyController() {
-        return gameLobbyFXML.getController(GameLobbyController_v2.class);
+    public WaitingScreenContoller getWaitingScreenContoller() {
+        return waitingScreenContoller;
     }
 }

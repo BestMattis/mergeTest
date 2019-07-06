@@ -31,7 +31,7 @@ public class GameListController {
      */
     @FXML
     public void initialize() {
-        setApp(Model.getInstance().getApp());
+        setApp(Model.getApp());
     }
 
     /**
@@ -83,7 +83,7 @@ public class GameListController {
                     e.printStackTrace();
                 }
             }
-            numberOfOpenGames.setText("" + openGameCounter);
+        numberOfOpenGames.setText(""+openGameCounter);
         });
     }
 

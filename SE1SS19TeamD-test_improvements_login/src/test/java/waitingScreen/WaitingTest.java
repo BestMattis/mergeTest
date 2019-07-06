@@ -1,9 +1,10 @@
-package gameLobby;
+package waitingScreen;
 
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import main.AdvancedWarsApplication;
 import model.App;
@@ -50,7 +51,7 @@ public class WaitingTest extends ApplicationTest {
         new AdvancedWarsApplication().start(stage);
         AdvancedWarsApplication.getInstance().offtesting = true;
         pri = stage;
-        //AdvancedWarsApplication.getInstance().goToLobby();
+        AdvancedWarsApplication.getInstance().goToLobby();
 
     }
 
@@ -62,14 +63,9 @@ public class WaitingTest extends ApplicationTest {
 
     @Test
     public void waitTest(){
-        clickOn("#nameTextfield");
-        write("testname");
-        clickOn("#pwTextfield");
-        write("testpw");
-        clickOn("#logButton");
         FxAssert.verifyThat(AdvancedWarsApplication.getInstance().primaryStage.getScene(), is(AdvancedWarsApplication.getInstance().getLobbyScene()));
         clickOn("#gameName");
-        AnchorPane base = find("#waitingbase");
+        AnchorPane base = find("#waitbase");
         FxAssert.verifyThat(base.isVisible(), is(true));
         FxAssert.verifyThat((AdvancedWarsApplication.getInstance().primaryStage.getScene() == AdvancedWarsApplication.getInstance().getLobbyScene()), is(false));
         clickOn("#back");
@@ -79,11 +75,6 @@ public class WaitingTest extends ApplicationTest {
 
     @Test
     public void addingPlayerTest(){
-        clickOn("#nameTextfield");
-        write("testname");
-        clickOn("#pwTextfield");
-        write("testpw");
-        clickOn("#logButton");
         clickOn("#gameName");
         Label name = find("#gameName");
         FxAssert.verifyThat(name.getText(), is(Model.getApp().getAllGames().get(0).getName()));
@@ -116,24 +107,14 @@ public class WaitingTest extends ApplicationTest {
 
     @Test
     public void nameTest(){
-        clickOn("#nameTextfield");
-        write("testname");
-        clickOn("#pwTextfield");
-        write("testpw");
-        clickOn("#logButton");
         clickOn("#gameName");
-        Label playerBox = find("#p1");
-        FxAssert.verifyThat(playerBox.getText(), is("Player0"));
+        VBox playerBox = find("#playerBox");
+        FxAssert.verifyThat(playerBox.getChildren().size(), is(Model.getApp().getAllGames().get(0).getPlayers().size()));
 
     }
 
     @Test
     public void test(){
-        clickOn("#nameTextfield");
-        write("testname");
-        clickOn("#pwTextfield");
-        write("testpw");
-        clickOn("#logButton");
         clickOn("#gameName");
     }
 }

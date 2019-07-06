@@ -33,7 +33,7 @@ public class CreateGameController {
      * Sets ActionHandler on Buttons.
      */
     @FXML
-    public void initialize() {
+    public void initialize(){
         cancelButton.setOnAction(evt -> cancelAction(evt));
         createButton.setOnAction(evt -> createAction(evt));
     }
@@ -44,44 +44,44 @@ public class CreateGameController {
      * @param evt
      */
     private void createAction(ActionEvent evt) {
-        if (nameField.getText().equals("") && playerNumberField.getText().equals("")) {
+        if(nameField.getText().equals("") && playerNumberField.getText().equals("")){
             messageField.setText("choose a name and number of players!");
             return;
-        } else if (nameField.getText().equals("")) {
+        } else if(nameField.getText().equals("")){
             messageField.setText("choose a name!");
             return;
-        } else if (playerNumberField.getText().equals("")) {
+        } else if(playerNumberField.getText().equals("")){
             messageField.setText("choose number of players!");
             return;
         }
 
         String gameName = nameField.getText();
-        try {
+        try{
             int playerNumber = Integer.parseInt(playerNumberField.getText());
-            if (playerNumber != 2 && playerNumber != 4) {
-                messageField.setText(playerNumber + " number must be 2 or 4");
+            if(playerNumber!=2 && playerNumber!=4){
+                messageField.setText(playerNumber+" number must be 2 or 4");
                 return;
             }
-            for (Game game : Model.getInstance().getApp().getAllGames()) {
-                if (game.getName().equals(gameName)) {
-                    messageField.setText("The Name " + gameName + " is already taken!");
+            for(Game game: Model.getApp().getAllGames()){
+                if(game.getName().equals(gameName)){
+                    messageField.setText("The Name "+gameName+" is already taken!");
                     return;
                 }
             }
             Game game = new Game();
-            Model.getInstance().getApp().withAllGames(game.setCapacity(playerNumber).setName(gameName)
-                    .withPlayers(Model.getInstance().getApp().getCurrentPlayer()));
-            System.out.println("Game: " + gameName + " was created! Maximal amount of Players: " + playerNumber);
+            Model.getApp().withAllGames(game.setCapacity(playerNumber).setName(gameName)
+                    .withPlayers(Model.getApp().getCurrentPlayer()));
+            System.out.println("Game: "+gameName+" was created! Maximal amount of Players: "+playerNumber);
 
             //showGameLobby();
             AdvancedWarsApplication.getInstance().goToGame(game);
-            AdvancedWarsApplication.getInstance().getGameScreenCon().getGameLobbyController().update(game);
-            AdvancedWarsApplication.getInstance().getGameScreenCon().getGameLobbyController().show();
+            AdvancedWarsApplication.getInstance().getGameScreenCon().getWaitingScreenContoller().update(game);
+            AdvancedWarsApplication.getInstance().getGameScreenCon().getWaitingScreenContoller().show();
 
             cancelAction(evt);
 
         } catch (NumberFormatException e) {
-            messageField.setText(playerNumberField.getText() + " is not an integer!");
+            messageField.setText(playerNumberField.getText()+" is not an integer!");
         }
     }
 

@@ -1,21 +1,21 @@
 package lobby;
 
-import javafx.application.Platform;
-import javafx.scene.Node;
-import javafx.scene.control.TabPane;
-import javafx.scene.layout.AnchorPane;
-import javafx.stage.Stage;
-import main.AdvancedWarsApplication;
-import model.Player;
+import static org.hamcrest.CoreMatchers.is;
+
+import model.Model;
 import org.junit.Test;
 import org.testfx.api.FxAssert;
 import org.testfx.framework.junit.ApplicationTest;
 
-import static org.hamcrest.CoreMatchers.is;
-
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
+import javafx.application.Platform;
+import javafx.scene.Node;
+import javafx.scene.control.TabPane;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import main.AdvancedWarsApplication;
+import model.Model;
+import model.Player;
 
 
 public class Screentest extends ApplicationTest {
@@ -27,9 +27,10 @@ public class Screentest extends ApplicationTest {
         return (T) lookup(query).queryAll().iterator().next();
     }
 
-    public void start(Stage stage) throws Exception {
+    public void start (Stage stage) throws Exception {
         AdvancedWarsApplication awa = new AdvancedWarsApplication();
         awa.start(stage);
+
 
 
         //Player player = new Player();
@@ -47,7 +48,7 @@ public class Screentest extends ApplicationTest {
     }
 
     @Test
-    public void infoShowTest() {
+    public void infoShowTest(){
         clickOn("#nameTextfield");
         write("testname");
         clickOn("#pwTextfield");
@@ -70,10 +71,10 @@ public class Screentest extends ApplicationTest {
         clickOn(from(base2).lookup("#logout").queryButton());
         FxAssert.verifyThat(base2.isVisible(), is(false));
 
-    }
+   }
 
     @Test
-    public void chatTabTest() {
+    public void chatTabTest(){
         clickOn("#nameTextfield");
         write("testname");
         clickOn("#pwTextfield");
@@ -106,7 +107,6 @@ public class Screentest extends ApplicationTest {
 
     @Test
     public void chatMessageDisplayTest() {
-        /*
         clickOn("#nameTextfield");
         write("testname");
         clickOn("#pwTextfield");
@@ -125,24 +125,19 @@ public class Screentest extends ApplicationTest {
         player1.setName("bla");
         final Player player2 = new Player();
         player2.setName("blubb");
-        FutureTask query = new FutureTask(new Callable() {
+        Platform.runLater(new Runnable() {
             @Override
-            public Object call() throws Exception {
+            public void run() {
                 AdvancedWarsApplication.getInstance().getLobbyCon().getChatCon().getSingleController().newTab(player1);
                 AdvancedWarsApplication.getInstance().getLobbyCon().getChatCon().getSingleController().newTab(player2);
-                return null;
             }
         });
-        Platform.runLater(query);
         try {
-            query.get();
+            Thread.sleep(100);  //Diesen Test mit Einfügen der Chat-Buttons in die Playerliste überarbeiten und platform runlater nit einem FxTest ersetzen.
         } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
             e.printStackTrace();
         }
         FxAssert.verifyThat(true, is(AdvancedWarsApplication.getInstance().getLobbyCon().getChatCon().getSingleController().chatTabs.get(0).AllController.getHistory().getChildren().isEmpty()));
-        clickOn("#chatAll");
         clickOn("#message");
         write("hallo");
         clickOn("#send");
@@ -153,8 +148,8 @@ public class Screentest extends ApplicationTest {
         FxAssert.verifyThat(2, is(AdvancedWarsApplication.getInstance().getLobbyCon().getChatCon().getAllController().getHistory().getChildren().size()));
         FxAssert.verifyThat(true, is(AdvancedWarsApplication.getInstance().getLobbyCon().getChatCon().getSingleController().chatTabs.get(0).AllController.getHistory().getChildren().isEmpty()));
         FxAssert.verifyThat(true, is(AdvancedWarsApplication.getInstance().getLobbyCon().getChatCon().getSingleController().chatTabs.get(1).AllController.getHistory().getChildren().isEmpty()));
-        FxAssert.verifyThat(0, is(player1.getSendedMessages().size()));
-        FxAssert.verifyThat(0, is(player2.getReceivedMessages().size()));
+        FxAssert.verifyThat(0, is(player1.getMessages().size()));
+        FxAssert.verifyThat(0, is(player2.getMessages().size()));
 
         clickOn("#chatPlayers");
         clickOn("#message");
@@ -165,9 +160,8 @@ public class Screentest extends ApplicationTest {
         FxAssert.verifyThat(2, is(AdvancedWarsApplication.getInstance().getLobbyCon().getChatCon().getAllController().getHistory().getChildren().size()));
         FxAssert.verifyThat(1, is(AdvancedWarsApplication.getInstance().getLobbyCon().getChatCon().getSingleController().chatTabs.get(0).AllController.getHistory().getChildren().size()));
         FxAssert.verifyThat(true, is(AdvancedWarsApplication.getInstance().getLobbyCon().getChatCon().getSingleController().chatTabs.get(1).AllController.getHistory().getChildren().isEmpty()));
-        FxAssert.verifyThat(1, is(player1.getSendedMessages().size()));
-        FxAssert.verifyThat(0, is(player2.getReceivedMessages().size()));
-        */
+        FxAssert.verifyThat(1, is(player1.getMessages().size()));
+        FxAssert.verifyThat(0, is(player2.getMessages().size()));
     }
 
     @Test

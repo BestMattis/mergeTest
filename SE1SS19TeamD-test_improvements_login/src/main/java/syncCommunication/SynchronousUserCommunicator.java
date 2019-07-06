@@ -6,7 +6,7 @@ import syncCommunication.RESTExceptions.RegistrationFailedException;
 
 import java.util.ArrayList;
 
-public class SynchronousUserCommunicator extends SynchronousCommunicator {
+public class SynchronousUserCommunicator implements SynchronousCommunicator {
 
     private HTTPUserHandler uHandler;
 
@@ -14,7 +14,6 @@ public class SynchronousUserCommunicator extends SynchronousCommunicator {
      * @param httpReq Used to assign the user. Same HttpRequests leads to the same logged in user.
      */
     public SynchronousUserCommunicator(HttpRequests httpReq) {
-        super(httpReq);
         uHandler = new HTTPUserHandler(httpReq);
     }
 

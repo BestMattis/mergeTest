@@ -10,34 +10,30 @@ import syncCommunication.RESTExceptions.LoginFailedException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
-public class HTTPGameHandler {
+public class HTTPGameLobbyHandler {
 
     private HttpRequests hr;
 
-    HTTPGameHandler(HttpRequests httpReq) {
+    HTTPGameLobbyHandler(HttpRequests httpReq) {
         hr = httpReq;
     }
 
     /*
      * Opens a game on the server as the user via the userKey.
-     * Returns the String of the id, once it was opened correctly.
+     * Returns true if successful.
      * Throws JSONException, GameLobbyCreationFailedException and LoginFailedException
      */
-    public String openGameLobby(String userKey, String name, int playerCount)
+    public boolean openGameLobby(String userKey, String name, int playerCount)
             throws JSONException, GameLobbyCreationFailedException, LoginFailedException {
-
-        if (userKey == null) {
-            throw new LoginFailedException("Log in first");
-        }
 
         JSONObject gameData = new JSONObject();
         gameData.put("name", name);
         gameData.put("neededPlayer", playerCount);
 
         try {
-            JSONObject response = hr.postJsonAs(userKey, gameData, "/game");
+            JSONObject response = hr.postJSONAs(userKey, gameData, "/game");
             if (response.getString("status").equals("success")) {
-                return response.getJSONObject("data").getString("gameId");
+                return true;
             } else {
 
                 String error = response.getString("message");
@@ -51,7 +47,7 @@ public class HTTPGameHandler {
 
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
-            return null;
+            return false;
         }
     }
 
@@ -61,10 +57,7 @@ public class HTTPGameHandler {
      * Throws JSONException and LoginFailedException
      */
     public ArrayList<JSONObject> getAllGameLobbies(String userKey) throws LoginFailedException, JSONException {
-
-        if (userKey == null) {
-            throw new LoginFailedException("Log in first");
-        }
+        
         try {
             JSONObject response = hr.getAsUser(userKey, "/game");
 
@@ -98,10 +91,6 @@ public class HTTPGameHandler {
      */
     public boolean joinGameLobby(String userKey, String gameID)
             throws LoginFailedException, JSONException, GameIdNotFoundException {
-
-        if (userKey == null) {
-            throw new LoginFailedException("Log in first");
-        }
 
         try {
             if (!checkID(userKey, gameID)) {
@@ -137,11 +126,7 @@ public class HTTPGameHandler {
      */
     public boolean deleteGameLobby(String userKey, String gameID)
             throws LoginFailedException, JSONException, GameIdNotFoundException {
-
-        if (userKey == null) {
-            throw new LoginFailedException("Log in first");
-        }
-
+        
         try {
             if (!checkID(userKey, gameID)) {
                 throw new GameIdNotFoundException("There is no game with that ID");

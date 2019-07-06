@@ -25,7 +25,7 @@ public class HttpRequests {
     private JsonAdapter jAdapter;
 
     public HttpRequests() {
-        ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
+                ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
         exec.scheduleAtFixedRate(() -> {
 
             if (!checkLastRequest() && userKey != null) {
@@ -90,11 +90,11 @@ public class HttpRequests {
      * POST HTTP request, transmitting a json to a specific URL
      * Throws ExecutionException, InterruptedException and JSONException.
      */
-    JSONObject postJson(JSONObject jsonObject, String postToURL) throws ExecutionException, InterruptedException, JSONException {
+    JSONObject postJSON(JSONObject jsonObject, String postToURL) throws ExecutionException, InterruptedException, JSONException {
 
 
         if (jAdapter != null) {
-            jAdapter.onRequestSend(jsonObject);
+            jAdapter.onRequestSend(postToURL, jsonObject);
         }
 
         if (injection != null) {
@@ -115,16 +115,20 @@ public class HttpRequests {
      * POST HTTP request, transmitting a json to a specific URL as a user via userKey.
      * Throws ExecutionException, InterruptedException and JSONException.
      */
-    JSONObject postJsonAs(String userKey, JSONObject jsonObject, String postToURL)
+    JSONObject postJSONAs(String asUser, JSONObject jsonObject, String postToURL)
             throws ExecutionException, InterruptedException, JSONException {
 
 
         if (jAdapter != null) {
-            jAdapter.onRequestSend(jsonObject);
+            jAdapter.onRequestSend(postToURL, jsonObject);
         }
 
         if (injection != null) {
             return injection;
+        }
+        
+        if (userKey == null) {
+            throw new LoginFailedException("Log in first");
         }
 
         updateLastRequestTime();
@@ -132,7 +136,7 @@ public class HttpRequests {
 
 
         BaseRequest req = Unirest.post(BASE_URL + postToURL)
-                .header("userKey", userKey).body(jsonObject.toString());
+                .header("userKey", asUser).body(jsonObject.toString());
         Future<HttpResponse<JsonNode>> future = req.asJsonAsync();
         HttpResponse<JsonNode> response = future.get();
 
@@ -144,22 +148,26 @@ public class HttpRequests {
      * GET HTTP request from a URL as a user via userKey.
      * Throws ExecutionException, InterruptedException and JSONException.
      */
-    JSONObject getAsUser(String userKey, String getFromURL)
+    JSONObject getAsUser(String asUser, String getFromURL)
             throws ExecutionException, InterruptedException, JSONException {
 
 
         if (jAdapter != null) {
-            jAdapter.onRequestSend(null);
+            jAdapter.onRequestSend(getFromURL, null);
         }
 
         if (injection != null) {
             return injection;
         }
+        
+        if (userKey == null) {
+            throw new LoginFailedException("Log in first");
+        }
 
         updateLastRequestTime();
         limitRequestsPerSecond();
 
-        BaseRequest req = Unirest.get(BASE_URL + getFromURL).header("userKey", userKey);
+        BaseRequest req = Unirest.get(BASE_URL + getFromURL).header("userKey", asUser);
         Future<HttpResponse<JsonNode>> future = req.asJsonAsync();
         HttpResponse<JsonNode> response = future.get();
 
@@ -170,12 +178,12 @@ public class HttpRequests {
      * DELETE HTTP request from a URL as a user via userKey.
      * Throws ExecutionException, InterruptedException and JSONException.
      */
-    JSONObject deleteAsUser(String userKey, String deleteAtURL)
+    JSONObject deleteAsUser(String asUser, String deleteAtURL)
             throws ExecutionException, InterruptedException, JSONException {
 
 
         if (jAdapter != null) {
-            jAdapter.onRequestSend(null);
+            jAdapter.onRequestSend(deleteAtURL, null);
         }
 
         if (injection != null) {
@@ -185,35 +193,7 @@ public class HttpRequests {
         updateLastRequestTime();
         limitRequestsPerSecond();
 
-        BaseRequest req = Unirest.delete(BASE_URL + deleteAtURL).header("userKey", userKey);
-        Future<HttpResponse<JsonNode>> future = req.asJsonAsync();
-        HttpResponse<JsonNode> response = future.get();
-
-        return new JSONObject(response.getBody().toString());
-    }
-
-    /*
-     * POST HTTP request, transmitting a json to a specific URL as a user via userKey.
-     * Throws ExecutionException, InterruptedException and JSONException.
-     */
-    JSONObject putJsonAs(String userKey, JSONObject jsonObject, String postToURL)
-            throws ExecutionException, InterruptedException, JSONException {
-
-
-        if (jAdapter != null) {
-            jAdapter.onRequestSend(jsonObject);
-        }
-
-        if (injection != null) {
-            return injection;
-        }
-
-        updateLastRequestTime();
-        limitRequestsPerSecond();
-
-
-        BaseRequest req = Unirest.put(BASE_URL + postToURL)
-                .header("userKey", userKey).body(jsonObject.toString());
+        BaseRequest req = Unirest.delete(BASE_URL + deleteAtURL).header("userKey", asUser);
         Future<HttpResponse<JsonNode>> future = req.asJsonAsync();
         HttpResponse<JsonNode> response = future.get();
 
@@ -221,16 +201,21 @@ public class HttpRequests {
     }
 
     void loginAs(String username, String password) throws JSONException, LoginFailedException {
-
+	
+	JSONObject userData = new JSONObject();
+        userData.put("name", username);
+        userData.put("password", password);
+        
+	if (jAdapter != null) {
+            jAdapter.onRequestSend("/user/login", userData);
+            return;
+        }
+        
         updateLastRequestTime();
         limitRequestsPerSecond();
 
-        JSONObject userData = new JSONObject();
-        userData.put("name", username);
-        userData.put("password", password);
-
         try {
-            JSONObject response = postJson(userData, "/user/login");
+            JSONObject response = postJSON(userData, "/user/login");
             if (response.getString("status").equals("success")) {
                 userKey = response.getJSONObject("data").getString("userKey");
             } else {
@@ -243,7 +228,13 @@ public class HttpRequests {
     }
 
     void logOut() throws LoginFailedException {
-        updateLastRequestTime();
+        
+	if (jAdapter != null) {
+            jAdapter.onRequestSend("/user/logout", null);
+            return;
+        }
+	
+	updateLastRequestTime();
         limitRequestsPerSecond();
 
         if (userKey == null) {

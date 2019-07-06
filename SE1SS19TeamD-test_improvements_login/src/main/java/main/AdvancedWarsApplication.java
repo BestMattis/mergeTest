@@ -1,5 +1,11 @@
 package main;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.PropertyResourceBundle;
+import java.util.ResourceBundle;
+
 import gameScreen.GameScreenController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -13,22 +19,16 @@ import registerLogin.RegisterLoginController;
 import syncCommunication.HttpRequests;
 import syncCommunication.SynchronousUserCommunicator;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.PropertyResourceBundle;
-import java.util.ResourceBundle;
-
 public class AdvancedWarsApplication extends Application {
 
     static AdvancedWarsApplication advancedWarsApplication;
     public Stage primaryStage;
-    public boolean offtesting = false;
     private Scene gameScene;
     private GameScreenController gameScreenCon;
+    public boolean offtesting = false;
+
     private FXMLLoad lobbyFxml;
     private FXMLLoad registerLoginFXML;
-    private FXMLLoad gameFXML;
 
 
     /**
@@ -72,7 +72,7 @@ public class AdvancedWarsApplication extends Application {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        
         goToRegisterLogin();
 
         primaryStage.show();
@@ -82,46 +82,63 @@ public class AdvancedWarsApplication extends Application {
      * Loads the RegisterLogin.fxml and displays it on the stage given(the primaryStage)
      */
     public void goToLobby() {
-        if (lobbyFxml == null){
-            lobbyFxml = new FXMLLoad("/lobby/LobbyScreen.fxml");
-    }
+        lobbyFxml = new FXMLLoad("/lobby/LobbyScreen.fxml");
         primaryStage.setScene(lobbyFxml.getScene());
         primaryStage.setFullScreen(true);
     }
 
     public void goToRegisterLogin() {
-        if (registerLoginFXML == null) {
-            registerLoginFXML = new FXMLLoad("/registerLogin/registerLogin.fxml",
-                    new RegisterLoginController());
-        }
+        registerLoginFXML = new FXMLLoad("/registerLogin/registerLogin.fxml",
+                new RegisterLoginController());
         primaryStage.setScene(registerLoginFXML.getScene());
         primaryStage.setFullScreen(true);
     }
-
+    
     public void goToGame(Game game){
-        if(gameFXML == null) {
-            gameFXML = new FXMLLoad("/gameScreen/gameScreen.fxml");
+        if (gameScene == null) {
+            try {
+                ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+                InputStream inputStream = classLoader.getResource("en-US.properties").openStream();
+                ResourceBundle bundle = new PropertyResourceBundle(inputStream);
+                URL loc = getClass().getResource("/gameScreen/gameScreen.fxml");
+                if (loc == null) {
+                    System.out.println("loc null");
+                }
+                FXMLLoader fxmlLoader = new FXMLLoader(loc, bundle);
+                Parent parent = fxmlLoader.load();
+                gameScreenCon = fxmlLoader.getController();
+                Scene scene = new Scene(parent);
+                gameScene = scene;
+                primaryStage.setTitle(bundle.getString("application.title"));
+                primaryStage.setScene(scene);
+                primaryStage.setFullScreen(true);
+
+                primaryStage.show();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            primaryStage.setScene(gameScene);
+            primaryStage.setFullScreen(true);
+            //primaryStage.show();
+
         }
-        primaryStage.setScene(gameFXML.getScene());
-		gameScene = gameFXML.getScene();
-		gameScreenCon = gameFXML.getController(GameScreenController.class);
-        primaryStage.setFullScreen(true);
     }
 
     /**
      * @return to get the httprequests with the user
      */
     public HttpRequests getHttpRequests() {
-        return Model.getInstance().getPlayerHttpRequestsHashMap().get(Model.getInstance().getApp().getCurrentPlayer());
+        return Model.getPlayerHttpRequestsHashMap().get(Model.getApp().getCurrentPlayer());
     }
 
     /**
      * @return the Controller of the game Scene
      */
     public GameScreenController getGameScreenCon(){
-        return gameFXML.getController(GameScreenController.class);
+        return gameScreenCon;
     }
-
     /**
      * @return the Controller of the Lobby Scene
      */
@@ -132,11 +149,11 @@ public class AdvancedWarsApplication extends Application {
     /**
      * @return the syncUserCom to always have the Userkey
      */
-    public SynchronousUserCommunicator getsynchronousUserCommunicator() {
-        return new SynchronousUserCommunicator(Model.getInstance().getPlayerHttpRequestsHashMap().get(Model.getInstance().getApp().getCurrentPlayer()));
+    public SynchronousUserCommunicator getsynchronousUserCommunicator(){
+        return new SynchronousUserCommunicator(Model.getPlayerHttpRequestsHashMap().get(Model.getApp().getCurrentPlayer()));
     }
 
-    public Scene getLobbyScene() {
+    public Scene getLobbyScene(){
         return lobbyFxml.getScene();
     }
 }

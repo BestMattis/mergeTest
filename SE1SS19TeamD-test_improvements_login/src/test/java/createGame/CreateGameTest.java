@@ -1,5 +1,7 @@
 package createGame;
 
-public class CreateGameTest {
+import org.junit.Test;
 
+public class CreateGameTest {
+    
 }

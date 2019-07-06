@@ -53,8 +53,8 @@ public class WebSocketTest {
 
         HttpRequests hr = new HttpRequests();
         SynchronousUserCommunicator uComm = new SynchronousUserCommunicator(hr);
-        String userName = "seb1";
-        String userPassword = "a";
+        String userName = "aVeryUniqueUsernameWS";
+        String userPassword = "1235813";
         try {
             uComm.logIn(userName, userPassword);
             String userKey = uComm.getUserKey();
@@ -62,12 +62,12 @@ public class WebSocketTest {
             WebSocketConfigurator.userKey = userKey;
             this.chatClient = new WebSocketRequests(new URI(BS_WS_URI + CHAT_WS + userName));
             this.systemClient = new WebSocketRequests(new URI(BS_WS_URI + SYSTEM_WS));
+
             int testDurationInSeconds = 30;
             long endTime = System.currentTimeMillis() + (testDurationInSeconds * 1000);
+
             while (System.currentTimeMillis() < endTime) ;
-            this.systemClient.stop();
-            this.chatClient.stop();
-        } catch (LoginFailedException | URISyntaxException | IOException e) {
+        } catch (LoginFailedException | URISyntaxException e) {
             e.printStackTrace();
         }
     }
@@ -89,33 +89,8 @@ public class WebSocketTest {
             WebSocketComponent wsComponent = new WebSocketComponent(userName, userKey);
             Thread.sleep(5000);
             wsComponent.stopComponent();
-        } catch (LoginFailedException | InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Test
-    public void testChatMessage() {
-
-        HttpRequests hr = new HttpRequests();
-        SynchronousUserCommunicator uComm = new SynchronousUserCommunicator(hr);
-        String userName = "seb";
-        String userPassword = "a";
-        try {
-            uComm.logIn(userName, userPassword);
-            String userKey = uComm.getUserKey();
-            WebSocketConfigurator.userKey = userKey;
-            this.chatClient = new WebSocketRequests(new URI(BS_WS_URI + CHAT_WS + userName));
-            this.systemClient = new WebSocketRequests(new URI(BS_WS_URI + SYSTEM_WS));
             Thread.sleep(2000);
-            this.chatClient.sendChatMessage("all", userName, "hello");
-            this.chatClient.sendChatMessage("private", "seb1", userName, "hi");
-            int testDurationInSeconds = 30;
-            long endTime = System.currentTimeMillis() + (testDurationInSeconds * 1000);
-            while (System.currentTimeMillis() < endTime) ;
-            this.chatClient.stop();
-            this.systemClient.stop();
-        } catch (LoginFailedException | InterruptedException | URISyntaxException | IOException e) {
+        } catch (LoginFailedException | InterruptedException e) {
             e.printStackTrace();
         }
     }

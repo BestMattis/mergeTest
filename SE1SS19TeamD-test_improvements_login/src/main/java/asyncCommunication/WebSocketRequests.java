@@ -36,7 +36,7 @@ public class WebSocketRequests {
         this.uri = uri;
         if (this.uri.toString().startsWith(BS_WS_URI + CHAT_WS)
                 || this.uri.toString().startsWith("ws://localhost:8090/websocket" + "/chat")) {
-            this.handler = new WebSocketChatHandler();
+            this.handler = new WebSocketChatHandler(this);
         } else if (this.uri.toString().startsWith(BS_WS_URI + SYSTEM_WS)
                 || this.uri.toString().startsWith("ws://localhost:8025/websocket" + SYSTEM_WS)) {
             this.handler = new WebSocketSystemHandler();
@@ -73,9 +73,9 @@ public class WebSocketRequests {
             if (message.equals("noop")) {
                 return;
             }
+
             if (handler != null) {
                 handler.handle(new JSONObject(message));
-
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -109,37 +109,15 @@ public class WebSocketRequests {
         }
     }
 
-    @OnError
-    public void onError(Session session, Throwable t) {
-        t.printStackTrace();
-    }
-
     public void sendChatMessage(ChatMessage message) {
 
-        if (message.getChannel().equals("all")) {
-            sendChatMessage(message.getChannel(), message.getSender().getName(), message.getMessage());
-        } else {
-            sendChatMessage(message.getChannel(), message.getReceiver().getName(),
-                    message.getSender().getName(), message.getMessage());
-        }
+        sendChatMessage(message.getChannel(), message.getSender().getName(), message.getMessage());
     }
 
     public void sendChatMessage(String channel, String from, String msg) {
 
         JSONObject jsonObject = new JSONObject().put("channel", channel)
                 .put("from", from).put("message", msg);
-
-        try {
-            this.session.getBasicRemote().sendText(jsonObject.toString());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void sendChatMessage(String channel, String to, String from, String msg) {
-
-        JSONObject jsonObject = new JSONObject().put("channel", channel)
-                .put("from", from).put("message", msg).put("to", to);
 
         try {
             this.session.getBasicRemote().sendText(jsonObject.toString());
@@ -163,20 +141,6 @@ public class WebSocketRequests {
     }
 
     public boolean isOpen() {
-
-        if (this.session.isOpen()) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public void sendGameMessage(JSONObject jsonObject) {
-
-        try {
-            this.session.getBasicRemote().sendText("" + jsonObject.toString());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        return true;
     }
 }

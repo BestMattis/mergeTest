@@ -1,24 +1,21 @@
 package lobby;
 
-import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.control.Tab;
-import main.FXMLLoad;
-import model.ChatMessage;
-import model.Player;
-import sendChatMessageToPlayer.ChatMessageSender;
-
 import java.beans.PropertyChangeEvent;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.control.Tab;
+import model.ChatMessage;
+import model.Player;
+import sendChatMessageToPlayer.ChatMessageSender;
+
 public class ChatTab {
 
     protected LobbyChatMessageListController AllController;
-    private FXMLLoad messageList;
     private Tab tab;
     private Player player;
 
@@ -34,24 +31,24 @@ public class ChatTab {
         if (player.getName() != null) {
             tab.setText(player.getName());
         }
-        messageList = new FXMLLoad("/lobby/LobbyChatMessageList.fxml",new LobbyChatMessageListController());
-        AllController = messageList.getController(LobbyChatMessageListController.class);
-        tab.setContent(messageList.getParent());
+        try {
+            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+            InputStream inputStream = classLoader.getResource("en-US.properties").openStream();
+            ResourceBundle bundle = new PropertyResourceBundle(inputStream);
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("LobbyChatMessageList.fxml"), bundle);
+            Parent parent = fxmlLoader.load();//Laden der Scrollpane mit vbox
+            AllController = fxmlLoader.getController();// Controller merken um z.B. Nachrichten anzuzeigen
+            tab.setContent(parent);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        player.addPropertyChangeListener("messages", this::printMessage);
 
-        player.addPropertyChangeListener(Player.PROPERTY_sentMessages, evt -> {
-            Platform.runLater(() -> printMessage(evt));
-        });
-
-        player.addPropertyChangeListener(Player.PROPERTY_receivedMessages, evt -> {
-            Platform.runLater(() -> printMessage(evt));
-        });
-
-        for (ChatMessage chatMessage : player.getSentMessages()) {
+        for (ChatMessage chatMessage: player.getMessages()){
             if (AllController != null && chatMessage != null) {
-                AllController.displayMessage("[" + player.getName() + "] " + chatMessage.getMessage());
+                AllController.addMessage(chatMessage.getMessage());
             }
         }
-
     }
 
     /**
@@ -68,18 +65,15 @@ public class ChatTab {
      *
      * @param text The text to display
      */
-    public void addMessage(String text) {
-
+    public void addMessage(String text){
         new ChatMessageSender().sendMessageTo(text, player);
     }
 
-    public void printMessage(PropertyChangeEvent t) {
-        ChatMessage message = (ChatMessage) t.getNewValue();
-        AllController.displayMessage("[" + message.getSender().getName() + "] " + message.getMessage());
-    }
-
-    public Player getPlayer() {
-
-        return this.player;
+    /** calle when a change in the model occurres
+     * show the latest message
+     */
+    public void printMessage(PropertyChangeEvent t){
+        ChatMessage message = (ChatMessage)t.getNewValue();
+        AllController.addMessage(message.getMessage());
     }
 }
