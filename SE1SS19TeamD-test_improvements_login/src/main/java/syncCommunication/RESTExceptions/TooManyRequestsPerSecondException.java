@@ -1,7 +1,7 @@
 package syncCommunication.RESTExceptions;
 
 @SuppressWarnings("serial")
-public class TooManyRequestsPerSecondException extends Exception {
+public class TooManyRequestsPerSecondException extends RuntimeException {
     public TooManyRequestsPerSecondException(String message) {
         super(message);
     }

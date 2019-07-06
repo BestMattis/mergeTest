@@ -1,28 +1,25 @@
 package registerLogin;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.PropertyResourceBundle;
+import java.util.ResourceBundle;
+
 import asyncCommunication.WebSocketComponent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import main.AdvancedWarsApplication;
 import model.Model;
 import model.Player;
 import syncCommunication.HttpRequests;
+import syncCommunication.SynchronousUserCommunicator;
 import syncCommunication.RESTExceptions.LoginFailedException;
 import syncCommunication.RESTExceptions.RegistrationFailedException;
-import syncCommunication.SynchronousUserCommunicator;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.PropertyResourceBundle;
-import java.util.ResourceBundle;
 
 public class RegisterLoginController {
     @SuppressWarnings("static-access")
@@ -70,15 +67,6 @@ public class RegisterLoginController {
                 e1.printStackTrace();
             }
         });
-
-        pwTextfield.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent ke) {
-                if (ke.getCode().equals(KeyCode.ENTER)) {
-                    loginUser();
-                }
-            }
-        });
     }
 
     /*
@@ -88,21 +76,23 @@ public class RegisterLoginController {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         InputStream inputStream = null;
         ResourceBundle bundle = null;
-        try {
+        try
+        {
             inputStream = classLoader.getResource("en-US.properties").openStream();
             bundle = new PropertyResourceBundle(inputStream);
-        } catch (IOException e1) {
+        } catch (IOException e1)
+        {
             // TODO Auto-generated catch block
             e1.printStackTrace();
         }
-
+        
         HttpRequests httpRequests = new HttpRequests();
         SynchronousUserCommunicator synchronousUserCommunicator =
                 new SynchronousUserCommunicator(httpRequests);
         boolean success = false;
         String username = this.nameTextfield.getText();
         String password = this.pwTextfield.getText();
-
+        
         if (username != null && password != null) {
             if (username.contains(" ") || password.contains(" ")) { // errorMsg false input
                 msgLabel.setVisible(true);
@@ -110,15 +100,19 @@ public class RegisterLoginController {
                 msgLabel.setText(bundle.getString("regLog.SpaceErrorRegister"));
             }
         }
-
-        try {
+        
+        try
+        {
             success = synchronousUserCommunicator.logIn(username, password);
-        } catch (LoginFailedException e) {
+        }
+        catch(LoginFailedException e)
+        {
             this.msgLabel.setText(bundle.getString("regLog.FailedLogin"));
         }
-
+        
         String userKey = synchronousUserCommunicator.getUserKey();
-
+        Model.setWebSocketComponent(new WebSocketComponent(username, userKey));
+        
         nameTextfield.clear();
         pwTextfield.clear();
         msgLabel.setVisible(true);
@@ -126,15 +120,14 @@ public class RegisterLoginController {
         if (!success) {
             msgLabel.setTextFill(Color.RED); // registrierung unsuccessful
             msgLabel.setText(bundle.getString("regLog.FailedLogin"));
-        } else {
+        }
+        else {
             Player currentPlayer = new Player().setName(username)
                     .setPassword(password).setApp(Model.getApp());
             Model.getApp().setCurrentPlayer(currentPlayer);
             Model.getPlayerHttpRequestsHashMap()
-                    .put(currentPlayer, httpRequests);
+                .put(currentPlayer, httpRequests);
             AdvancedWarsApplication.getInstance().goToLobby();
-            //start WS-component
-            Model.setWebSocketComponent(new WebSocketComponent(username, userKey));
         }
     }
 

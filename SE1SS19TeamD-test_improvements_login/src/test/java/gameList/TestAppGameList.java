@@ -47,7 +47,7 @@ public class TestAppGameList extends Application {
         }
 
 
-        Model.setApp(app);
+        Model.getInstance().setApp(app);
 
 
         try {

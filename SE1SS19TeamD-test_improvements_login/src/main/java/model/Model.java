@@ -1,10 +1,10 @@
 package model;
 
 
+import java.util.HashMap;
+
 import asyncCommunication.WebSocketComponent;
 import syncCommunication.HttpRequests;
-
-import java.util.HashMap;
 
 public class Model {
 
@@ -27,17 +27,17 @@ public class Model {
         }
         return app;
     }
-
-    public static void setApp(App app) {
-        Model.app = app;
-    }
-
+    
     public static WebSocketComponent getWebSocketComponent() {
-        return wSC;
+    	return wSC;
     }
-
+    
     public static void setWebSocketComponent(WebSocketComponent component) {
         wSC = component;
+    }
+
+    public void setApp(App app) {
+        Model.app = app;
     }
 
     public static HashMap<Player, HttpRequests> getPlayerHttpRequestsHashMap() {

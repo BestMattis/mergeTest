@@ -47,7 +47,7 @@
                         </VBox>
                         <HBox alignment="CENTER" minHeight="50.0" spacing="186.0">
                             <children>
-                                <Button id="logButton" fx:id="logButton" alignment="CENTER" contentDisplay="CENTER"
+                                <Button fx:id="logButton" alignment="CENTER" contentDisplay="CENTER"
                                         mnemonicParsing="false" prefWidth="68.0" text="Login"/>
                                 <Button fx:id="regButton" alignment="CENTER" contentDisplay="CENTER"
                                         mnemonicParsing="false" prefWidth="88.0" text="Register"/>
