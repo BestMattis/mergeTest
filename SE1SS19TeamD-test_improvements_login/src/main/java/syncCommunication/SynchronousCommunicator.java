@@ -27,6 +27,4 @@ public class SynchronousCommunicator {
     public void setJsonAdapter(JsonAdapter jAdapter) {
         hr.setJsonAdapter(jAdapter);
     }
-
-
 }

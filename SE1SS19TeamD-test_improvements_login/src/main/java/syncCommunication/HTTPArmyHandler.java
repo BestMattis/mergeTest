@@ -56,10 +56,6 @@ public class HTTPArmyHandler {
     String createArmy(String userKey, String name, String[] units)
             throws ArmyCreationException, LoginFailedException, InvalidUnitIdException {
 
-        if (userKey == null) {
-            throw new LoginFailedException("Log in first");
-        }
-
         if (units.length != ARMY_SIZE) {
             throw new ArmyCreationException("An army must have ten units");
         }
@@ -92,9 +88,6 @@ public class HTTPArmyHandler {
      * Throws LoginFailedException
      */
     ArrayList<JSONObject> getOwnedArmies(String userKey) throws LoginFailedException {
-        if (userKey == null) {
-            throw new LoginFailedException("Log in first");
-        }
         try {
             JSONObject response = hr.getAsUser(getUserKey(), "/army");
 
@@ -127,9 +120,6 @@ public class HTTPArmyHandler {
      * Throws ArmyIdNotFoundException, LoginFailedException
      */
     JSONObject getArmyById(String userKey, String id) throws ArmyIdNotFoundException, LoginFailedException {
-        if (userKey == null) {
-            throw new LoginFailedException("Log in first");
-        }
 
         try {
             JSONObject response = hr.getAsUser(userKey, "/army/" + id);
@@ -160,9 +150,6 @@ public class HTTPArmyHandler {
      */
     boolean updateArmy(String userKey, String id, String name, String[] units)
             throws ArmyCreationException, LoginFailedException, InvalidUnitIdException {
-        if (userKey == null) {
-            throw new LoginFailedException("Log in first");
-        }
 
         if (units.length != ARMY_SIZE) {
             throw new ArmyCreationException("An army must have ten units");
@@ -203,9 +190,6 @@ public class HTTPArmyHandler {
      * Throws LoginFailedException, ArmyIdNotFoundException
      */
     boolean deleteArmy(String userKey, String id) throws LoginFailedException, ArmyIdNotFoundException {
-        if (userKey == null) {
-            throw new LoginFailedException("Log in first");
-        }
 
         try {
             JSONObject response = hr.deleteAsUser(userKey, "/army/" + id);
@@ -234,9 +218,6 @@ public class HTTPArmyHandler {
      * Throws LoginFailedException
      */
     ArrayList<JSONObject> getUnits(String userKey) throws LoginFailedException {
-        if (userKey == null) {
-            throw new LoginFailedException("Log in first");
-        }
         try {
             JSONObject response = hr.getAsUser(getUserKey(), "/army/units");
 

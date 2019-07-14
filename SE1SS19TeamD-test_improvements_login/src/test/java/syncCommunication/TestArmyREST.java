@@ -1,7 +1,7 @@
 package syncCommunication;
 
 import model.ArmyConfiguration;
-import model.BazookaTrooper;
+import model.Unit;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
@@ -36,7 +36,7 @@ public class TestArmyREST {
         System.out.println("Creating games: ");
 
         for (int i = 0; i < 10; ++i) {
-            armyConfig.withUnits(new BazookaTrooper()
+            armyConfig.withUnits(new Unit()
                     .setId("5cc051bd62083600017db3b7"));
         }
 

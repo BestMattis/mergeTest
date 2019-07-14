@@ -1,26 +1,29 @@
 package armyManager;
 
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import main.FXMLLoad;
-import model.*;
+import model.ArmyConfiguration;
+import model.Model;
+import model.Player;
+import model.Unit;
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
 import registerLogin.LoginRegisterTestUtils;
 import syncCommunication.HttpRequests;
 import syncCommunication.RESTExceptions.LoginFailedException;
 import syncCommunication.SynchronousUserCommunicator;
+
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -50,7 +53,6 @@ public class ArmyManagerControllerTest extends ApplicationTest {
             httpReq = new HttpRequests();
             synchronousUserCommunicator = new SynchronousUserCommunicator(httpReq);
             synchronousUserCommunicator.logIn(LoginRegisterTestUtils.getTestUserName(), LoginRegisterTestUtils.getTestUserPassword());
-
             currentPlayer = new Player().setName(LoginRegisterTestUtils.getTestUserName())
                     .setPassword(LoginRegisterTestUtils.getTestUserPassword()).setApp(Model.getApp());
             Model.getApp().setCurrentPlayer(currentPlayer);
@@ -186,9 +188,9 @@ public class ArmyManagerControllerTest extends ApplicationTest {
             }
 
             for(Unit unit: savedConfiguration.getUnits()){
-                if(unit.getClass().isInstance(new Infantry())){
+                if(unit.getType().equals("Infantry")){
                     ++infantryCount;
-                }else if(unit.getClass().isInstance(new HeavyTank())){
+                }else if(unit.getType().equals("Heavy Tank")){
                     ++heavyTankCount;
                 }
             }
@@ -204,9 +206,9 @@ public class ArmyManagerControllerTest extends ApplicationTest {
         int infantryCountServer = 0;
         int heavyTankCountServer = 0;
         for(Unit unit: savedServerConfiguration.getUnits()){
-            if(unit.getClass().isInstance(new Infantry())){
+            if(unit.getType().equals("Infantry")){
                 ++infantryCountServer;
-            }else if(unit.getClass().isInstance(new HeavyTank())){
+            }else if(unit.getType().equals("Heavy Tank")){
                 ++heavyTankCountServer;
             }
         }

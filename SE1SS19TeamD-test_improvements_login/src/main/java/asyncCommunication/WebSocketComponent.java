@@ -1,6 +1,7 @@
 package asyncCommunication;
 
 import model.ChatMessage;
+import msgToAllPlayers.WSChatEndpoint;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -16,6 +17,8 @@ public class WebSocketComponent {
     private WebSocketRequests chatClient;
     private WebSocketRequests systemClient;
     private WebSocketRequests gameClient;
+    
+    private boolean online;
 
     /**
      * creates a WebSocket component that starts a chat- and a system-client
@@ -24,14 +27,23 @@ public class WebSocketComponent {
      * @param userKey  the user-key of the user
      */
     public WebSocketComponent(String userName, String userKey) {
-
+        this(userName, userKey, true);
+    }
+    
+    /**
+     * creates a WebSocket component that starts a chat- and a system-client
+     *
+     * @param userName the username of the user
+     * @param userKey  the user-key of the user
+     * @param online whether this Requests component is used online
+     */
+    public WebSocketComponent(String userName, String userKey, boolean online) {
+	this.online = online;
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> {
             WebSocketConfigurator.userKey = userKey;
             startChatSocket(userName);
             startSystemSocket();
-            while (this.chatClient.isOpen() && this.systemClient.isOpen()) {
-            }
         });
     }
 
@@ -43,6 +55,33 @@ public class WebSocketComponent {
     public WebSocketComponent(String userName, URI uri) {
 
         this.chatClient = new WebSocketRequests(uri);
+    }
+    
+    /**
+     * Return the chat client.
+     * 
+     * @return the chat client (a websocket requests object)
+     */
+    public WebSocketRequests getChatClient() {
+        return chatClient;
+    }
+    
+    /**
+     * Return the system client.
+     * 
+     * @return the system client (a websocket requests object)
+     */
+    public WebSocketRequests getSystemClient() {
+        return systemClient;
+    }
+    
+    /**
+     * Return the game client.
+     * 
+     * @return the game client (a websocket requests object)
+     */
+    public WebSocketRequests getGameClient() {
+        return gameClient;
     }
 
     /**
@@ -63,16 +102,22 @@ public class WebSocketComponent {
             } catch (URISyntaxException e) {
                 e.printStackTrace();
             }
+            if(online)
+            {
+                this.chatClient.connect();
+            }
         }
     }
 
     private void stopChatSocket() {
-
-        try {
-            this.chatClient.stop();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+	if(this.chatClient != null)
+	{
+            try {
+                this.chatClient.stop();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+	}
     }
 
     private void startSystemSocket() {
@@ -83,16 +128,22 @@ public class WebSocketComponent {
             } catch (URISyntaxException e) {
                 e.printStackTrace();
             }
+            if(online)
+            {
+                this.systemClient.connect();
+            }
         }
     }
 
     private void stopSystemSocket() {
-
-        try {
-            this.systemClient.stop();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+	if(this.systemClient != null)
+	{
+            try {
+                this.systemClient.stop();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+	}
     }
 
     /**
@@ -104,11 +155,18 @@ public class WebSocketComponent {
     public void joinGame(String gameID, String armyID) {
 
         if (this.gameClient == null || !this.gameClient.isOpen()) {
+
+            WSChatEndpoint.getInstance().setIngameListeners();
             ExecutorService executor = Executors.newSingleThreadExecutor();
             executor.execute(() -> {
 
                 try {
-                    this.gameClient = new WebSocketRequests(new URI(BS_WS_URI + GAME_WS + gameID + "&" + "" + "armyId=" +  armyID));
+                    this.gameClient = new WebSocketRequests(new URI(BS_WS_URI + GAME_WS + gameID
+                            + "&" + "" + "armyId=" +  armyID));
+                    if(online)
+                    {
+                        this.gameClient.connect();
+                    }
                 } catch (URISyntaxException e) {
                     e.printStackTrace();
                 }
@@ -129,8 +187,9 @@ public class WebSocketComponent {
      */
     public void leaveGame() {
 
-        if (this.gameClient != null && this.gameClient.isOpen()) {
+        if (this.gameClient != null && (!online || this.gameClient.isOpen())) {
 
+            WSChatEndpoint.removeIngameListeners();
             JSONObject jsonObject = new JSONObject().put("messageType", "command").put("action", "leaveGame");
             gameClient.sendGameMessage(jsonObject);
             try {
@@ -160,7 +219,7 @@ public class WebSocketComponent {
      */
     public void sendChatmessage(ChatMessage message) {
 
-        if (this.chatClient != null && this.chatClient.isOpen()) {
+        if (this.chatClient != null && (!online || this.chatClient.isOpen())) {
             if (testChatMessage(message)) {
                 this.chatClient.sendChatMessage(message);
             }
@@ -186,7 +245,7 @@ public class WebSocketComponent {
      */
     public void sendGameChatMessage (ChatMessage message) {
 
-        if (this.gameClient != null && this.gameClient.isOpen()) {
+        if (this.gameClient != null && (!online || this.gameClient.isOpen())) {
             if (testChatMessage(message)) {
                 if(message.getChannel().equals("all")) {
                     this.gameClient.sendAllChatGameMessage(message);

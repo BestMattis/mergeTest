@@ -7,6 +7,6 @@
             minWidth="-Infinity"
             stylesheets="@../screen.css" vbarPolicy="ALWAYS" xmlns="http://javafx.com/javafx/8">
     <content>
-        <VBox fx:id="history"/>
+        <VBox id="history" fx:id="history"/>
     </content>
 </ScrollPane>

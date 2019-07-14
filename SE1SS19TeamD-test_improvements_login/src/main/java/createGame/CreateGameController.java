@@ -4,6 +4,7 @@ import gameList.GameListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -11,14 +12,11 @@ import javafx.scene.layout.AnchorPane;
 import main.AdvancedWarsApplication;
 import model.Game;
 import model.Model;
-import org.json.JSONObject;
 import syncCommunication.HttpRequests;
 import syncCommunication.RESTExceptions.GameIdNotFoundException;
 import syncCommunication.RESTExceptions.GameLobbyCreationFailedException;
 import syncCommunication.RESTExceptions.LoginFailedException;
 import syncCommunication.SynchronousGameCommunicator;
-
-import java.util.concurrent.TimeUnit;
 
 public class CreateGameController {
 
@@ -37,6 +35,7 @@ public class CreateGameController {
     @FXML
     private Label messageField;
     private AnchorPane base;
+    private Parent parent;
 
     /**
      * Sets ActionHandler on Buttons.
@@ -77,6 +76,7 @@ public class CreateGameController {
                     return;
                 }
             }
+            // create the game on the server
             HttpRequests httpReq = Model.getPlayerHttpRequestsHashMap().get(
                     Model.getApp().getCurrentPlayer());
             SynchronousGameCommunicator gameComm = new SynchronousGameCommunicator(httpReq);
@@ -111,16 +111,19 @@ public class CreateGameController {
             }
 
             game.withPlayers(Model.getApp().getCurrentPlayer());
-
+            Model.getWebSocketComponent().joinGame(gameID, Model.getApp().getCurrentPlayer()
+                    .getArmyConfigurations().get(0).getId());
+            System.out.println(Model.getApp().getCurrentPlayer().getGame().getName() + "lelelel");
 
             System.out.println("Game: " + gameName + " was created. Maximal amount of Players: " + playerNumber);
+
+            cancelAction(evt);
 
             //showGameLobby();
             AdvancedWarsApplication.getInstance().goToGame(game);
             AdvancedWarsApplication.getInstance().getGameScreenCon().getGameLobbyController().update(game);
             AdvancedWarsApplication.getInstance().getGameScreenCon().getGameLobbyController().show();
 
-            cancelAction(evt);
 
         } catch (NumberFormatException | InterruptedException e) {
             messageField.setText(playerNumberField.getText() + " is not an integer!");
@@ -133,14 +136,19 @@ public class CreateGameController {
      * @param evt
      */
     private void cancelAction(ActionEvent evt) {
-        Node node = base.getChildren().get(0);
-        Node node1 = base.getChildren().get(1);
-        Node node2 = base.getChildren().get(2);
-        base.getChildren().clear();
-        base.getChildren().addAll(node, node1, node2);
+        //Node node = base.getChildren().get(0);
+        //Node node1 = base.getChildren().get(1);
+        //Node node2 = base.getChildren().get(2);
+        //base.getChildren().clear();
+        //base.getChildren().addAll(node, node1, node2);
+        base.getChildren().remove(parent);
     }
 
     public void setBase(AnchorPane base) {
         this.base = base;
+    }
+
+    public void setParent(Parent parent1){
+        parent = parent1;
     }
 }

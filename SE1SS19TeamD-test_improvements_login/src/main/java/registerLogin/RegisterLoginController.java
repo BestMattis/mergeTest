@@ -70,7 +70,7 @@ public class RegisterLoginController {
                 e1.printStackTrace();
             }
         });
-
+        
         pwTextfield.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent ke) {
@@ -95,11 +95,7 @@ public class RegisterLoginController {
             // TODO Auto-generated catch block
             e1.printStackTrace();
         }
-
-        HttpRequests httpRequests = new HttpRequests();
-        SynchronousUserCommunicator synchronousUserCommunicator =
-                new SynchronousUserCommunicator(httpRequests);
-        boolean success = false;
+        
         String username = this.nameTextfield.getText();
         String password = this.pwTextfield.getText();
 
@@ -110,32 +106,56 @@ public class RegisterLoginController {
                 msgLabel.setText(bundle.getString("regLog.SpaceErrorRegister"));
             }
         }
-
-        try {
-            success = synchronousUserCommunicator.logIn(username, password);
-        } catch (LoginFailedException e) {
-            this.msgLabel.setText(bundle.getString("regLog.FailedLogin"));
+        
+        boolean success = false;
+        Player currentPlayer = Model.getApp().getCurrentPlayer();
+        HttpRequests httpRequests = Model.getPlayerHttpRequestsHashMap().get(currentPlayer);
+        String userKey = "";
+        if(httpRequests != null)
+        {
+            success = true;
+        }
+        else
+        {
+            httpRequests = new HttpRequests();
+        }
+        SynchronousUserCommunicator synchronousUserCommunicator =
+                new SynchronousUserCommunicator(httpRequests);
+        
+        if(!success)
+        {
+            try {
+                success = synchronousUserCommunicator.logIn(username, password);
+            } catch (LoginFailedException e) {
+                this.msgLabel.setText(bundle.getString("regLog.FailedLogin"));
+            }
         }
 
-        String userKey = synchronousUserCommunicator.getUserKey();
-
-        nameTextfield.clear();
-        pwTextfield.clear();
-        msgLabel.setVisible(true);
-
+        userKey = synchronousUserCommunicator.getUserKey();
+        
         if (!success) {
             msgLabel.setTextFill(Color.RED); // registrierung unsuccessful
             msgLabel.setText(bundle.getString("regLog.FailedLogin"));
         } else {
-            Player currentPlayer = new Player().setName(username)
+            if(currentPlayer == null)
+            {
+        	currentPlayer = new Player().setName(username)
                     .setPassword(password).setApp(Model.getApp());
-            Model.getApp().setCurrentPlayer(currentPlayer);
-            Model.getPlayerHttpRequestsHashMap()
+        	Model.getApp().setCurrentPlayer(currentPlayer);
+        	Model.getPlayerHttpRequestsHashMap()
                     .put(currentPlayer, httpRequests);
+            }
             AdvancedWarsApplication.getInstance().goToLobby();
             //start WS-component
-            Model.setWebSocketComponent(new WebSocketComponent(username, userKey));
+            if(Model.getWebSocketComponent() == null)
+            {
+        	Model.setWebSocketComponent(new WebSocketComponent(username, userKey));
+            }
         }
+
+        nameTextfield.clear();
+        pwTextfield.clear();
+        msgLabel.setVisible(true);
     }
 
     /*

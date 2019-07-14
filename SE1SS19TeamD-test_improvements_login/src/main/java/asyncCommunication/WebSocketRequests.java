@@ -1,6 +1,8 @@
 package asyncCommunication;
 
 import model.ChatMessage;
+import syncCommunication.JsonAdapter;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -19,20 +21,15 @@ public class WebSocketRequests {
     private Timer noopTimer;
     private URI uri;
     private WebSocketHandler handler;
+    private JsonAdapter adapter;
 
     /**
-     * Creates a connection between the ClientEndpoint and the ServerEndpoint by doing a "handshake".
+     * Initializes this Request Component.
      *
      * @param uri The address the client wants to connect to.
      */
     public WebSocketRequests(URI uri) {
-
-        try {
-            WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-            container.connectToServer(this, uri);
-        } catch (IOException | DeploymentException e) {
-            e.printStackTrace();
-        }
+	
         this.uri = uri;
         if (this.uri.toString().startsWith(BS_WS_URI + CHAT_WS)
                 || this.uri.toString().startsWith("ws://localhost:8090/websocket" + "/chat")) {
@@ -42,6 +39,18 @@ public class WebSocketRequests {
             this.handler = new WebSocketSystemHandler();
         } else if (this.uri.toString().startsWith(BS_WS_URI + GAME_WS)) {
             this.handler = new WebSocketGameHandler();
+        }
+    }
+    
+    /**
+     * Creates a connection between the ClientEndpoint and the ServerEndpoint by doing a "handshake".
+     */
+    public void connect() {
+	try {
+            WebSocketContainer container = ContainerProvider.getWebSocketContainer();
+            container.connectToServer(this, uri);
+        } catch (IOException | DeploymentException e) {
+            e.printStackTrace();
         }
     }
 
@@ -63,11 +72,7 @@ public class WebSocketRequests {
             @Override
             public void run() {
                 if (session.isOpen()) {
-                    try {
-                        session.getBasicRemote().sendText(NOOP_OP);
-                    } catch (Exception e) {
-                        System.err.println("cannot send NOOP");
-                    }
+                    sendNOOP();
                 }
             }
         }, 0, 1000 * 60);
@@ -141,7 +146,16 @@ public class WebSocketRequests {
     public void onError(Session session, Throwable t) {
         t.printStackTrace();
     }
-
+    
+    /**
+     * Set the JSON adapter to mock this Requests object.
+     * 
+     * @param adapter the JSON adapter
+     */
+    public void setJSONAdapter(JsonAdapter adapter) {
+	this.adapter = adapter;
+    }
+    
     /**
      * Checks if the message is a private message or an all-chat message.
      * Uses the specific method afterwards.
@@ -170,7 +184,7 @@ public class WebSocketRequests {
         JSONObject jsonObject = new JSONObject().put("channel", channel)
                 .put("from", from).put("message", msg);
 
-        this.session.getAsyncRemote().sendText(jsonObject.toString());
+        sendMessage(jsonObject);
     }
 
     /**
@@ -186,9 +200,9 @@ public class WebSocketRequests {
         JSONObject jsonObject = new JSONObject().put("channel", channel)
                 .put("from", from).put("message", msg).put("to", to);
 
-        this.session.getAsyncRemote().sendText(jsonObject.toString());
+        sendMessage(jsonObject);
     }
-
+    
     /**
      * Closes the session with the server and stops the WebSocket.
      *
@@ -209,11 +223,14 @@ public class WebSocketRequests {
      */
     public boolean isOpen() {
 
-        if (this.session.isOpen()) {
-            return true;
-        } else {
-            return false;
+        if (this.session != null) {
+            if (this.session.isOpen()) {
+                return true;
+            } else {
+                return false;
+            }
         }
+        return false;
     }
 
     /**
@@ -222,8 +239,8 @@ public class WebSocketRequests {
      * @param jsonObject contains the JSONObject that has to be sent to the ServerEndpoint.
      */
     public void sendGameMessage(JSONObject jsonObject) {
-
-        this.session.getAsyncRemote().sendText("" + jsonObject.toString());
+	
+	this.sendMessage(jsonObject);
     }
 
     /**
@@ -259,5 +276,24 @@ public class WebSocketRequests {
                     .put("message", message.getMessage());
             sendGameMessage(json);
         }
+    }
+    
+    private void sendMessage(JSONObject jsonObject) {
+	
+	if(this.adapter != null) {
+	    this.adapter.onRequestSend(this.uri.toString(), jsonObject);
+	    return;
+	}
+	this.session.getAsyncRemote().sendText(jsonObject.toString());
+    }
+    
+    private void sendNOOP() {
+	if(this.adapter == null) {
+    	    try {
+                session.getBasicRemote().sendText(NOOP_OP);
+            } catch (Exception e) {
+                System.err.println("cannot send NOOP");
+            }
+	}
     }
 }

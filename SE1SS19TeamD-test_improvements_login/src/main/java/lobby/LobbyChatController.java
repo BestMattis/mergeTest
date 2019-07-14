@@ -55,7 +55,7 @@ public class LobbyChatController {
         loadAll();
         loadPlayers();
         if (!AdvancedWarsApplication.getInstance().offtesting) {
-            WSChatEndpoint.getInstance().setListeners();
+            WSChatEndpoint.getInstance().setLobbyChatListeners();
         }
         chatAll.setOnAction(t -> setToAll());
         chatPlayers.setOnAction(t -> setToPlayers());

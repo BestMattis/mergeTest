@@ -124,4 +124,22 @@ public class GameLobbyTest extends ApplicationTest {
         login();
         clickOn("#gameName");
     }
+
+    @Test
+    public void armyImplementationTest(){
+        login();
+        FxAssert.verifyThat(AdvancedWarsApplication.getInstance().getLobbyCon().armymanagerFXML.getParent().isVisible(), is(false));
+        clickOn("#armymanager");
+        FxAssert.verifyThat(AdvancedWarsApplication.getInstance().getLobbyCon().armymanagerFXML.getParent().isVisible(), is(true));
+        clickOn("#back");
+        FxAssert.verifyThat(AdvancedWarsApplication.getInstance().getLobbyCon().armymanagerFXML.getParent().isVisible(), is(false));
+        clickOn("#gameName");
+        FxAssert.verifyThat(AdvancedWarsApplication.getInstance().getLobbyCon().armymanagerFXML.getParent().isVisible(), is(false));
+        clickOn("#manager");
+        FxAssert.verifyThat(AdvancedWarsApplication.getInstance().getGameScreenCon().getGameLobbyController().armymanagerFXML.getParent().isVisible(), is(true));
+        clickOn("#back");
+        FxAssert.verifyThat(AdvancedWarsApplication.getInstance().getLobbyCon().armymanagerFXML.getParent().isVisible(), is(false));
+        moveTo("#count");
+
+    }
 }

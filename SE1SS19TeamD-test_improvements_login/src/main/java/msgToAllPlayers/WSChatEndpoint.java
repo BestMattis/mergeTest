@@ -1,12 +1,12 @@
 package msgToAllPlayers;
 
+import gameLobby.GameLobbyController_v2;
+import gameScreen.GameChatController;
 import javafx.application.Platform;
 import lobby.LobbyChatController;
 import lobby.LobbyChatMessageListController;
-import model.App;
-import model.ChatMessage;
-import model.Model;
-import model.Player;
+import main.AdvancedWarsApplication;
+import model.*;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -24,13 +24,14 @@ public class WSChatEndpoint {
         return instance;
     }
 
+
     /**
      * This Method creates listeners for incoming/outgoing allchat-messages and for outgoing private messages.
      * The listeners for incoming private messages are already set in the class "ChatTab"
      */
 
     @SuppressWarnings("static-access")
-    public void setListeners() {
+    public void setLobbyChatListeners() {
 
         setAllChatListeners();
         setPrivateChatListeners();
@@ -84,5 +85,84 @@ public class WSChatEndpoint {
             });
             executor.shutdown();
         });
+    }
+
+    public void setIngameListeners() {
+       setIngameAllchatListeners();
+       setIngamePrivateChatListeners();
+    }
+
+    private void setIngamePrivateChatListeners() {
+
+        Model.getApp().getCurrentPlayer().addPropertyChangeListener(Game.PROPERTY_ingameMessages, evt -> {
+
+            ChatMessage message = (ChatMessage) evt.getNewValue();
+            if (message.getChannel() != null && message.getChannel().equals("private")) {
+                ExecutorService executor = Executors.newSingleThreadExecutor();
+                executor.execute(() -> {
+
+                    while (message.getReceiver() == null || message.getSender() == null);
+                    if ( message.getMessage() != null) {
+
+                        Player currentPlayer = Model.getApp().getCurrentPlayer();
+                        Player sender = message.getSender();
+
+                        if (sender.getName().equals(currentPlayer.getName())) {
+                            Platform.runLater(() -> Model.getWebSocketComponent().sendGameChatMessage(message));
+                        } else {
+                            //show private message in chat
+                            System.out.println(message.toString() + "private game message");
+                            GameChatController controller = AdvancedWarsApplication.getInstance()
+                                    .getGameScreenCon().getGameChatController();
+                            GameLobbyController_v2 controller_v2 = AdvancedWarsApplication.getInstance()
+                                    .getGameScreenCon().getGameLobbyController();
+
+                            if (controller_v2.isOpen()) {
+                                controller_v2.displayMessage(message);
+                            } else if (controller.isOpen()) {
+                                controller.displayMessage(message);
+                            }
+                        }
+                    }
+                });
+                executor.shutdown();
+
+            }
+        });
+    }
+
+    private void setIngameAllchatListeners() {
+
+        Model.getApp().getCurrentPlayer().addPropertyChangeListener(Game.PROPERTY_ingameMessages, evt -> {
+
+            ChatMessage message = (ChatMessage) evt.getNewValue();
+            if (message.getChannel() != null && message.getChannel().equals("all")) {
+
+                if (message.getSender() != null && message.getMessage() != null) {
+
+                    if (message.getSender().getName().equals(Model.getApp()
+                            .getCurrentPlayer().getName())) {
+
+                        Platform.runLater(() -> Model.getWebSocketComponent().sendGameChatMessage(message));
+                    } else if (!message.getSender().getName().equals(Model.getApp().getCurrentPlayer().getName())) {
+
+                       //display allchat message in chat
+                        System.out.println(message.toString() + " all chat game message");
+                        GameChatController controller = AdvancedWarsApplication.getInstance()
+                                .getGameScreenCon().getGameChatController();
+                        GameLobbyController_v2 controller_v2 = AdvancedWarsApplication.getInstance()
+                                .getGameScreenCon().getGameLobbyController();
+                        if (controller_v2.isOpen()) {
+                            controller_v2.displayMessage(message);
+                        } else if (controller.isOpen()) {
+                            controller.displayMessage(message);
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    public static void removeIngameListeners() {
     }
 }

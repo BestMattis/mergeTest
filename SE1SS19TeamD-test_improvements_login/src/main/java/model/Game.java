@@ -1,9 +1,10 @@
 package model;
 
-import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
-public class Game  
+import java.beans.PropertyChangeListener;
+
+public class Game 
 {
 
    public static final String PROPERTY_name = "name";
@@ -64,6 +65,48 @@ public class Game
          String oldValue = this.gameId;
          this.gameId = value;
          firePropertyChange("gameId", oldValue, value);
+      }
+      return this;
+   }
+
+
+   public static final String PROPERTY_joinedPlayers = "joinedPlayers";
+
+   private int joinedPlayers;
+
+   public int getJoinedPlayers()
+   {
+      return joinedPlayers;
+   }
+
+   public Game setJoinedPlayers(int value)
+   {
+      if (value != this.joinedPlayers)
+      {
+         int oldValue = this.joinedPlayers;
+         this.joinedPlayers = value;
+         firePropertyChange("joinedPlayers", oldValue, value);
+      }
+      return this;
+   }
+
+
+   public static final String PROPERTY_observingPlayers = "observingPlayers";
+
+   private java.util.ArrayList<Player> observingPlayers;
+
+   public java.util.ArrayList<Player> getObservingPlayers()
+   {
+      return observingPlayers;
+   }
+
+   public Game setObservingPlayers(java.util.ArrayList<Player> value)
+   {
+      if (value != this.observingPlayers)
+      {
+         java.util.ArrayList<Player> oldValue = this.observingPlayers;
+         this.observingPlayers = value;
+         firePropertyChange("observingPlayers", oldValue, value);
       }
       return this;
    }
@@ -147,6 +190,115 @@ public class Game
    }
 
 
+   public static final java.util.ArrayList<ChatMessage> EMPTY_ingameMessages = new java.util.ArrayList<ChatMessage>()
+   { @Override public boolean add(ChatMessage value){ throw new UnsupportedOperationException("No direct add! Use xy.withIngameMessages(obj)"); }};
+
+
+   public static final String PROPERTY_ingameMessages = "ingameMessages";
+
+   private java.util.ArrayList<ChatMessage> ingameMessages = null;
+
+   public java.util.ArrayList<ChatMessage> getIngameMessages()
+   {
+      if (this.ingameMessages == null)
+      {
+         return EMPTY_ingameMessages;
+      }
+
+      return this.ingameMessages;
+   }
+
+   public Game withIngameMessages(Object... value)
+   {
+      if(value==null) return this;
+      for (Object item : value)
+      {
+         if (item == null) continue;
+         if (item instanceof java.util.Collection)
+         {
+            for (Object i : (java.util.Collection) item)
+            {
+               this.withIngameMessages(i);
+            }
+         }
+         else if (item instanceof ChatMessage)
+         {
+            if (this.ingameMessages == null)
+            {
+               this.ingameMessages = new java.util.ArrayList<ChatMessage>();
+            }
+            if ( ! this.ingameMessages.contains(item))
+            {
+               this.ingameMessages.add((ChatMessage)item);
+               ((ChatMessage)item).setGame(this);
+               firePropertyChange("ingameMessages", null, item);
+            }
+         }
+         else throw new IllegalArgumentException();
+      }
+      return this;
+   }
+
+
+
+   public Game withoutIngameMessages(Object... value)
+   {
+      if (this.ingameMessages == null || value==null) return this;
+      for (Object item : value)
+      {
+         if (item == null) continue;
+         if (item instanceof java.util.Collection)
+         {
+            for (Object i : (java.util.Collection) item)
+            {
+               this.withoutIngameMessages(i);
+            }
+         }
+         else if (item instanceof ChatMessage)
+         {
+            if (this.ingameMessages.contains(item))
+            {
+               this.ingameMessages.remove((ChatMessage)item);
+               ((ChatMessage)item).setGame(null);
+               firePropertyChange("ingameMessages", item, null);
+            }
+         }
+      }
+      return this;
+   }
+
+
+   public static final String PROPERTY_turnPlayer = "turnPlayer";
+
+   private Player turnPlayer = null;
+
+   public Player getTurnPlayer()
+   {
+      return this.turnPlayer;
+   }
+
+   public Game setTurnPlayer(Player value)
+   {
+      if (this.turnPlayer != value)
+      {
+         Player oldValue = this.turnPlayer;
+         if (this.turnPlayer != null)
+         {
+            this.turnPlayer = null;
+            oldValue.setTurnPlayerGame(null);
+         }
+         this.turnPlayer = value;
+         if (value != null)
+         {
+            value.setTurnPlayerGame(this);
+         }
+         firePropertyChange("turnPlayer", oldValue, value);
+      }
+      return this;
+   }
+
+
+
    public static final String PROPERTY_app = "app";
 
    private App app = null;
@@ -172,6 +324,37 @@ public class Game
             value.withAllGames(this);
          }
          firePropertyChange("app", oldValue, value);
+      }
+      return this;
+   }
+
+
+
+   public static final String PROPERTY_gameField = "gameField";
+
+   private GameField gameField = null;
+
+   public GameField getGameField()
+   {
+      return this.gameField;
+   }
+
+   public Game setGameField(GameField value)
+   {
+      if (this.gameField != value)
+      {
+         GameField oldValue = this.gameField;
+         if (this.gameField != null)
+         {
+            this.gameField = null;
+            oldValue.setGame(null);
+         }
+         this.gameField = value;
+         if (value != null)
+         {
+            value.setGame(this);
+         }
+         firePropertyChange("gameField", oldValue, value);
       }
       return this;
    }
@@ -242,32 +425,16 @@ public class Game
 
    public void removeYou()
    {
+      this.setTurnPlayer(null);
       this.setApp(null);
+      this.setGameField(null);
 
       this.withoutPlayers(this.getPlayers().clone());
 
 
-   }
+      this.withoutIngameMessages(this.getIngameMessages().clone());
 
 
-   public static final String PROPERTY_joinedPlayers = "joinedPlayers";
-
-   private int joinedPlayers;
-
-   public int getJoinedPlayers()
-   {
-      return joinedPlayers;
-   }
-
-   public Game setJoinedPlayers(int value)
-   {
-      if (value != this.joinedPlayers)
-      {
-         int oldValue = this.joinedPlayers;
-         this.joinedPlayers = value;
-         firePropertyChange("joinedPlayers", oldValue, value);
-      }
-      return this;
    }
 
 

@@ -31,7 +31,7 @@ public class TestREST {
         // Artificial injection test, where a normally incorrect
         // query returns successful due to the injected JSON always
         // returning "successful"
-        uComm.setJsonAdapter(System.out::println);
+        uComm.setJsonAdapter((url, json) -> System.out.println(json));
 
         uComm.injectResponse(new JSONObject()
                 .put("status", "success")

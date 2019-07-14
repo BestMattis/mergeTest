@@ -2,20 +2,19 @@ package main;
 
 import gameScreen.GameScreenController;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import lobby.LobbyScreenController;
 import model.Game;
 import model.Model;
+import model.Player;
 import registerLogin.RegisterLoginController;
 import syncCommunication.HttpRequests;
 import syncCommunication.SynchronousUserCommunicator;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
+import java.util.ArrayList;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
@@ -99,8 +98,23 @@ public class AdvancedWarsApplication extends Application {
     }
 
     public void goToGame(Game game){
+        Model.getApp().getCurrentPlayer().setGame(game);
         if(gameFXML == null) {
-            gameFXML = new FXMLLoad("/gameScreen/gameScreen.fxml");
+            gameFXML = new FXMLLoad("/gameScreen/gameScreen.fxml", new GameScreenController());
+            gameFXML.getController(GameScreenController.class).addScene(gameFXML.getScene());
+        }
+        primaryStage.setScene(gameFXML.getScene());
+		gameScene = gameFXML.getScene();
+		gameScreenCon = gameFXML.getController(GameScreenController.class);
+        primaryStage.setFullScreen(true);
+    }
+    
+    public void goToGameAsObserver(Game game){
+        Model.getApp().getCurrentPlayer().setGame(game);
+        Model.getApp().getCurrentPlayer().getGame().setObservingPlayers(new ArrayList<Player>());
+        Model.getApp().getCurrentPlayer().getGame().getObservingPlayers().add(Model.getApp().getCurrentPlayer());
+        if(gameFXML == null) {
+            gameFXML = new FXMLLoad("/gameScreen/gameScreen.fxml", new GameScreenController());
             gameFXML.getController(GameScreenController.class).addScene(gameFXML.getScene());
         }
         primaryStage.setScene(gameFXML.getScene());

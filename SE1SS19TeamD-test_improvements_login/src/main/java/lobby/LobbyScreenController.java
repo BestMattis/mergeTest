@@ -77,7 +77,13 @@ public class LobbyScreenController {
             Parent parent = fxmlLoader.load();
             CreateGameController createGameController = fxmlLoader.getController();
             createGameController.setBase(base);
-            base.getChildren().addAll(parent.getChildrenUnmodifiable());
+            createGameController.setParent(parent);
+            base.getChildren().add(parent);
+            AnchorPane.setRightAnchor(parent, 0d);
+            AnchorPane.setBottomAnchor(parent, 0d);
+            AnchorPane.setLeftAnchor(parent, 0d);
+            AnchorPane.setTopAnchor(parent, 0d);
+            //base.getChildren().addAll(parent.getChildrenUnmodifiable());
         } catch (Exception e1) {
             e1.printStackTrace();
         }

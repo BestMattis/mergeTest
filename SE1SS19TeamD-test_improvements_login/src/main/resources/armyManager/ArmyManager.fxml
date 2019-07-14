@@ -30,7 +30,7 @@
               <items>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0" SplitPane.resizableWithParent="false">
                      <children>
-                        <Button fx:id="back" layoutX="286.0" layoutY="11.0" mnemonicParsing="false" prefWidth="90.0" styleClass="redButton" text="%manager.back" AnchorPane.bottomAnchor="11.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="11.0" />
+                        <Button id="back" fx:id="back" layoutX="286.0" layoutY="11.0" mnemonicParsing="false" prefWidth="90.0" styleClass="redButton" text="%manager.back" AnchorPane.bottomAnchor="11.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="11.0" />
                         <Button fx:id="save" layoutX="228.0" layoutY="11.0" mnemonicParsing="false" prefWidth="90.0" styleClass="greenButton" text="%manager.save" AnchorPane.bottomAnchor="11.0" AnchorPane.rightAnchor="118.0" AnchorPane.topAnchor="11.0" />
                         <ComboBox fx:id="configlist" editable="true" layoutX="14.0" layoutY="12.0" prefHeight="34.0" prefWidth="134.0" AnchorPane.bottomAnchor="11.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="326.0" AnchorPane.topAnchor="11.0" />
                         <Button fx:id="newButton" layoutX="144.0" layoutY="11.0" mnemonicParsing="false" prefWidth="90.0" styleClass="greenButton" text="%manager.new" AnchorPane.bottomAnchor="11.0" AnchorPane.rightAnchor="222.0" AnchorPane.topAnchor="11.0" />

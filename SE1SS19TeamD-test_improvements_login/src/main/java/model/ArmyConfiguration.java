@@ -1,9 +1,10 @@
 package model;
 
-import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
-public class ArmyConfiguration  
+import java.beans.PropertyChangeListener;
+
+public class ArmyConfiguration 
 {
 
    public static final String PROPERTY_name = "name";
@@ -48,16 +49,16 @@ public class ArmyConfiguration
    }
 
 
-   public static final String PROPERTY_player = "player";
+public static final String PROPERTY_player = "player";
 
-   private Player player = null;
+private Player player = null;
 
-   public Player getPlayer()
+public Player getPlayer()
    {
       return this.player;
    }
 
-   public ArmyConfiguration setPlayer(Player value)
+public ArmyConfiguration setPlayer(Player value)
    {
       if (this.player != value)
       {
@@ -65,18 +66,17 @@ public class ArmyConfiguration
          if (this.player != null)
          {
             this.player = null;
-            oldValue.withoutArmyConfigurations(this);
+            oldValue.setCurrentArmyConfiguration(null);
          }
          this.player = value;
          if (value != null)
          {
-            value.withArmyConfigurations(this);
+            value.setCurrentArmyConfiguration(this);
          }
          firePropertyChange("player", oldValue, value);
       }
       return this;
    }
-
 
 
    public static final java.util.ArrayList<Unit> EMPTY_units = new java.util.ArrayList<Unit>()
@@ -221,6 +221,7 @@ public class ArmyConfiguration
 
    public void removeYou()
    {
+      this.setPlayer(null);
       this.setPlayer(null);
 
       this.withoutUnits(this.getUnits().clone());

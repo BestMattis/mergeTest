@@ -16,20 +16,21 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
+import main.AdvancedWarsApplication;
 import main.FXMLLoad;
-import model.*;
+import model.ArmyConfiguration;
+import model.Model;
+import model.Player;
+import model.Unit;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import syncCommunication.HttpRequests;
-import syncCommunication.RESTExceptions.ArmyCreationException;
-import syncCommunication.RESTExceptions.InvalidUnitIdException;
 import syncCommunication.RESTExceptions.LoginFailedException;
 import syncCommunication.SynchronousArmyCommunicator;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
-import java.util.ArrayList;
 
 public class ArmyManagerController {
 
@@ -62,7 +63,7 @@ public class ArmyManagerController {
 
     private Player currentPlayer;
     private HttpRequests httpReq;
-    private SynchronousArmyCommunicator synchronousArmyCommunicator;
+    private SynchronousArmyCommunicator armyCommunicator;
     private ResourceBundle bundle;
     private final int neededArmySize = 10;
     private final int maxConfigs = 7;
@@ -82,14 +83,14 @@ public class ArmyManagerController {
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
             InputStream inputStream = classLoader.getResource(propertiespath).openStream();
             bundle = new PropertyResourceBundle(inputStream);
-        }catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
         //initialize Player and syncCommunication
         currentPlayer = Model.getApp().getCurrentPlayer();
         httpReq = Model.getPlayerHttpRequestsHashMap().get(currentPlayer);
-        synchronousArmyCommunicator = new SynchronousArmyCommunicator(httpReq);
+        armyCommunicator = new SynchronousArmyCommunicator(httpReq);
 
         //initialize units, unitlist
         units = FXCollections.observableArrayList();
@@ -103,21 +104,24 @@ public class ArmyManagerController {
         newUnitCard("5cc051bd62083600017db3ba");
         newUnitCard("5cc051bd62083600017db3bb");
 
-        //initialize configs
-        configs = FXCollections.observableArrayList();
-        //ON EVERY LOGIN
-        loadConfigurationsFromServer(currentPlayer); //load the current players configs from the server at the start
-        configs.addAll(configurationNames(currentPlayer));
-        configlist.setItems(configs);
-        if (configs.size() > 0) {
-            //load first config from data model and select it
-            configlist.getSelectionModel().selectFirst();
-            currentConfigName = configlist.getSelectionModel().getSelectedItem();
-            loadConfiguration(currentConfigName, currentPlayer);
-        } else {
-            //ON FIRST LOGIN
-            //create the players first config with a basic unit configuration already
-            createStandardConfiguration();
+
+        if (!AdvancedWarsApplication.getInstance().offtesting) {
+            //initialize configs
+            configs = FXCollections.observableArrayList();
+            //ON EVERY LOGIN
+            loadConfigurationsFromServer(currentPlayer); //load the current players configs from the server at the start
+            configs.addAll(configurationNames(currentPlayer));
+            configlist.setItems(configs);
+            if (configs.size() > 0) {
+                //load first config from data model and select it
+                configlist.getSelectionModel().selectFirst();
+                currentConfigName = configlist.getSelectionModel().getSelectedItem();
+                loadConfiguration(currentConfigName, currentPlayer);
+            } else {
+                //ON FIRST LOGIN
+                //create the players first config with a basic unit configuration already
+                createStandardConfiguration();
+            }
         }
 
         //EventListener
@@ -132,7 +136,8 @@ public class ArmyManagerController {
         back.setOnAction(t -> hide());
 
         save.setOnAction(t -> saveConfiguration(currentConfigName, getUnits(), currentPlayer));
-        configlist.setOnHiding(t -> loadConfiguration(configlist.getSelectionModel().getSelectedItem(), currentPlayer));
+        configlist.setOnHiding(t -> loadConfiguration(configlist.getSelectionModel()
+                .getSelectedItem(), currentPlayer));
         newButton.setOnAction(t -> createConfiguration());
         System.out.println("ArmyManagerController initialized");
     }
@@ -219,7 +224,8 @@ public class ArmyManagerController {
                 if (pane.getChildren().isEmpty()) {
                     success = true;
                     UnitCardController unitCardController = new UnitCardController();
-                    FXMLLoad unitfxml = new FXMLLoad("/armyManager/UnitCard.fxml", unitCardController, false);
+                    FXMLLoad unitfxml = new FXMLLoad("/armyManager/UnitCard.fxml",
+                            unitCardController, false);
                     unitfxml.getController(UnitCardController.class).setUnit(id);
                     unitCardControllers[i] = unitCardController;
                     pane.getChildren().add(index, unitfxml.getParent());
@@ -366,41 +372,31 @@ public class ArmyManagerController {
      * Method to create a list of Unit type units from JSONObject type units
      * Uses list of all available unit types and its data
      *
-     * @param jsonUnits list of units in JSON
-     * @param unitTypes list of all different available unit types
+     * @param unitIdList list of unit ids
+     * @param unitTypes  list of all different available unit types
      * @return list of units as Unit
      */
-    public ArrayList<Unit> createUnitsFromJSON(ArrayList<String> jsonUnits, ArrayList<JSONObject> unitTypes) {
+    public ArrayList<Unit> createUnitsFromJSON(ArrayList<String> unitIdList,
+                                               ArrayList<JSONObject> unitTypes) {
 
-        ArrayList<Unit> units = new ArrayList<Unit>();
+        ArrayList<Unit> units = new ArrayList<>();
 
-        for (String jsonUnit : jsonUnits) {
+        for (String jsonUnit : unitIdList) {
 
-            //create unit object by type
-            String unitID = jsonUnit;
-            Unit currentUnit = null;
-            if (unitID.equals("5cc051bd62083600017db3b7")) {
-                currentUnit = new BazookaTrooper();
-            } else if (unitID.equals("5cc051bd62083600017db3bb")) {
-                currentUnit = new Chopper();
-            } else if (unitID.equals("5cc051bd62083600017db3ba")) {
-                currentUnit = new HeavyTank();
-            } else if (unitID.equals("5cc051bd62083600017db3b6")) {
-                currentUnit = new Infantry();
-            } else if (unitID.equals("5cc051bd62083600017db3b8")) {
-                currentUnit = new Jeep();
-            } else if (unitID.equals("5cc051bd62083600017db3b9")) {
-                currentUnit = new LightTank();
-            }
+
+            Unit currentUnit = new Unit();
+
 
             //find blueprint in unitTypes and create currentUnit after it
             for (JSONObject unitType : unitTypes) {
-                if (unitID.equals(unitType.getString("id"))) {
-                    currentUnit.setId(
-                            unitType.getString("id"));
+
+                if (jsonUnit.equals(unitType.getString("id"))) {
+                    currentUnit.setType(unitType.getString("type"));
+                    currentUnit.setId(unitType.getString("id"));
                     currentUnit.setHp(unitType.getInt("hp"));
                     currentUnit.setMp(unitType.getInt("mp"));
-                    ArrayList<String> canAttack = new ArrayList<String>();
+
+                    ArrayList<String> canAttack = new ArrayList<>();
                     JSONArray jArray = unitType.getJSONArray("canAttack");
                     if (jArray != null) {
                         for (int i = 0; i < jArray.length(); ++i) {
@@ -408,7 +404,9 @@ public class ArmyManagerController {
                         }
                     }
                     currentUnit.setCanAttack(canAttack);
+                    break;
                 }
+
             }
             units.add(currentUnit);
         }
@@ -433,10 +431,11 @@ public class ArmyManagerController {
         if (configs.size() == 0) {//if should never be false!
             currentConfigName = "config1";
             //TODO: standard config via JSON
-            String[] sUnitArr = {"5cc051bd62083600017db3b7", "5cc051bd62083600017db3b7", "5cc051bd62083600017db3bb",
-                    "5cc051bd62083600017db3ba", "5cc051bd62083600017db3b6", "5cc051bd62083600017db3b6",
-                    "5cc051bd62083600017db3b8", "5cc051bd62083600017db3b8", "5cc051bd62083600017db3b9",
-                    "5cc051bd62083600017db3b9"};
+            String[] sUnitArr = {"5cc051bd62083600017db3b7", "5cc051bd62083600017db3b7",
+                    "5cc051bd62083600017db3bb", "5cc051bd62083600017db3ba",
+                    "5cc051bd62083600017db3b6", "5cc051bd62083600017db3b6",
+                    "5cc051bd62083600017db3b8", "5cc051bd62083600017db3b8",
+                    "5cc051bd62083600017db3b9", "5cc051bd62083600017db3b9"};
             List<String> sList = Arrays.asList(sUnitArr);
             ArrayList<String> sUnitList = new ArrayList<String>();
             sUnitList.addAll(sList);
@@ -454,23 +453,26 @@ public class ArmyManagerController {
      * @param unitIDs           list of the IDs of units in the configuration
      * @param player            current player
      */
-    public boolean saveConfiguration(String configurationName, ArrayList<String> unitIDs, Player player) {
+    public boolean saveConfiguration(String configurationName, ArrayList<String> unitIDs,
+                                     Player player) {
         if (unitIDs.size() == neededArmySize) {
             ArmyConfiguration armyConfiguration;
             ArrayList<String> oldConfigs = configurationNames(currentPlayer);
             boolean isOld = false;
             boolean nameAlreadyTaken = false;
 
-                for (String oldConfig : oldConfigs) {
-                    if (configurationName.equals(oldConfig)) {
-                        isOld = true;
-                    }
-                    if(configlist.getSelectionModel().getSelectedItem().equals(oldConfig)&&!configurationName.equals(oldConfig)){
-                        nameAlreadyTaken = true;
-                    }
+            for (String oldConfig : oldConfigs) {
+                if (configurationName.equals(oldConfig)) {
+                    isOld = true;
                 }
+                if (configlist.getSelectionModel().getSelectedItem().equals(oldConfig)
+                        && !configurationName.equals(oldConfig)) {
 
-            if(nameAlreadyTaken==false) {
+                    nameAlreadyTaken = true;
+                }
+            }
+
+            if (nameAlreadyTaken == false) {
                 armyConfiguration = new ArmyConfiguration();
                 armyConfiguration.setName(configurationName);
 
@@ -499,13 +501,13 @@ public class ArmyManagerController {
                         }
                     }
 
-                }else if (!configlist.getSelectionModel().getSelectedItem().equals(configurationName)) {
-                        int index = configlist.getSelectionModel().getSelectedIndex();
-                        currentConfigName = configlist.getSelectionModel().getSelectedItem();
-                        configs.remove(index);
-                        configs.add(index, currentConfigName);
-                        configlist.getSelectionModel().select(index);
-                        armyConfiguration.setName(currentConfigName);
+                } else if (!configlist.getSelectionModel().getSelectedItem().equals(configurationName)) {
+                    int index = configlist.getSelectionModel().getSelectedIndex();
+                    currentConfigName = configlist.getSelectionModel().getSelectedItem();
+                    configs.remove(index);
+                    configs.add(index, currentConfigName);
+                    configlist.getSelectionModel().select(index);
+                    armyConfiguration.setName(currentConfigName);
 
                 }
 
@@ -516,7 +518,7 @@ public class ArmyManagerController {
                 //save cofiguration on server and add it to the player
                 try {
                     if (isOld == false) {
-                        String id = synchronousArmyCommunicator.createArmyOnServer(armyConfiguration);
+                        String id = armyCommunicator.createArmyOnServer(armyConfiguration);
                         //set id after getting it from the server
                         armyConfiguration.setId(id);
                         player.withArmyConfigurations(armyConfiguration);
@@ -525,7 +527,7 @@ public class ArmyManagerController {
                         return true;
                     } else {
                         boolean updated = false;
-                        updated = synchronousArmyCommunicator.updateArmyOnServer(armyConfiguration);
+                        updated = armyCommunicator.updateArmyOnServer(armyConfiguration);
                         player.withArmyConfigurations(armyConfiguration);
 
                         System.out.println("Successfully updated on server");
@@ -537,29 +539,30 @@ public class ArmyManagerController {
                     showError(bundle.getString("manager.servererror"));
                 }
                 return false;
-            }else{
+            } else {
                 showError(bundle.getString("manager.exists"));
                 return false;
             }
         } else {
             //gui shows missing units
             noUnits();
-            return  false;
+            return false;
         }
     }
 
     /**
      * Load all configs of the current player from the server and save it in the data model
      * Also loads all types of units that are available
+     *
      * @param player current player
      */
     public void loadConfigurationsFromServer(Player player) {
         try {
             //get all possible unit types from the server as JSON
-            AllDifferentUnitTypes = synchronousArmyCommunicator.getAllUnitTypes();
+            AllDifferentUnitTypes = armyCommunicator.getAllUnitTypes();
 
             //get all armyConfigurations of the user from the server
-            ArrayList<JSONObject> jsonArmyConfigurations = synchronousArmyCommunicator.getAllOwnedArmies();
+            ArrayList<JSONObject> jsonArmyConfigurations = armyCommunicator.getAllOwnedArmies();
             System.out.println("Configs loaded from server: " + jsonArmyConfigurations);
             //create configs from JSON
             for (JSONObject jsonArmyConfiguration : jsonArmyConfigurations) {
@@ -568,7 +571,7 @@ public class ArmyManagerController {
                 armyConfiguration.setId(jsonArmyConfiguration.getString("id"));
 
                 //create units for data model
-                ArrayList<String> unitIDs = new ArrayList<String>();
+                ArrayList<String> unitIDs = new ArrayList<>();
                 JSONArray jArray = jsonArmyConfiguration.getJSONArray("units");
                 if (jArray != null) {
                     for (int i = 0; i < jArray.length(); ++i) {
@@ -579,7 +582,7 @@ public class ArmyManagerController {
 
                 player.withArmyConfigurations(armyConfiguration);
             }
-        }catch (LoginFailedException e){
+        } catch (LoginFailedException e) {
             e.printStackTrace();
             showError(bundle.getString("manager.loginerror"));
         }
@@ -587,6 +590,7 @@ public class ArmyManagerController {
 
     /**
      * Method for returning configuration names for a specific player
+     *
      * @param player for current player
      * @return names of configurations belonging to current player
      */
@@ -600,9 +604,10 @@ public class ArmyManagerController {
     }
 
     /**
-     *Method to load a selected configuration from data model and show it in the GUI
+     * Method to load a selected configuration from data model and show it in the GUI
+     *
      * @param configurationName for the name of the configuration to load
-     * @param player for current player
+     * @param player            for current player
      */
     public void loadConfiguration(String configurationName, Player player) {
         ArrayList<ArmyConfiguration> armyConfigurations = player.getArmyConfigurations();
@@ -620,15 +625,16 @@ public class ArmyManagerController {
 
     /**
      * Method to delete a specific ArmyConfiguration from the server
+     *
      * @param armyConfiguration the configuration in the data model that should be deleted
      * @return sucessfullyDeleted boolean
      */
-    public boolean deleteConfiguration(ArmyConfiguration armyConfiguration){
+    public boolean deleteConfiguration(ArmyConfiguration armyConfiguration) {
         boolean successfullyDeleted = false;
-        if(currentPlayer.getArmyConfigurations().size() > 1) {
+        if (currentPlayer.getArmyConfigurations().size() > 1) {
             try {
                 //remove config from server
-                successfullyDeleted = synchronousArmyCommunicator.deleteArmyOnServer(armyConfiguration.getId());
+                successfullyDeleted = armyCommunicator.deleteArmyOnServer(armyConfiguration.getId());
                 //delete config from data model
                 currentPlayer.withoutArmyConfigurations(armyConfiguration);
                 for (int i = 0; i < configs.size(); ++i) {
@@ -641,7 +647,7 @@ public class ArmyManagerController {
                 e.printStackTrace();
                 showError(bundle.getString("manager.servererror"));
             }
-        }else{
+        } else {
             showError(bundle.getString("manager.lastconfig"));
         }
         return successfullyDeleted;
@@ -650,18 +656,19 @@ public class ArmyManagerController {
     /**
      * Method to load a single ArmyConfiguration from the server
      * !ONLY USED IN TESTS CURRENTLY!
+     *
      * @param id the id of the config to load
      * @return ArmyConfiguration that was loaded
      */
-    public ArmyConfiguration getSingleArmyConfiguration(String id){
+    public ArmyConfiguration getSingleArmyConfiguration(String id) {
         try {
-            JSONObject jsonArmyConfiguration = synchronousArmyCommunicator.getArmyByID(id);
+            JSONObject jsonArmyConfiguration = armyCommunicator.getArmyByID(id);
             ArmyConfiguration armyConfiguration = new ArmyConfiguration();
             armyConfiguration.setName(jsonArmyConfiguration.getString("name"));
             armyConfiguration.setId(jsonArmyConfiguration.getString("id"));
 
             //create units for data model
-            ArrayList<String> unitIDs = new ArrayList<String>();
+            ArrayList<String> unitIDs = new ArrayList<>();
             JSONArray jArray = jsonArmyConfiguration.getJSONArray("units");
             if (jArray != null) {
                 for (int i = 0; i < jArray.length(); ++i) {
@@ -670,9 +677,17 @@ public class ArmyManagerController {
             }
             armyConfiguration.withUnits(createUnitsFromJSON(unitIDs, AllDifferentUnitTypes));
             return armyConfiguration;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public ComboBox<String> getConfiglist() {
+        return configlist;
+    }
+
+    public ObservableList<String> getConfigs() {
+        return configs;
     }
 }

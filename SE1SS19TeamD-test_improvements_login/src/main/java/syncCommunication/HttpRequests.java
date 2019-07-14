@@ -32,7 +32,7 @@ public class HttpRequests {
                 try {
                     getAsUser(userKey, "/user");
 
-                } catch (JSONException | ExecutionException | InterruptedException e) {
+                } catch (JSONException | ExecutionException | InterruptedException | LoginFailedException e) {
                     e.printStackTrace();
                 }
             }
@@ -90,11 +90,11 @@ public class HttpRequests {
      * POST HTTP request, transmitting a json to a specific URL
      * Throws ExecutionException, InterruptedException and JSONException.
      */
-    JSONObject postJson(JSONObject jsonObject, String postToURL) throws ExecutionException, InterruptedException, JSONException {
+    JSONObject postJson(JSONObject jsonObject, String postToURL) throws ExecutionException, InterruptedException, JSONException, LoginFailedException {
 
 
         if (jAdapter != null) {
-            jAdapter.onRequestSend(jsonObject);
+            jAdapter.onRequestSend(postToURL, jsonObject);
         }
 
         if (injection != null) {
@@ -116,15 +116,18 @@ public class HttpRequests {
      * Throws ExecutionException, InterruptedException and JSONException.
      */
     JSONObject postJsonAs(String userKey, JSONObject jsonObject, String postToURL)
-            throws ExecutionException, InterruptedException, JSONException {
-
+            throws ExecutionException, InterruptedException, JSONException, LoginFailedException {
 
         if (jAdapter != null) {
-            jAdapter.onRequestSend(jsonObject);
+            jAdapter.onRequestSend(postToURL, jsonObject);
         }
 
         if (injection != null) {
             return injection;
+        }
+        
+        if (userKey == null) {
+            throw new LoginFailedException("Log in first");
         }
 
         updateLastRequestTime();
@@ -145,15 +148,18 @@ public class HttpRequests {
      * Throws ExecutionException, InterruptedException and JSONException.
      */
     JSONObject getAsUser(String userKey, String getFromURL)
-            throws ExecutionException, InterruptedException, JSONException {
-
+            throws ExecutionException, InterruptedException, JSONException, LoginFailedException {
 
         if (jAdapter != null) {
-            jAdapter.onRequestSend(null);
+            jAdapter.onRequestSend(getFromURL, null);
         }
 
         if (injection != null) {
             return injection;
+        }
+        
+        if (userKey == null) {
+            throw new LoginFailedException("Log in first");
         }
 
         updateLastRequestTime();
@@ -171,15 +177,18 @@ public class HttpRequests {
      * Throws ExecutionException, InterruptedException and JSONException.
      */
     JSONObject deleteAsUser(String userKey, String deleteAtURL)
-            throws ExecutionException, InterruptedException, JSONException {
-
+            throws ExecutionException, InterruptedException, JSONException, LoginFailedException {
 
         if (jAdapter != null) {
-            jAdapter.onRequestSend(null);
+            jAdapter.onRequestSend(deleteAtURL, null);
         }
 
         if (injection != null) {
             return injection;
+        }
+        
+        if (userKey == null) {
+            throw new LoginFailedException("Log in first");
         }
 
         updateLastRequestTime();
@@ -197,15 +206,19 @@ public class HttpRequests {
      * Throws ExecutionException, InterruptedException and JSONException.
      */
     JSONObject putJsonAs(String userKey, JSONObject jsonObject, String postToURL)
-            throws ExecutionException, InterruptedException, JSONException {
+            throws ExecutionException, InterruptedException, JSONException, LoginFailedException {
 
 
         if (jAdapter != null) {
-            jAdapter.onRequestSend(jsonObject);
+            jAdapter.onRequestSend(postToURL, jsonObject);
         }
 
         if (injection != null) {
             return injection;
+        }
+        
+        if (userKey == null) {
+            throw new LoginFailedException("Log in first");
         }
 
         updateLastRequestTime();
@@ -221,14 +234,19 @@ public class HttpRequests {
     }
 
     void loginAs(String username, String password) throws JSONException, LoginFailedException {
-
-        updateLastRequestTime();
-        limitRequestsPerSecond();
-
-        JSONObject userData = new JSONObject();
+	
+	JSONObject userData = new JSONObject();
         userData.put("name", username);
         userData.put("password", password);
-
+        
+	if (jAdapter != null) {
+            jAdapter.onRequestSend("/user/login", userData);
+            return;
+        }
+        
+        updateLastRequestTime();
+        limitRequestsPerSecond();
+        
         try {
             JSONObject response = postJson(userData, "/user/login");
             if (response.getString("status").equals("success")) {
@@ -243,7 +261,13 @@ public class HttpRequests {
     }
 
     void logOut() throws LoginFailedException {
-        updateLastRequestTime();
+        
+	if (jAdapter != null) {
+            jAdapter.onRequestSend("/user/logout", null);
+            return;
+        }
+	
+	updateLastRequestTime();
         limitRequestsPerSecond();
 
         if (userKey == null) {

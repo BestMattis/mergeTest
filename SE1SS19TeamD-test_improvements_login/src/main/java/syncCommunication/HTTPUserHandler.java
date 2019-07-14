@@ -37,7 +37,7 @@ public class HTTPUserHandler {
                 throw new RegistrationFailedException(response.getString("message"));
             }
 
-        } catch (ExecutionException | InterruptedException e) {
+        } catch (ExecutionException | InterruptedException | LoginFailedException e) {
             e.printStackTrace();
             return false;
         }
@@ -49,9 +49,6 @@ public class HTTPUserHandler {
      * Throws JSONException and LoginFailedException
      */
     public ArrayList<String> getAllUsers(String userKey) throws LoginFailedException, JSONException {
-        if (userKey == null) {
-            throw new LoginFailedException("Log in first");
-        }
         try {
             JSONObject response = hr.getAsUser(userKey, "/user");
 

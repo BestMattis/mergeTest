@@ -2,6 +2,7 @@ package asyncCommunication;
 
 
 import model.ChatMessage;
+import model.Game;
 import model.Model;
 import model.Player;
 import org.json.JSONObject;
@@ -18,6 +19,7 @@ import syncCommunication.SynchronousUserCommunicator;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 
 import static asyncCommunication.Constants.*;
 
@@ -140,8 +142,8 @@ public class WebSocketTest {
         HttpRequests hr = new HttpRequests();
         SynchronousUserCommunicator uComm = new SynchronousUserCommunicator(hr);
         SynchronousArmyCommunicator aComm = new SynchronousArmyCommunicator(hr);
-        String userName = "aVeryUniqueUsernameWS";
-        String userPassword = "1235813";
+        String userName = "seb";
+        String userPassword = "a";
         Model.getApp().setCurrentPlayer(new Player().setName(userName));
         WebSocketComponent wsComponent = null;
         try {
@@ -167,24 +169,27 @@ public class WebSocketTest {
         String gameID = null;
         boolean successfull = false;
         try {
-            gameID = gameComm.openGame("testTest2", 2);
+            gameID = gameComm.openGame("testTesttt2", 2);
         } catch (GameLobbyCreationFailedException | LoginFailedException e) {
             e.printStackTrace();
         }
-
+        Game game = new Game().setName("testTesttt2").setCapacity(2).setGameId(gameID);
+        Model.getApp().withAllGames(game);
+        Model.getApp().getCurrentPlayer().setGame(game);
         try {
             successfull = gameComm.joinGame(gameID);
         } catch (GameIdNotFoundException | LoginFailedException e) {
             e.printStackTrace();
         }
-        System.out.println("#" + gameID + armyID + "#");
-        System.out.println("#" + "#");
+        System.out.println("#" + gameID +"#" + armyID + "#");
+
+
         wsComponent.joinGame(gameID, armyID);
         ChatMessage chatMessage = new ChatMessage().setMessage("hi").setChannel("all")
                 .setSender(Model.getApp().getCurrentPlayer());
         ChatMessage chatMessage2 = new ChatMessage().setMessage("hi").setChannel("private")
                 .setSender(Model.getApp().getCurrentPlayer()).setReceiver(Model.getApp().getCurrentPlayer());
-        int testDurationInSeconds = 10;
+        int testDurationInSeconds = 30;
         long endTime = System.currentTimeMillis() + (testDurationInSeconds * 1000);
         while (System.currentTimeMillis() < endTime);
 
@@ -195,8 +200,20 @@ public class WebSocketTest {
         endTime = System.currentTimeMillis() + (testDurationInSeconds * 1000);
         while (System.currentTimeMillis() < endTime);
 
+        ArrayList<ChatMessage> messages = Model.getApp().getCurrentPlayer().getGame().getIngameMessages();
+        System.out.println(messages.size() + "messages");
+        for (ChatMessage msg : messages) {
+            System.out.println(msg.toString());
+        }
         //leaves the Game with a command and closes the component
         wsComponent.leaveGame();
         wsComponent.stopComponent();
+        try {
+            gameComm.deleteGame(gameID);
+        } catch (GameIdNotFoundException e) {
+            e.printStackTrace();
+        } catch (LoginFailedException e) {
+            e.printStackTrace();
+        }
     }
 }

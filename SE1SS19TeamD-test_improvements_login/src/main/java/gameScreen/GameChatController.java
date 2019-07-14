@@ -4,11 +4,18 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import javafx.util.Duration;
+import model.ChatMessage;
+import model.Model;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 public class GameChatController {
 
@@ -16,6 +23,10 @@ public class GameChatController {
     TextField message;
     @FXML
     AnchorPane base;
+
+    @FXML
+    VBox chatBox;
+
 
     Timeline beat;
 
@@ -40,6 +51,15 @@ public class GameChatController {
                 }
             }
         });
+        message.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent ke) {
+                if (ke.getCode().equals(KeyCode.ENTER)) {
+                    sendMessage();
+                }
+            }
+        });
+
 
         base.setOnMouseEntered(t -> {
             inChat = true;
@@ -52,6 +72,25 @@ public class GameChatController {
             forceClose = false;
         });
         base.setVisible(false);
+    }
+
+    private void sendMessage() {
+
+        String text = message.getText();
+        message.clear();
+        if (text.length() > 0) {
+            ChatMessage message = new ChatMessage().setChannel("all").setMessage(text)
+                    .setSender(Model.getApp().getCurrentPlayer());
+            message.setDate(new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime()));
+            Model.getApp().getCurrentPlayer().getGame().withIngameMessages(message);
+            displayMessage(message);
+        }
+
+    }
+
+    public void displayMessage(ChatMessage message) {
+        chatBox.getChildren().add(new Label("[" + message.getDate() + "] " + "[" + message.getSender() + "] "
+                + message.getMessage()));
     }
 
     /**
@@ -78,4 +117,10 @@ public class GameChatController {
 
     }
 
+    public boolean isOpen() {
+        if(base.isVisible()) {
+            return true;
+        }
+        return false;
+    }
 }

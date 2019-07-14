@@ -29,7 +29,7 @@ public class msgToAllPlayersTest {
         String msg = "testMsg";
         app.setCurrentPlayer(testPlayer);
 
-        WSChatEndpoint.getInstance().setListeners();
+        WSChatEndpoint.getInstance().setLobbyChatListeners();
 
         msgTAP.sendToAll(msg);
     }

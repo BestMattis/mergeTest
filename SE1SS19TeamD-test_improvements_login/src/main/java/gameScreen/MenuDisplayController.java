@@ -51,6 +51,7 @@ public class MenuDisplayController {
      * set the screen to the lobby
      */
     public void leaveGame(){
+        Model.getWebSocketComponent().leaveGame();
         AdvancedWarsApplication.getInstance().goToLobby();
     }
 

@@ -1,9 +1,10 @@
 package model;
 
-import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
-public class Player  
+import java.beans.PropertyChangeListener;
+
+public class Player 
 {
 
    public static final String PROPERTY_name = "name";
@@ -78,224 +79,36 @@ public class Player
    }
 
 
-   public static final String PROPERTY_app = "app";
 
-   private App app = null;
+   public static final String PROPERTY_turnPlayerGame = "turnPlayerGame";
 
-   public App getApp()
+   private Game turnPlayerGame = null;
+
+   public Game getTurnPlayerGame()
    {
-      return this.app;
+      return this.turnPlayerGame;
    }
 
-   public Player setApp(App value)
+   public Player setTurnPlayerGame(Game value)
    {
-      if (this.app != value)
+      if (this.turnPlayerGame != value)
       {
-         App oldValue = this.app;
-         if (this.app != null)
+         Game oldValue = this.turnPlayerGame;
+         if (this.turnPlayerGame != null)
          {
-            this.app = null;
-            oldValue.withoutAllPlayers(this);
+            this.turnPlayerGame = null;
+            oldValue.setTurnPlayer(null);
          }
-         this.app = value;
+         this.turnPlayerGame = value;
          if (value != null)
          {
-            value.withAllPlayers(this);
+            value.setTurnPlayer(this);
          }
-         firePropertyChange("app", oldValue, value);
+         firePropertyChange("turnPlayerGame", oldValue, value);
       }
       return this;
    }
 
-
-
-   public static final String PROPERTY_myApp = "myApp";
-
-   private App myApp = null;
-
-   public App getMyApp()
-   {
-      return this.myApp;
-   }
-
-   public Player setMyApp(App value)
-   {
-      if (this.myApp != value)
-      {
-         App oldValue = this.myApp;
-         if (this.myApp != null)
-         {
-            this.myApp = null;
-            oldValue.setCurrentPlayer(null);
-         }
-         this.myApp = value;
-         if (value != null)
-         {
-            value.setCurrentPlayer(this);
-         }
-         firePropertyChange("myApp", oldValue, value);
-      }
-      return this;
-   }
-
-
-
-   protected PropertyChangeSupport listeners = null;
-
-   public boolean firePropertyChange(String propertyName, Object oldValue, Object newValue)
-   {
-      if (listeners != null)
-      {
-         listeners.firePropertyChange(propertyName, oldValue, newValue);
-         return true;
-      }
-      return false;
-   }
-
-   public boolean addPropertyChangeListener(PropertyChangeListener listener)
-   {
-      if (listeners == null)
-      {
-         listeners = new PropertyChangeSupport(this);
-      }
-      listeners.addPropertyChangeListener(listener);
-      return true;
-   }
-
-   public boolean addPropertyChangeListener(String propertyName, PropertyChangeListener listener)
-   {
-      if (listeners == null)
-      {
-         listeners = new PropertyChangeSupport(this);
-      }
-      listeners.addPropertyChangeListener(propertyName, listener);
-      return true;
-   }
-
-   public boolean removePropertyChangeListener(PropertyChangeListener listener)
-   {
-      if (listeners != null)
-      {
-         listeners.removePropertyChangeListener(listener);
-      }
-      return true;
-   }
-
-   public boolean removePropertyChangeListener(String propertyName,PropertyChangeListener listener)
-   {
-      if (listeners != null)
-      {
-         listeners.removePropertyChangeListener(propertyName, listener);
-      }
-      return true;
-   }
-
-   @Override
-   public String toString()
-   {
-      StringBuilder result = new StringBuilder();
-
-      result.append(" ").append(this.getName());
-      result.append(" ").append(this.getPassword());
-
-
-      return result.substring(1);
-   }
-
-   public void removeYou()
-   {
-      this.setGame(null);
-      this.setApp(null);
-      this.setMyApp(null);
-
-      this.withoutReceivedMessages(this.getReceivedMessages().clone());
-
-
-      this.withoutSentMessages(this.getSentMessages().clone());
-
-
-      this.withoutArmyConfigurations(this.getArmyConfigurations().clone());
-
-
-   }
-
-
-   public static final java.util.ArrayList<ArmyConfiguration> EMPTY_armyConfigurations = new java.util.ArrayList<ArmyConfiguration>()
-   { @Override public boolean add(ArmyConfiguration value){ throw new UnsupportedOperationException("No direct add! Use xy.withArmyConfigurations(obj)"); }};
-
-
-   public static final String PROPERTY_armyConfigurations = "armyConfigurations";
-
-   private java.util.ArrayList<ArmyConfiguration> armyConfigurations = null;
-
-   public java.util.ArrayList<ArmyConfiguration> getArmyConfigurations()
-   {
-      if (this.armyConfigurations == null)
-      {
-         return EMPTY_armyConfigurations;
-      }
-
-      return this.armyConfigurations;
-   }
-
-   public Player withArmyConfigurations(Object... value)
-   {
-      if(value==null) return this;
-      for (Object item : value)
-      {
-         if (item == null) continue;
-         if (item instanceof java.util.Collection)
-         {
-            for (Object i : (java.util.Collection) item)
-            {
-               this.withArmyConfigurations(i);
-            }
-         }
-         else if (item instanceof ArmyConfiguration)
-         {
-            if (this.armyConfigurations == null)
-            {
-               this.armyConfigurations = new java.util.ArrayList<ArmyConfiguration>();
-            }
-            if ( ! this.armyConfigurations.contains(item))
-            {
-               this.armyConfigurations.add((ArmyConfiguration)item);
-               ((ArmyConfiguration)item).setPlayer(this);
-               firePropertyChange("armyConfigurations", null, item);
-            }
-         }
-         else throw new IllegalArgumentException();
-      }
-      return this;
-   }
-
-
-
-   public Player withoutArmyConfigurations(Object... value)
-   {
-      if (this.armyConfigurations == null || value==null) return this;
-      for (Object item : value)
-      {
-         if (item == null) continue;
-         if (item instanceof java.util.Collection)
-         {
-            for (Object i : (java.util.Collection) item)
-            {
-               this.withoutArmyConfigurations(i);
-            }
-         }
-         else if (item instanceof ArmyConfiguration)
-         {
-            if (this.armyConfigurations.contains(item))
-            {
-               this.armyConfigurations.remove((ArmyConfiguration)item);
-               ((ArmyConfiguration)item).setPlayer(null);
-               firePropertyChange("armyConfigurations", item, null);
-            }
-         }
-      }
-      return this;
-   }
 
 
    public static final java.util.ArrayList<ChatMessage> EMPTY_receivedMessages = new java.util.ArrayList<ChatMessage>()
@@ -451,6 +264,259 @@ public class Player
          }
       }
       return this;
+   }
+
+
+   public static final String PROPERTY_app = "app";
+
+   private App app = null;
+
+   public App getApp()
+   {
+      return this.app;
+   }
+
+   public Player setApp(App value)
+   {
+      if (this.app != value)
+      {
+         App oldValue = this.app;
+         if (this.app != null)
+         {
+            this.app = null;
+            oldValue.withoutAllPlayers(this);
+         }
+         this.app = value;
+         if (value != null)
+         {
+            value.withAllPlayers(this);
+         }
+         firePropertyChange("app", oldValue, value);
+      }
+      return this;
+   }
+
+
+
+   public static final String PROPERTY_myApp = "myApp";
+
+   private App myApp = null;
+
+   public App getMyApp()
+   {
+      return this.myApp;
+   }
+
+   public Player setMyApp(App value)
+   {
+      if (this.myApp != value)
+      {
+         App oldValue = this.myApp;
+         if (this.myApp != null)
+         {
+            this.myApp = null;
+            oldValue.setCurrentPlayer(null);
+         }
+         this.myApp = value;
+         if (value != null)
+         {
+            value.setCurrentPlayer(this);
+         }
+         firePropertyChange("myApp", oldValue, value);
+      }
+      return this;
+   }
+
+
+
+   public static final java.util.ArrayList<ArmyConfiguration> EMPTY_armyConfigurations = new java.util.ArrayList<ArmyConfiguration>()
+   { @Override public boolean add(ArmyConfiguration value){ throw new UnsupportedOperationException("No direct add! Use xy.withArmyConfigurations(obj)"); }};
+
+
+   public static final String PROPERTY_armyConfigurations = "armyConfigurations";
+
+   private java.util.ArrayList<ArmyConfiguration> armyConfigurations = null;
+
+   public java.util.ArrayList<ArmyConfiguration> getArmyConfigurations()
+   {
+      if (this.armyConfigurations == null)
+      {
+         return EMPTY_armyConfigurations;
+      }
+
+      return this.armyConfigurations;
+   }
+
+   public Player withArmyConfigurations(Object... value)
+   {
+      if(value==null) return this;
+      for (Object item : value)
+      {
+         if (item == null) continue;
+         if (item instanceof java.util.Collection)
+         {
+            for (Object i : (java.util.Collection) item)
+            {
+               this.withArmyConfigurations(i);
+            }
+         }
+         else if (item instanceof ArmyConfiguration)
+         {
+            if (this.armyConfigurations == null)
+            {
+               this.armyConfigurations = new java.util.ArrayList<ArmyConfiguration>();
+            }
+            if ( ! this.armyConfigurations.contains(item))
+            {
+               this.armyConfigurations.add((ArmyConfiguration)item);
+               ((ArmyConfiguration)item).setPlayer(this);
+               firePropertyChange("armyConfigurations", null, item);
+            }
+         }
+         else throw new IllegalArgumentException();
+      }
+      return this;
+   }
+
+
+
+   public Player withoutArmyConfigurations(Object... value)
+   {
+      if (this.armyConfigurations == null || value==null) return this;
+      for (Object item : value)
+      {
+         if (item == null) continue;
+         if (item instanceof java.util.Collection)
+         {
+            for (Object i : (java.util.Collection) item)
+            {
+               this.withoutArmyConfigurations(i);
+            }
+         }
+         else if (item instanceof ArmyConfiguration)
+         {
+            if (this.armyConfigurations.contains(item))
+            {
+               this.armyConfigurations.remove((ArmyConfiguration)item);
+               ((ArmyConfiguration)item).setPlayer(null);
+               firePropertyChange("armyConfigurations", item, null);
+            }
+         }
+      }
+      return this;
+   }
+
+
+   public static final String PROPERTY_currentArmyConfiguration = "currentArmyConfiguration";
+
+   private ArmyConfiguration currentArmyConfiguration = null;
+
+   public ArmyConfiguration getCurrentArmyConfiguration()
+   {
+      return this.currentArmyConfiguration;
+   }
+
+   public Player setCurrentArmyConfiguration(ArmyConfiguration value)
+   {
+      if (this.currentArmyConfiguration != value)
+      {
+         ArmyConfiguration oldValue = this.currentArmyConfiguration;
+         if (this.currentArmyConfiguration != null)
+         {
+            this.currentArmyConfiguration = null;
+            oldValue.setPlayer(null);
+         }
+         this.currentArmyConfiguration = value;
+         if (value != null)
+         {
+            value.setPlayer(this);
+         }
+         firePropertyChange("currentArmyConfiguration", oldValue, value);
+      }
+      return this;
+   }
+
+
+
+   protected PropertyChangeSupport listeners = null;
+
+   public boolean firePropertyChange(String propertyName, Object oldValue, Object newValue)
+   {
+      if (listeners != null)
+      {
+         listeners.firePropertyChange(propertyName, oldValue, newValue);
+         return true;
+      }
+      return false;
+   }
+
+   public boolean addPropertyChangeListener(PropertyChangeListener listener)
+   {
+      if (listeners == null)
+      {
+         listeners = new PropertyChangeSupport(this);
+      }
+      listeners.addPropertyChangeListener(listener);
+      return true;
+   }
+
+   public boolean addPropertyChangeListener(String propertyName, PropertyChangeListener listener)
+   {
+      if (listeners == null)
+      {
+         listeners = new PropertyChangeSupport(this);
+      }
+      listeners.addPropertyChangeListener(propertyName, listener);
+      return true;
+   }
+
+   public boolean removePropertyChangeListener(PropertyChangeListener listener)
+   {
+      if (listeners != null)
+      {
+         listeners.removePropertyChangeListener(listener);
+      }
+      return true;
+   }
+
+   public boolean removePropertyChangeListener(String propertyName,PropertyChangeListener listener)
+   {
+      if (listeners != null)
+      {
+         listeners.removePropertyChangeListener(propertyName, listener);
+      }
+      return true;
+   }
+
+   @Override
+   public String toString()
+   {
+      StringBuilder result = new StringBuilder();
+
+      result.append(" ").append(this.getName());
+      result.append(" ").append(this.getPassword());
+
+
+      return result.substring(1);
+   }
+
+   public void removeYou()
+   {
+      this.setGame(null);
+      this.setTurnPlayerGame(null);
+      this.setApp(null);
+      this.setMyApp(null);
+      this.setCurrentArmyConfiguration(null);
+
+      this.withoutReceivedMessages(this.getReceivedMessages().clone());
+
+
+      this.withoutSentMessages(this.getSentMessages().clone());
+
+
+      this.withoutArmyConfigurations(this.getArmyConfigurations().clone());
+
+
    }
 
 

@@ -26,10 +26,6 @@ public class HTTPGameHandler {
     public String openGameLobby(String userKey, String name, int playerCount)
             throws JSONException, GameLobbyCreationFailedException, LoginFailedException {
 
-        if (userKey == null) {
-            throw new LoginFailedException("Log in first");
-        }
-
         JSONObject gameData = new JSONObject();
         gameData.put("name", name);
         gameData.put("neededPlayer", playerCount);
@@ -61,10 +57,7 @@ public class HTTPGameHandler {
      * Throws JSONException and LoginFailedException
      */
     public ArrayList<JSONObject> getAllGameLobbies(String userKey) throws LoginFailedException, JSONException {
-
-        if (userKey == null) {
-            throw new LoginFailedException("Log in first");
-        }
+	
         try {
             JSONObject response = hr.getAsUser(userKey, "/game");
 
@@ -98,10 +91,6 @@ public class HTTPGameHandler {
      */
     public boolean joinGameLobby(String userKey, String gameID)
             throws LoginFailedException, JSONException, GameIdNotFoundException {
-
-        if (userKey == null) {
-            throw new LoginFailedException("Log in first");
-        }
 
         try {
             if (!checkID(userKey, gameID)) {
@@ -137,10 +126,6 @@ public class HTTPGameHandler {
      */
     public boolean deleteGameLobby(String userKey, String gameID)
             throws LoginFailedException, JSONException, GameIdNotFoundException {
-
-        if (userKey == null) {
-            throw new LoginFailedException("Log in first");
-        }
 
         try {
             if (!checkID(userKey, gameID)) {

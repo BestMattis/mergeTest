@@ -44,8 +44,10 @@ public class WebSocketSystemHandler implements WebSocketHandler {
         // data contains the name of the user
         else if (action.equals("userLeft")) {
 
-            Model.getApp().withoutAllPlayers(PlayerListener.getPlayerByName(data.getString("name")));
-            System.out.println("User: " + data.getString("name") + " went offline.");
+            if (!data.get("name").equals(Model.getApp().getCurrentPlayer().getName())) {
+                Model.getApp().withoutAllPlayers(PlayerListener.getPlayerByName(data.getString("name")));
+                System.out.println("User: " + data.getString("name") + " went offline.");
+            }
         }
 
         // data contains the name of the game, the gameID and the capacity

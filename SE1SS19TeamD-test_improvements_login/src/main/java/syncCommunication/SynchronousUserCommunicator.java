@@ -14,7 +14,7 @@ public class SynchronousUserCommunicator extends SynchronousCommunicator {
      * @param httpReq Used to assign the user. Same HttpRequests leads to the same logged in user.
      */
     public SynchronousUserCommunicator(HttpRequests httpReq) {
-        super(httpReq);
+	super(httpReq);
         uHandler = new HTTPUserHandler(httpReq);
     }
 

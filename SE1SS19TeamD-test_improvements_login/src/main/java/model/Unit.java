@@ -1,10 +1,73 @@
 package model;
 
-import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
-public class Unit
+import java.beans.PropertyChangeListener;
+
+public class Unit 
 {
+
+   public static final String PROPERTY_id = "id";
+
+   private String id;
+
+   public String getId()
+   {
+      return id;
+   }
+
+   public Unit setId(String value)
+   {
+      if (value == null ? this.id != null : ! value.equals(this.id))
+      {
+         String oldValue = this.id;
+         this.id = value;
+         firePropertyChange("id", oldValue, value);
+      }
+      return this;
+   }
+
+
+   public static final String PROPERTY_canAttack = "canAttack";
+
+   private java.util.ArrayList<String> canAttack;
+
+   public java.util.ArrayList<String> getCanAttack()
+   {
+      return canAttack;
+   }
+
+   public Unit setCanAttack(java.util.ArrayList<String> value)
+   {
+      if (value != this.canAttack)
+      {
+         java.util.ArrayList<String> oldValue = this.canAttack;
+         this.canAttack = value;
+         firePropertyChange("canAttack", oldValue, value);
+      }
+      return this;
+   }
+
+
+   public static final String PROPERTY_type = "type";
+
+   private String type;
+
+   public String getType()
+   {
+      return type;
+   }
+
+   public Unit setType(String value)
+   {
+      if (value == null ? this.type != null : ! value.equals(this.type))
+      {
+         String oldValue = this.type;
+         this.type = value;
+         firePropertyChange("type", oldValue, value);
+      }
+      return this;
+   }
 
 
    public static final String PROPERTY_mp = "mp";
@@ -49,27 +112,6 @@ public class Unit
    }
 
 
-   public static final String PROPERTY_id = "id";
-
-   private String id;
-
-   public String getId()
-   {
-      return id;
-   }
-
-   public Unit setId(String value)
-   {
-      if (value == null ? this.id != null : ! value.equals(this.id))
-      {
-         String oldValue = this.id;
-         this.id = value;
-         firePropertyChange("id", oldValue, value);
-      }
-      return this;
-   }
-
-
    public static final String PROPERTY_armyConfiguration = "armyConfiguration";
 
    private ArmyConfiguration armyConfiguration = null;
@@ -95,6 +137,37 @@ public class Unit
             value.withUnits(this);
          }
          firePropertyChange("armyConfiguration", oldValue, value);
+      }
+      return this;
+   }
+
+
+
+   public static final String PROPERTY_occupiesField = "occupiesField";
+
+   private Field occupiesField = null;
+
+   public Field getOccupiesField()
+   {
+      return this.occupiesField;
+   }
+
+   public Unit setOccupiesField(Field value)
+   {
+      if (this.occupiesField != value)
+      {
+         Field oldValue = this.occupiesField;
+         if (this.occupiesField != null)
+         {
+            this.occupiesField = null;
+            oldValue.setOccupiedBy(null);
+         }
+         this.occupiesField = value;
+         if (value != null)
+         {
+            value.setOccupiedBy(this);
+         }
+         firePropertyChange("occupiesField", oldValue, value);
       }
       return this;
    }
@@ -151,42 +224,24 @@ public class Unit
       return true;
    }
 
-   public void removeYou()
-   {
-      this.setArmyConfiguration(null);
-
-   }
-
-
-   public static final String PROPERTY_canAttack = "canAttack";
-
-   private java.util.ArrayList<String> canAttack;
-
-   public java.util.ArrayList<String> getCanAttack()
-   {
-      return canAttack;
-   }
-
-   public Unit setCanAttack(java.util.ArrayList<String> value)
-   {
-      if (value != this.canAttack)
-      {
-         java.util.ArrayList<String> oldValue = this.canAttack;
-         this.canAttack = value;
-         firePropertyChange("canAttack", oldValue, value);
-      }
-      return this;
-   }
-
-
    @Override
    public String toString()
    {
       StringBuilder result = new StringBuilder();
 
       result.append(" ").append(this.getId());
+      result.append(" ").append(this.getType());
 
 
       return result.substring(1);
    }
+
+   public void removeYou()
+   {
+      this.setArmyConfiguration(null);
+      this.setOccupiesField(null);
+
+   }
+
+
 }
