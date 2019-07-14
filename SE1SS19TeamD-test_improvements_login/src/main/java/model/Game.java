@@ -93,18 +93,18 @@ public class Game
 
    public static final String PROPERTY_observingPlayers = "observingPlayers";
 
-   private java.util.ArrayList<Player> observingPlayers;
+   private java.util.ArrayList<%s> observingPlayers;
 
-   public java.util.ArrayList<Player> getObservingPlayers()
+   public java.util.ArrayList<%s> getObservingPlayers()
    {
       return observingPlayers;
    }
 
-   public Game setObservingPlayers(java.util.ArrayList<Player> value)
+   public Game setObservingPlayers(java.util.ArrayList<%s> value)
    {
       if (value != this.observingPlayers)
       {
-         java.util.ArrayList<Player> oldValue = this.observingPlayers;
+         java.util.ArrayList<%s> oldValue = this.observingPlayers;
          this.observingPlayers = value;
          firePropertyChange("observingPlayers", oldValue, value);
       }

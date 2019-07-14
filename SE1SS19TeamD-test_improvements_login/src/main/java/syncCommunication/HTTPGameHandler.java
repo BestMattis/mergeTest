@@ -60,7 +60,6 @@ public class HTTPGameHandler {
 	
         try {
             JSONObject response = hr.getAsUser(userKey, "/game");
-
             if (response.getString("status").equals("success")) {
                 JSONArray jArray = response.getJSONArray("data");
                 ArrayList<JSONObject> lobbyList = new ArrayList<>();
@@ -69,11 +68,8 @@ public class HTTPGameHandler {
                     for (int i = 0; i < jArray.length(); ++i) {
                         lobbyList.add(jArray.getJSONObject(i));
                     }
-                    return lobbyList;
-
-                } else {
-                    return null;
                 }
+                return lobbyList;
             } else {
                 throw new LoginFailedException(response.getString("message"));
             }

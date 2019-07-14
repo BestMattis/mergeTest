@@ -49,9 +49,7 @@ public class GameListController {
         SynchronousGameCommunicator gameCommunicator = new SynchronousGameCommunicator(httpReq);
         ArrayList<JSONObject> list = null;
         try {
-            if (gameCommunicator.getUserKey() != null) {
-                list = gameCommunicator.getAllGames();
-            }
+            list = gameCommunicator.getAllGames();
         } catch (LoginFailedException e) {
             e.printStackTrace();
         }

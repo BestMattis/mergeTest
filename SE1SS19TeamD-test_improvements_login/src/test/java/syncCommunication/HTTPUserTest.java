@@ -24,7 +24,9 @@ public class HTTPUserTest {
 	String password = "myPassword";
 
 	HttpRequests req = new HttpRequests();
-	req.setJsonAdapter((url, json) -> {
+
+	req.setJsonAdapter((method, url, json) -> {
+
 	    JSONTestUtils.assertJSON(json, name, "name");
 	    JSONTestUtils.assertJSON(json, password, "password");
 	    req.injectResponse(new JSONObject().put("status", "success"));
@@ -49,7 +51,9 @@ public class HTTPUserTest {
 	String password = "myPassword";
 
 	HttpRequests req = new HttpRequests();
-	req.setJsonAdapter((url, json) -> {
+
+	req.setJsonAdapter((method, url, json) -> {
+
 	    Assert.assertEquals("URL not correct", "/user/login", url);
 	    JSONTestUtils.assertJSON(json, name, "name");
 	    JSONTestUtils.assertJSON(json, password, "password");
@@ -75,7 +79,9 @@ public class HTTPUserTest {
     @Test
     public void testLogout() {
 	HttpRequests req = new HttpRequests();
-	req.setJsonAdapter((url, json) -> {
+
+	req.setJsonAdapter((method, url, json) -> {
+
 	    Assert.assertEquals("URL not correct", "/user/logout", url);
 	});
 
@@ -96,7 +102,9 @@ public class HTTPUserTest {
     @Test
     public void testGetAllUsers() {
 	HttpRequests req = new HttpRequests();
-	req.setJsonAdapter((url, json) -> {
+
+	req.setJsonAdapter((method, url, json) -> {
+
 	    Assert.assertEquals("URL not correct", "/user", url);
 	    req.injectResponse(
 		    new JSONObject().put("data", new JSONArray().put("Alice").put("Bob")).put("status", "success"));

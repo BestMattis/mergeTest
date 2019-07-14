@@ -94,7 +94,7 @@ public class HttpRequests {
 
 
         if (jAdapter != null) {
-            jAdapter.onRequestSend(postToURL, jsonObject);
+            jAdapter.onRequestSend("POST", postToURL, jsonObject);
         }
 
         if (injection != null) {
@@ -119,7 +119,8 @@ public class HttpRequests {
             throws ExecutionException, InterruptedException, JSONException, LoginFailedException {
 
         if (jAdapter != null) {
-            jAdapter.onRequestSend(postToURL, jsonObject);
+
+            jAdapter.onRequestSend("POST", postToURL, jsonObject);
         }
 
         if (injection != null) {
@@ -151,7 +152,9 @@ public class HttpRequests {
             throws ExecutionException, InterruptedException, JSONException, LoginFailedException {
 
         if (jAdapter != null) {
-            jAdapter.onRequestSend(getFromURL, null);
+
+            jAdapter.onRequestSend("GET", getFromURL, null);
+
         }
 
         if (injection != null) {
@@ -180,7 +183,9 @@ public class HttpRequests {
             throws ExecutionException, InterruptedException, JSONException, LoginFailedException {
 
         if (jAdapter != null) {
-            jAdapter.onRequestSend(deleteAtURL, null);
+
+            jAdapter.onRequestSend("DELETE", deleteAtURL, null);
+
         }
 
         if (injection != null) {
@@ -210,7 +215,9 @@ public class HttpRequests {
 
 
         if (jAdapter != null) {
-            jAdapter.onRequestSend(postToURL, jsonObject);
+
+            jAdapter.onRequestSend("PUT", postToURL, jsonObject);
+
         }
 
         if (injection != null) {
@@ -243,7 +250,7 @@ public class HttpRequests {
             jAdapter.onRequestSend("/user/login", userData);
             return;
         }
-        
+
         updateLastRequestTime();
         limitRequestsPerSecond();
         
@@ -261,6 +268,7 @@ public class HttpRequests {
     }
 
     void logOut() throws LoginFailedException {
+
         
 	if (jAdapter != null) {
             jAdapter.onRequestSend("/user/logout", null);
@@ -269,10 +277,7 @@ public class HttpRequests {
 	
 	updateLastRequestTime();
         limitRequestsPerSecond();
-
-        if (userKey == null) {
-            throw new LoginFailedException("Log in first");
-        }
+        
         try {
             JSONObject response = getAsUser(userKey, "/user/logout");
 

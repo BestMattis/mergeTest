@@ -3,7 +3,6 @@ package createGame;
 import gameList.GameListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -111,9 +110,9 @@ public class CreateGameController {
             }
 
             game.withPlayers(Model.getApp().getCurrentPlayer());
-            Model.getWebSocketComponent().joinGame(gameID, Model.getApp().getCurrentPlayer()
-                    .getArmyConfigurations().get(0).getId());
-            System.out.println(Model.getApp().getCurrentPlayer().getGame().getName() + "lelelel");
+
+            Model.getWebSocketComponent().joinGameLobby(gameID);
+
 
             System.out.println("Game: " + gameName + " was created. Maximal amount of Players: " + playerNumber);
 

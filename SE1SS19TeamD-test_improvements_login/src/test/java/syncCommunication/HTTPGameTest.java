@@ -27,7 +27,9 @@ public class HTTPGameTest {
 	int noOfNeededPlayers = 4;
 
 	HttpRequests req = new HttpRequests();
-	req.setJsonAdapter((url, json) -> {
+
+	req.setJsonAdapter((method, url, json) -> {
+
 	    JSONTestUtils.assertJSON(json, gameName, "name");
 	    JSONTestUtils.assertJSON(json, noOfNeededPlayers, "neededPlayer");
 	    JSONObject responseData = new JSONObject();
@@ -88,7 +90,9 @@ public class HTTPGameTest {
     public void testGetAllGames() {
 	String gameID = "123456789";
 	HttpRequests req = new HttpRequests();
-	req.setJsonAdapter((url, json) -> {
+
+	req.setJsonAdapter((method, url, json) -> {
+
 	    req.injectResponse(new JSONObject().put("data", new JSONArray().put(new JSONObject().put("id", gameID)))
 		    .put("status", "success"));
 	});
@@ -107,7 +111,9 @@ public class HTTPGameTest {
     private HttpRequests setupHTTPRequests(String gameID) {
 	final AtomicBoolean alreadyCalled = new AtomicBoolean(false);
 	HttpRequests req = new HttpRequests();
-	req.setJsonAdapter((url, json) -> {
+
+	req.setJsonAdapter((method, url, json) -> {
+
 
 	    if (!alreadyCalled.get()) {
 		req.injectResponse(new JSONObject().put("data", new JSONArray().put(new JSONObject().put("id", gameID)))

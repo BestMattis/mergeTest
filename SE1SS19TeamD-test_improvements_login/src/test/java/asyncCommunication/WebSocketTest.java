@@ -5,6 +5,7 @@ import model.ChatMessage;
 import model.Game;
 import model.Model;
 import model.Player;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;

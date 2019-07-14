@@ -5,6 +5,9 @@ import org.json.JSONObject;
 @FunctionalInterface
 public interface JsonAdapter {
 
-    void onRequestSend(String url, JSONObject json);
+
+
+    void onRequestSend(String method, String url, JSONObject json);
+
 
 }

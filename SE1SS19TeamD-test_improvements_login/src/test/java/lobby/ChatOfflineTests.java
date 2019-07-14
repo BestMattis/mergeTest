@@ -188,7 +188,9 @@ public class ChatOfflineTests extends ApplicationTest {
 	 * =============== WEBSOCKET MOCKING ===============
 	 */
 	
-	Model.getWebSocketComponent().getChatClient().setJSONAdapter((url, json) -> {
+
+	Model.getWebSocketComponent().getChatClient().setJSONAdapter((method, url, json) -> {
+
 	    JSONTestUtils.assertJSON(json, "AliceTeamD", "from");
 	    JSONTestUtils.assertJSON(json, "all", "channel");
 	    JSONTestUtils.assertJSON(json, "Hello everybody", "message");
@@ -303,7 +305,9 @@ public class ChatOfflineTests extends ApplicationTest {
 	 * =============== WEBSOCKET MOCKING ===============
 	 */
 	
-	Model.getWebSocketComponent().getChatClient().setJSONAdapter((url, json) -> {
+
+	Model.getWebSocketComponent().getChatClient().setJSONAdapter((method, url, json) -> {
+
 	    JSONTestUtils.assertJSON(json, "AliceTeamD", "from");
 	    JSONTestUtils.assertJSON(json, "BobTeamD", "to");
 	    JSONTestUtils.assertJSON(json, "private", "channel");

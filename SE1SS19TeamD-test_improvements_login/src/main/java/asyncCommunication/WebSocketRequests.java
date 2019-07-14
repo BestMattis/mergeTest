@@ -5,6 +5,7 @@ import syncCommunication.JsonAdapter;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import syncCommunication.JsonAdapter;
 
 import javax.websocket.*;
 import java.io.IOException;
@@ -281,19 +282,20 @@ public class WebSocketRequests {
     private void sendMessage(JSONObject jsonObject) {
 	
 	if(this.adapter != null) {
-	    this.adapter.onRequestSend(this.uri.toString(), jsonObject);
+	    this.adapter.onRequestSend("WS", this.uri.toString(), jsonObject);
 	    return;
 	}
 	this.session.getAsyncRemote().sendText(jsonObject.toString());
     }
     
     private void sendNOOP() {
-	if(this.adapter == null) {
+	    if(this.adapter == null) {
     	    try {
                 session.getBasicRemote().sendText(NOOP_OP);
             } catch (Exception e) {
                 System.err.println("cannot send NOOP");
             }
-	}
+	    }
+
     }
 }

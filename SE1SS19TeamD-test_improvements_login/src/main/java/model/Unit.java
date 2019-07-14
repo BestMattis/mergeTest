@@ -30,18 +30,18 @@ public class Unit
 
    public static final String PROPERTY_canAttack = "canAttack";
 
-   private java.util.ArrayList<String> canAttack;
+   private java.util.ArrayList<%s> canAttack;
 
-   public java.util.ArrayList<String> getCanAttack()
+   public java.util.ArrayList<%s> getCanAttack()
    {
       return canAttack;
    }
 
-   public Unit setCanAttack(java.util.ArrayList<String> value)
+   public Unit setCanAttack(java.util.ArrayList<%s> value)
    {
       if (value != this.canAttack)
       {
-         java.util.ArrayList<String> oldValue = this.canAttack;
+         java.util.ArrayList<%s> oldValue = this.canAttack;
          this.canAttack = value;
          firePropertyChange("canAttack", oldValue, value);
       }
