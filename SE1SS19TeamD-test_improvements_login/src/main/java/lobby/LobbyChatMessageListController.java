@@ -32,7 +32,7 @@ public class LobbyChatMessageListController {
      *
      * @param text the text to display
      */
-    public void addMessage(String text) {
+    public void displayMessage(String text) {
         Label txtlabel = new Label(text);
         history.getChildren().add(txtlabel);
     }

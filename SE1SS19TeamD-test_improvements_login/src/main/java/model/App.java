@@ -1,10 +1,9 @@
 package model;
 
+import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
-import java.beans.PropertyChangeListener;
-
-public class App 
+public class App  
 {
 
    public static final java.util.ArrayList<Player> EMPTY_allPlayers = new java.util.ArrayList<Player>()
@@ -338,6 +337,62 @@ public class App
 
 
    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 }

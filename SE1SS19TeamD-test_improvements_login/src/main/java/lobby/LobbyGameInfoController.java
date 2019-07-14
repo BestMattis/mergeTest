@@ -26,7 +26,7 @@ public class LobbyGameInfoController {
     /**
      * sets the action on the back button and hides the panel
      */
-    public void initialize(){
+    public void initialize() {
         back.setOnAction(t -> backToLobby());
         resetGameInfo();
         initCredits();
@@ -36,27 +36,27 @@ public class LobbyGameInfoController {
     /**
      * action called by the back button to go back to the lobby
      */
-    public void backToLobby(){
+    public void backToLobby() {
         System.out.println("back");
         base2.setVisible(false);
         resetGameInfo();
     }
 
-    public void show(){
+    public void show() {
         base2.setVisible(true);
     }
 
     /**
      * resets the infopage every time the panel is closed
      */
-    public void resetGameInfo(){
+    public void resetGameInfo() {
         web.getEngine().load("https://warswiki.org/wiki/Main_Page");
     }
 
     /**
      * method to generate the credits text
      */
-    public void initCredits(){
+    public void initCredits() {
         ResourceBundle cbundle = loadBundle();
         Text poTitle = new Text();
         poTitle.setText(cbundle.getString("credits.owner") + "\n");
@@ -86,10 +86,12 @@ public class LobbyGameInfoController {
         credits.getChildren().addAll(poTitle, po, smTitle, sm, devTitle, devs);
     }
 
-    /** loads the properties
+    /**
+     * loads the properties
+     *
      * @return the properties bundle
      */
-    public ResourceBundle loadBundle(){
+    public ResourceBundle loadBundle() {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         InputStream inputStream = null;
         try {

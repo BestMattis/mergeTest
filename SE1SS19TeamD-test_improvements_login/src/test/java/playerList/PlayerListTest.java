@@ -27,7 +27,7 @@ public class PlayerListTest extends ApplicationTest {
 
         App app = new App().withAllPlayers(new Player().setName("TestPlayer"));
 
-        Model.getInstance().setApp(app);
+        Model.setApp(app);
 
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         InputStream inputStream = classLoader.getResource("en-US.properties").openStream();
@@ -49,7 +49,7 @@ public class PlayerListTest extends ApplicationTest {
     }
 
     @Test
-    public void numberOfPlayers(){
+    public void numberOfPlayers() {
         Assert.assertEquals(Model.getApp().getAllPlayers().size(), Integer.parseInt(playerListController.getNumberOfPlayers().getText()));
     }
 

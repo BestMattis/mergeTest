@@ -8,6 +8,9 @@ import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
 
+import syncCommunication.RESTExceptions.GameIdNotFoundException;
+import syncCommunication.RESTExceptions.GameLobbyCreationFailedException;
+import syncCommunication.RESTExceptions.LoginFailedException;
 import testUtils.JSONTestUtils;
 
 /**
@@ -24,14 +27,22 @@ public class HTTPGameTest {
 	int noOfNeededPlayers = 4;
 
 	HttpRequests req = new HttpRequests();
-	req.setJsonAdapter((url, json) -> {
+	req.setJsonAdapter((method, url, json) -> {
 	    JSONTestUtils.assertJSON(json, gameName, "name");
 	    JSONTestUtils.assertJSON(json, noOfNeededPlayers, "neededPlayer");
-	    req.injectResponse(new JSONObject().put("status", "success"));
+	    JSONObject responseData = new JSONObject();
+	    responseData.put("gameId", "my-game-id");
+	    req.injectResponse(new JSONObject().put("status", "success").put("data", responseData));
 	});
 	SynchronousGameCommunicator gameCommunicator = new SynchronousGameCommunicator(req);
-	boolean result = gameCommunicator.openGame(gameName, noOfNeededPlayers);
-	Assert.assertTrue("Game creation was successful but openGame() returned false", result);
+	String result = null;
+	try {
+	    result = gameCommunicator.openGame(gameName, noOfNeededPlayers);
+	} catch (GameLobbyCreationFailedException | LoginFailedException e) {
+	    e.printStackTrace();
+	}
+	Assert.assertTrue("Game creation was successful but openGame() returned no userkey",
+		result != null && !result.equals(""));
     }
 
     /**
@@ -43,7 +54,12 @@ public class HTTPGameTest {
 
 	HttpRequests req = this.setupHTTPRequests(gameID);
 	SynchronousGameCommunicator gameCommunicator = new SynchronousGameCommunicator(req);
-	boolean result = gameCommunicator.joinGame(gameID);
+	boolean result = false;
+	try {
+	    result = gameCommunicator.joinGame(gameID);
+	} catch (GameIdNotFoundException | LoginFailedException e) {
+	    e.printStackTrace();
+	}
 	Assert.assertTrue("Join was successful but joinGame() returned false", result);
     }
 
@@ -56,7 +72,12 @@ public class HTTPGameTest {
 
 	HttpRequests req = this.setupHTTPRequests(gameID);
 	SynchronousGameCommunicator gameCommunicator = new SynchronousGameCommunicator(req);
-	boolean result = gameCommunicator.deleteGame(gameID);
+	boolean result = false;
+	try {
+	    result = gameCommunicator.deleteGame(gameID);
+	} catch (GameIdNotFoundException | LoginFailedException e) {
+	    e.printStackTrace();
+	}
 	Assert.assertTrue("Deletion was successful but deleteGame() returned false", result);
     }
 
@@ -67,13 +88,18 @@ public class HTTPGameTest {
     public void testGetAllGames() {
 	String gameID = "123456789";
 	HttpRequests req = new HttpRequests();
-	req.setJsonAdapter((url, json) -> {
+	req.setJsonAdapter((method, url, json) -> {
 	    req.injectResponse(new JSONObject().put("data", new JSONArray().put(new JSONObject().put("id", gameID)))
 		    .put("status", "success"));
 	});
 
 	SynchronousGameCommunicator gameCommunicator = new SynchronousGameCommunicator(req);
-	ArrayList<JSONObject> result = gameCommunicator.getAllGames();
+	ArrayList<JSONObject> result = null;
+	try {
+	    result = gameCommunicator.getAllGames();
+	} catch (LoginFailedException e) {
+	    e.printStackTrace();
+	}
 	Assert.assertEquals("GET Games was successful but getAllGames() returned a wrong game list", gameID,
 		result.get(0).get("id"));
     }
@@ -81,7 +107,7 @@ public class HTTPGameTest {
     private HttpRequests setupHTTPRequests(String gameID) {
 	final AtomicBoolean alreadyCalled = new AtomicBoolean(false);
 	HttpRequests req = new HttpRequests();
-	req.setJsonAdapter((url, json) -> {
+	req.setJsonAdapter((method, url, json) -> {
 
 	    if (!alreadyCalled.get()) {
 		req.injectResponse(new JSONObject().put("data", new JSONArray().put(new JSONObject().put("id", gameID)))

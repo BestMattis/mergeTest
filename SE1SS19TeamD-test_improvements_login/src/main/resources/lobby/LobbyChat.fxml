@@ -32,7 +32,7 @@
             <items>
                 <AnchorPane styleClass="pane">
                     <children>
-                        <TextField fx:id="message" layoutX="-17.0" layoutY="11.0" promptText="%chat.prompt"
+                        <TextField id="message" fx:id="message" layoutX="-17.0" layoutY="11.0" promptText="%chat.prompt"
                                    AnchorPane.bottomAnchor="3.0" AnchorPane.leftAnchor="3.0"
                                    AnchorPane.rightAnchor="3.0" AnchorPane.topAnchor="3.0"/>
                     </children>
