@@ -1,0 +1,627 @@
+- c1: 	ClassModel
+  classes: 	player2 	game3 	app4 	chatMessage5 	armyConfiguration6 	unit7 	gameField8 	field9 	
+  defaultPropertyStyle: 	POJO
+  defaultRoleType: 	"java.util.ArrayList<%s>"
+  mainJavaDir: 	"src/generatedSources/java"
+  packageName: 	model
+  packageSrcFolder: 	"src/generatedSources/java/model"
+
+- player2: 	Clazz
+  attributes: 	name10 	id11 	color12 	isReady13 	password14 	
+  model: 	c1
+  modified: 	false
+  name: 	Player
+  propertyStyle: 	POJO
+  roles: 	game15 	turnPlayerGame16 	receivedMessages17 	sentMessages18 	app19 	myApp20 	armyConfigurations21 	currentArmyConfiguration22 	
+
+- game3: 	Clazz
+  attributes: 	name23 	capacity24 	gameId25 	joinedPlayers26 	winner27 	
+  model: 	c1
+  modified: 	false
+  name: 	Game
+  propertyStyle: 	POJO
+  roles: 	players28 	ingameMessages29 	turnPlayer30 	selectedUnit31 	app32 	gameField33 	
+
+- app4: 	Clazz
+  model: 	c1
+  modified: 	false
+  name: 	App
+  propertyStyle: 	POJO
+  roles: 	allPlayers34 	allGames35 	currentPlayer36 	allChatMessages37 	
+
+- chatMessage5: 	Clazz
+  attributes: 	message38 	channel39 	date40 	
+  model: 	c1
+  modified: 	false
+  name: 	ChatMessage
+  propertyStyle: 	POJO
+  roles: 	game41 	receiver42 	sender43 	app44 	
+
+- armyConfiguration6: 	Clazz
+  attributes: 	name45 	id46 	
+  model: 	c1
+  modified: 	false
+  name: 	ArmyConfiguration
+  propertyStyle: 	POJO
+  roles: 	player47 	player48 	units49 	
+
+- unit7: 	Clazz
+  attributes: 	id50 	canAttack51 	type52 	mp53 	hp54 	
+  model: 	c1
+  modified: 	false
+  name: 	Unit
+  propertyStyle: 	POJO
+  roles: 	selectedBy55 	armyConfiguration56 	occupiesField57 	currentField58 	
+
+- gameField8: 	Clazz
+  attributes: 	sizeX59 	sizeY60 	gameFieldLoaded61 	
+  model: 	c1
+  modified: 	false
+  name: 	GameField
+  propertyStyle: 	POJO
+  roles: 	fields62 	game63 	
+
+- field9: 	Clazz
+  attributes: 	isPassable64 	posX65 	posY66 	id67 	type68 	
+  model: 	c1
+  modified: 	false
+  name: 	Field
+  propertyStyle: 	POJO
+  roles: 	gameField69 	neighbour70 	neighbour71 	occupiedBy72 	currentUnitOnField73 	
+
+- name10: 	Attribute
+  clazz: 	player2
+  modified: 	false
+  name: 	name
+  propertyStyle: 	POJO
+  type: 	String
+
+- id11: 	Attribute
+  clazz: 	player2
+  modified: 	false
+  name: 	id
+  propertyStyle: 	POJO
+  type: 	String
+
+- color12: 	Attribute
+  clazz: 	player2
+  modified: 	false
+  name: 	color
+  propertyStyle: 	POJO
+  type: 	String
+
+- isReady13: 	Attribute
+  clazz: 	player2
+  modified: 	false
+  name: 	isReady
+  propertyStyle: 	POJO
+  type: 	boolean
+
+- password14: 	Attribute
+  clazz: 	player2
+  modified: 	false
+  name: 	password
+  propertyStyle: 	POJO
+  type: 	String
+
+- game15: 	AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	player2
+  modified: 	false
+  name: 	game
+  other: 	players28
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- turnPlayerGame16: 	AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	player2
+  modified: 	false
+  name: 	turnPlayerGame
+  other: 	turnPlayer30
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- receivedMessages17: 	AssocRole
+  aggregation: 	false
+  cardinality: 	42
+  clazz: 	player2
+  modified: 	false
+  name: 	receivedMessages
+  other: 	receiver42
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- sentMessages18: 	AssocRole
+  aggregation: 	false
+  cardinality: 	42
+  clazz: 	player2
+  modified: 	false
+  name: 	sentMessages
+  other: 	sender43
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- app19: 	AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	player2
+  modified: 	false
+  name: 	app
+  other: 	allPlayers34
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- myApp20: 	AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	player2
+  modified: 	false
+  name: 	myApp
+  other: 	currentPlayer36
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- armyConfigurations21: 	AssocRole
+  aggregation: 	false
+  cardinality: 	42
+  clazz: 	player2
+  modified: 	false
+  name: 	armyConfigurations
+  other: 	player47
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- currentArmyConfiguration22: 	AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	player2
+  modified: 	false
+  name: 	currentArmyConfiguration
+  other: 	player48
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- name23: 	Attribute
+  clazz: 	game3
+  modified: 	false
+  name: 	name
+  propertyStyle: 	POJO
+  type: 	String
+
+- capacity24: 	Attribute
+  clazz: 	game3
+  modified: 	false
+  name: 	capacity
+  propertyStyle: 	POJO
+  type: 	int
+
+- gameId25: 	Attribute
+  clazz: 	game3
+  modified: 	false
+  name: 	gameId
+  propertyStyle: 	POJO
+  type: 	String
+
+- joinedPlayers26: 	Attribute
+  clazz: 	game3
+  modified: 	false
+  name: 	joinedPlayers
+  propertyStyle: 	POJO
+  type: 	int
+
+- winner27: 	Attribute
+  clazz: 	game3
+  modified: 	false
+  name: 	winner
+  propertyStyle: 	POJO
+  type: 	String
+
+- players28: 	AssocRole
+  aggregation: 	false
+  cardinality: 	42
+  clazz: 	game3
+  modified: 	false
+  name: 	players
+  other: 	game15
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- ingameMessages29: 	AssocRole
+  aggregation: 	false
+  cardinality: 	42
+  clazz: 	game3
+  modified: 	false
+  name: 	ingameMessages
+  other: 	game41
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- turnPlayer30: 	AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	game3
+  modified: 	false
+  name: 	turnPlayer
+  other: 	turnPlayerGame16
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- selectedUnit31: 	AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	game3
+  modified: 	false
+  name: 	selectedUnit
+  other: 	selectedBy55
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- app32: 	AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	game3
+  modified: 	false
+  name: 	app
+  other: 	allGames35
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- gameField33: 	AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	game3
+  modified: 	false
+  name: 	gameField
+  other: 	game63
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- allPlayers34: 	AssocRole
+  aggregation: 	false
+  cardinality: 	42
+  clazz: 	app4
+  modified: 	false
+  name: 	allPlayers
+  other: 	app19
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- allGames35: 	AssocRole
+  aggregation: 	false
+  cardinality: 	42
+  clazz: 	app4
+  modified: 	false
+  name: 	allGames
+  other: 	app32
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- currentPlayer36: 	AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	app4
+  modified: 	false
+  name: 	currentPlayer
+  other: 	myApp20
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- allChatMessages37: 	AssocRole
+  aggregation: 	false
+  cardinality: 	42
+  clazz: 	app4
+  modified: 	false
+  name: 	allChatMessages
+  other: 	app44
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- message38: 	Attribute
+  clazz: 	chatMessage5
+  modified: 	false
+  name: 	message
+  propertyStyle: 	POJO
+  type: 	String
+
+- channel39: 	Attribute
+  clazz: 	chatMessage5
+  modified: 	false
+  name: 	channel
+  propertyStyle: 	POJO
+  type: 	String
+
+- date40: 	Attribute
+  clazz: 	chatMessage5
+  modified: 	false
+  name: 	date
+  propertyStyle: 	POJO
+  type: 	String
+
+- game41: 	AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	chatMessage5
+  modified: 	false
+  name: 	game
+  other: 	ingameMessages29
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- receiver42: 	AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	chatMessage5
+  modified: 	false
+  name: 	receiver
+  other: 	receivedMessages17
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- sender43: 	AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	chatMessage5
+  modified: 	false
+  name: 	sender
+  other: 	sentMessages18
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- app44: 	AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	chatMessage5
+  modified: 	false
+  name: 	app
+  other: 	allChatMessages37
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- name45: 	Attribute
+  clazz: 	armyConfiguration6
+  modified: 	false
+  name: 	name
+  propertyStyle: 	POJO
+  type: 	String
+
+- id46: 	Attribute
+  clazz: 	armyConfiguration6
+  modified: 	false
+  name: 	id
+  propertyStyle: 	POJO
+  type: 	String
+
+- player47: 	AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	armyConfiguration6
+  modified: 	false
+  name: 	player
+  other: 	armyConfigurations21
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- player48: 	AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	armyConfiguration6
+  modified: 	false
+  name: 	player
+  other: 	currentArmyConfiguration22
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- units49: 	AssocRole
+  aggregation: 	false
+  cardinality: 	42
+  clazz: 	armyConfiguration6
+  modified: 	false
+  name: 	units
+  other: 	armyConfiguration56
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- id50: 	Attribute
+  clazz: 	unit7
+  modified: 	false
+  name: 	id
+  propertyStyle: 	POJO
+  type: 	String
+
+- canAttack51: 	Attribute
+  clazz: 	unit7
+  modified: 	false
+  name: 	canAttack
+  propertyStyle: 	POJO
+  type: 	"java.util.ArrayList<String>"
+
+- type52: 	Attribute
+  clazz: 	unit7
+  modified: 	false
+  name: 	type
+  propertyStyle: 	POJO
+  type: 	String
+
+- mp53: 	Attribute
+  clazz: 	unit7
+  modified: 	false
+  name: 	mp
+  propertyStyle: 	POJO
+  type: 	int
+
+- hp54: 	Attribute
+  clazz: 	unit7
+  modified: 	false
+  name: 	hp
+  propertyStyle: 	POJO
+  type: 	int
+
+- selectedBy55: 	AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	unit7
+  modified: 	false
+  name: 	selectedBy
+  other: 	selectedUnit31
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- armyConfiguration56: 	AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	unit7
+  modified: 	false
+  name: 	armyConfiguration
+  other: 	units49
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- occupiesField57: 	AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	unit7
+  modified: 	false
+  name: 	occupiesField
+  other: 	occupiedBy72
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- currentField58: 	AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	unit7
+  modified: 	false
+  name: 	currentField
+  other: 	currentUnitOnField73
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- sizeX59: 	Attribute
+  clazz: 	gameField8
+  modified: 	false
+  name: 	sizeX
+  propertyStyle: 	POJO
+  type: 	int
+
+- sizeY60: 	Attribute
+  clazz: 	gameField8
+  modified: 	false
+  name: 	sizeY
+  propertyStyle: 	POJO
+  type: 	int
+
+- gameFieldLoaded61: 	Attribute
+  clazz: 	gameField8
+  modified: 	false
+  name: 	gameFieldLoaded
+  propertyStyle: 	POJO
+  type: 	boolean
+
+- fields62: 	AssocRole
+  aggregation: 	false
+  cardinality: 	42
+  clazz: 	gameField8
+  modified: 	false
+  name: 	fields
+  other: 	gameField69
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- game63: 	AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	gameField8
+  modified: 	false
+  name: 	game
+  other: 	gameField33
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- isPassable64: 	Attribute
+  clazz: 	field9
+  modified: 	false
+  name: 	isPassable
+  propertyStyle: 	POJO
+  type: 	boolean
+
+- posX65: 	Attribute
+  clazz: 	field9
+  modified: 	false
+  name: 	posX
+  propertyStyle: 	POJO
+  type: 	int
+
+- posY66: 	Attribute
+  clazz: 	field9
+  modified: 	false
+  name: 	posY
+  propertyStyle: 	POJO
+  type: 	int
+
+- id67: 	Attribute
+  clazz: 	field9
+  modified: 	false
+  name: 	id
+  propertyStyle: 	POJO
+  type: 	String
+
+- type68: 	Attribute
+  clazz: 	field9
+  modified: 	false
+  name: 	type
+  propertyStyle: 	POJO
+  type: 	String
+
+- gameField69: 	AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	field9
+  modified: 	false
+  name: 	gameField
+  other: 	fields62
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- neighbour70: 	AssocRole
+  aggregation: 	false
+  cardinality: 	42
+  clazz: 	field9
+  modified: 	false
+  name: 	neighbour
+  other: 	neighbour71
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- neighbour71: 	AssocRole
+  aggregation: 	false
+  cardinality: 	42
+  clazz: 	field9
+  modified: 	false
+  name: 	neighbour
+  other: 	neighbour70
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- occupiedBy72: 	AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	field9
+  modified: 	false
+  name: 	occupiedBy
+  other: 	occupiesField57
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
+- currentUnitOnField73: 	AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	field9
+  modified: 	false
+  name: 	currentUnitOnField
+  other: 	currentField58
+  propertyStyle: 	POJO
+  roleType: 	"java.util.ArrayList<%s>"
+
