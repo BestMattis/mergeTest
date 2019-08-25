@@ -114,7 +114,7 @@ public class GameLobbyController {
     }
 
     /**
-     * load the waitinglobbyScreen and set the actions
+     * load the waitinglobbyScreen and set the actions nad test new merge blala
      */
     public void initialize() {
         hide();
