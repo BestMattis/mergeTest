@@ -1,6 +1,7 @@
 package syncCommunication;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 import syncCommunication.RESTExceptions.LoginFailedException;
 import syncCommunication.RESTExceptions.RegistrationFailedException;
 
@@ -14,7 +15,7 @@ public class SynchronousUserCommunicator extends SynchronousCommunicator {
      * @param httpReq Used to assign the user. Same HttpRequests leads to the same logged in user.
      */
     public SynchronousUserCommunicator(HttpRequests httpReq) {
-	super(httpReq);
+        super(httpReq);
         uHandler = new HTTPUserHandler(httpReq);
     }
 
@@ -36,6 +37,22 @@ public class SynchronousUserCommunicator extends SynchronousCommunicator {
         }
 
         return false;
+    }
+
+    /**
+     * Register a temporary user.
+     *
+     * @return JSONObject containing the Strings "password" and "name" of the temp user.
+     */
+    public JSONObject registerTempUser() throws RegistrationFailedException {
+
+        try {
+            return uHandler.registerTempUser();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     /**

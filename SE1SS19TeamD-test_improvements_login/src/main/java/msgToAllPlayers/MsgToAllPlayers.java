@@ -8,6 +8,12 @@ import model.Model;
 
 public class MsgToAllPlayers {
 
+    private Model model;
+
+    public MsgToAllPlayers(Model model) {
+        this.model = model;
+    }
+
     /**
      * This method creates new Chat Object with the message and puts this chat
      * object into the data model.
@@ -19,7 +25,7 @@ public class MsgToAllPlayers {
     @SuppressWarnings("static-access")
     public void sendToAll(String text) {
 
-        App app = Model.getApp();
+        App app = model.getApp();
         ChatMessage chatToSend = new ChatMessage().setChannel("all").setMessage(text)
                 .setSender(app.getCurrentPlayer());
         app.withAllChatMessages(chatToSend); // add message to data model

@@ -15,11 +15,11 @@ public class HTTPArmyHandler {
     private final int ARMY_SIZE = 10;
 
     private HttpRequests hr;
+    private ArrayList<JSONObject> unitTypes = null;
 
     HTTPArmyHandler(HttpRequests httpReq) {
         hr = httpReq;
     }
-    private ArrayList<JSONObject> unitTypes = null;
 
     /*
      * A method to check if at least one incorrect unit id is int he array.
@@ -39,10 +39,10 @@ public class HTTPArmyHandler {
         }
 
         for (String s : units) {
-          if (!idList.contains(s)) {
+            if (!idList.contains(s)) {
 
-              return true;
-          }
+                return true;
+            }
         }
 
         return false;
@@ -90,7 +90,7 @@ public class HTTPArmyHandler {
      */
     ArrayList<JSONObject> getOwnedArmies(String userKey) throws LoginFailedException {
         try {
-            JSONObject response = hr.getAsUser(getUserKey(), "/army");
+            JSONObject response = hr.getJsonAsUser(getUserKey(), "/army");
 
             if (response.getString("status").equals("success")) {
                 JSONArray jArray = response.getJSONArray("data");
@@ -123,7 +123,7 @@ public class HTTPArmyHandler {
     JSONObject getArmyById(String userKey, String id) throws ArmyIdNotFoundException, LoginFailedException {
 
         try {
-            JSONObject response = hr.getAsUser(userKey, "/army/" + id);
+            JSONObject response = hr.getJsonAsUser(userKey, "/army/" + id);
 
             if (response.getString("status").equals("success")) {
                 return response.getJSONObject("data");
@@ -165,7 +165,7 @@ public class HTTPArmyHandler {
         armyData.put("units", units);
 
         try {
-            JSONObject response = hr.putJsonAs(userKey, armyData ,"/army/" + id);
+            JSONObject response = hr.putJsonAs(userKey, armyData, "/army/" + id);
             if (response.getString("status").equals("success")) {
                 return true;
 
@@ -220,7 +220,7 @@ public class HTTPArmyHandler {
      */
     ArrayList<JSONObject> getUnits(String userKey) throws LoginFailedException {
         try {
-            JSONObject response = hr.getAsUser(getUserKey(), "/army/units");
+            JSONObject response = hr.getJsonAsUser(getUserKey(), "/army/units");
 
             if (response.getString("status").equals("success")) {
                 JSONArray jArray = response.getJSONArray("data");

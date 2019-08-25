@@ -30,7 +30,7 @@ public class HttpRequests {
 
             if (!checkLastRequest() && userKey != null) {
                 try {
-                    getAsUser(userKey, "/user");
+                    getJsonAsUser(userKey, "/user");
 
                 } catch (JSONException | ExecutionException | InterruptedException | LoginFailedException e) {
                     e.printStackTrace();
@@ -125,7 +125,7 @@ public class HttpRequests {
         if (injection != null) {
             return injection;
         }
-        
+
         if (userKey == null) {
             throw new LoginFailedException("Log in first");
         }
@@ -142,12 +142,36 @@ public class HttpRequests {
         return new JSONObject(response.getBody().toString());
     }
 
+    /*
+     * GET HTTP request from a URL without userKey.
+     * Throws ExecutionException, InterruptedException and JSONException.
+     */
+    JSONObject getJson(String getFromURL)
+            throws ExecutionException, InterruptedException, JSONException {
+
+        if (jAdapter != null) {
+            jAdapter.onRequestSend("GET", getFromURL, null);
+        }
+
+        if (injection != null) {
+            return injection;
+        }
+
+        updateLastRequestTime();
+        limitRequestsPerSecond();
+
+        BaseRequest req = Unirest.get(BASE_URL + getFromURL);
+        Future<HttpResponse<JsonNode>> future = req.asJsonAsync();
+        HttpResponse<JsonNode> response = future.get();
+
+        return new JSONObject(response.getBody().toString());
+    }
 
     /*
      * GET HTTP request from a URL as a user via userKey.
      * Throws ExecutionException, InterruptedException and JSONException.
      */
-    JSONObject getAsUser(String userKey, String getFromURL)
+    JSONObject getJsonAsUser(String userKey, String getFromURL)
             throws ExecutionException, InterruptedException, JSONException, LoginFailedException {
 
         if (jAdapter != null) {
@@ -157,7 +181,7 @@ public class HttpRequests {
         if (injection != null) {
             return injection;
         }
-        
+
         if (userKey == null) {
             throw new LoginFailedException("Log in first");
         }
@@ -186,7 +210,7 @@ public class HttpRequests {
         if (injection != null) {
             return injection;
         }
-        
+
         if (userKey == null) {
             throw new LoginFailedException("Log in first");
         }
@@ -216,7 +240,7 @@ public class HttpRequests {
         if (injection != null) {
             return injection;
         }
-        
+
         if (userKey == null) {
             throw new LoginFailedException("Log in first");
         }
@@ -234,14 +258,14 @@ public class HttpRequests {
     }
 
     void loginAs(String username, String password) throws JSONException, LoginFailedException {
-	
-	JSONObject userData = new JSONObject();
+
+        JSONObject userData = new JSONObject();
         userData.put("name", username);
         userData.put("password", password);
-        
+
         updateLastRequestTime();
         limitRequestsPerSecond();
-        
+
         try {
             JSONObject response = postJson(userData, "/user/login");
             if (response.getString("status").equals("success")) {
@@ -256,12 +280,12 @@ public class HttpRequests {
     }
 
     void logOut() throws LoginFailedException {
-	
-	updateLastRequestTime();
+
+        updateLastRequestTime();
         limitRequestsPerSecond();
-        
+
         try {
-            JSONObject response = getAsUser(userKey, "/user/logout");
+            JSONObject response = getJsonAsUser(userKey, "/user/logout");
 
             if (response.getString("status").equals("success")) {
                 userKey = null;

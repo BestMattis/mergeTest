@@ -20,7 +20,7 @@ public class HTTPUserHandler {
     /*
      * Registers a new user on the server.
      * Returns true if successful.
-     * Throws JSONException and RegistrationFailedException
+     * Throws JSONException and RegistrationFailedException.
      */
     public boolean registerUser(String username, String password)
             throws JSONException, RegistrationFailedException {
@@ -44,13 +44,37 @@ public class HTTPUserHandler {
     }
 
     /*
+     * Registers a new temporary user on the server.
+     * Returns true if successful.
+     * Throws JSONException and RegistrationFailedException.
+     */
+    public JSONObject registerTempUser()
+            throws JSONException, RegistrationFailedException {
+
+        try {
+            JSONObject response = hr.getJson("/user/temp");
+            if (response.getString("status").equals("success")) {
+                JSONObject tempUser = response.getJSONObject("data");
+                return tempUser;
+
+            } else {
+                throw new RegistrationFailedException(response.getString("message"));
+            }
+
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /*
      * Lists all users currently logged in. UserKey required.
      * Returns ArrayList of all playerNames.
      * Throws JSONException and LoginFailedException
      */
     public ArrayList<String> getAllUsers(String userKey) throws LoginFailedException, JSONException {
         try {
-            JSONObject response = hr.getAsUser(userKey, "/user");
+            JSONObject response = hr.getJsonAsUser(userKey, "/user");
 
             if (response.getString("status").equals("success")) {
                 JSONArray jArray = response.getJSONArray("data");

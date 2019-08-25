@@ -10,16 +10,18 @@ import java.util.Calendar;
 
 public class ChatMessageSender {
 
-    private LobbyChatSingleTabsController chatController = new LobbyChatSingleTabsController();
+    private Model model;
+    private LobbyChatSingleTabsController chatController = new LobbyChatSingleTabsController(model);
 
-    public ChatMessageSender() {
+    public ChatMessageSender(Model model) {
+        this.model = model;
     }
 
     public boolean sendMessageTo(String message, Player receivingPlayer) {
 
         ChatMessage chatMessage = new ChatMessage();
 
-        Player sender = Model.getApp().getCurrentPlayer();
+        Player sender = model.getApp().getCurrentPlayer();
 
         if (receivingPlayer == null || sender == null || message == null) {
             System.out.println("Message was not sent.");

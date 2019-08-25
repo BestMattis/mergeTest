@@ -112,6 +112,37 @@ public class Field
    }
 
 
+   public static final String PROPERTY_selectedBy = "selectedBy";
+
+   private Game selectedBy = null;
+
+   public Game getSelectedBy()
+   {
+      return this.selectedBy;
+   }
+
+   public Field setSelectedBy(Game value)
+   {
+      if (this.selectedBy != value)
+      {
+         Game oldValue = this.selectedBy;
+         if (this.selectedBy != null)
+         {
+            this.selectedBy = null;
+            oldValue.setSelectedField(null);
+         }
+         this.selectedBy = value;
+         if (value != null)
+         {
+            value.setSelectedField(this);
+         }
+         firePropertyChange("selectedBy", oldValue, value);
+      }
+      return this;
+   }
+
+
+
    public static final String PROPERTY_gameField = "gameField";
 
    private GameField gameField = null;
@@ -251,37 +282,6 @@ public Field withoutNeighbour(Object... value)
 
 
 
-   public static final String PROPERTY_currentUnitOnField = "currentUnitOnField";
-
-   private Unit currentUnitOnField = null;
-
-   public Unit getCurrentUnitOnField()
-   {
-      return this.currentUnitOnField;
-   }
-
-   public Field setCurrentUnitOnField(Unit value)
-   {
-      if (this.currentUnitOnField != value)
-      {
-         Unit oldValue = this.currentUnitOnField;
-         if (this.currentUnitOnField != null)
-         {
-            this.currentUnitOnField = null;
-            oldValue.setCurrentField(null);
-         }
-         this.currentUnitOnField = value;
-         if (value != null)
-         {
-            value.setCurrentField(this);
-         }
-         firePropertyChange("currentUnitOnField", oldValue, value);
-      }
-      return this;
-   }
-
-
-
    protected PropertyChangeSupport listeners = null;
 
    public boolean firePropertyChange(String propertyName, Object oldValue, Object newValue)
@@ -346,9 +346,9 @@ public Field withoutNeighbour(Object... value)
 
    public void removeYou()
    {
+      this.setSelectedBy(null);
       this.setGameField(null);
       this.setOccupiedBy(null);
-      this.setCurrentUnitOnField(null);
 
       this.withoutNeighbour(this.getNeighbour().clone());
 

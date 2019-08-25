@@ -2,29 +2,30 @@ package lobby;
 
 import armyManager.ArmyManagerController;
 import createGame.CreateGameController;
+import gameList.GameListController;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 import main.AdvancedWarsApplication;
 import main.FXMLLoad;
 import model.App;
 import model.Model;
+import playerList.PlayerListController;
 import syncCommunication.HttpRequests;
 import syncCommunication.RESTExceptions.LoginFailedException;
 import syncCommunication.SynchronousUserCommunicator;
 
-import java.io.InputStream;
-import java.util.PropertyResourceBundle;
-import java.util.ResourceBundle;
-
 public class LobbyScreenController {
 
+    public FXMLLoad armymanagerFXML;
+    public FXMLLoad optionsFXML;
     @SuppressWarnings("static-access")
-    App app = Model.getApp();
+    App app;
     AdvancedWarsApplication application = AdvancedWarsApplication.getInstance();
+    private Model model;
     @FXML
     private AnchorPane chat;
     @FXML
@@ -43,10 +44,13 @@ public class LobbyScreenController {
     private ImageView logo;
     @FXML
     private Button manager;
-
     private FXMLLoad infoFXML;
     private FXMLLoad chatFXML;
-    public FXMLLoad armymanagerFXML;
+
+    public LobbyScreenController(Model model) {
+        this.model = model;
+        app = model.getApp();
+    }
 
     /**
      * called when the lobbyScreen scene is loaded.
@@ -57,36 +61,31 @@ public class LobbyScreenController {
         options.setOnAction(t -> optionsButtonClicked());
         logout.setOnAction(t -> logoutButtonClicked());
         logo.setOnMouseClicked(t -> infoImageClicked());
-        manager.setOnAction(t -> managerButtonclicked() );
+        manager.setOnAction(t -> managerButtonclicked());
         loadChat();
         loadGamelist();
         loadPlayerlist();
         loadInfo();
         loadManager();
+        loadOptions();
     }
 
     /**
      * Method to start a new game
      */
     public void newGameButtonClicked() {
-        try {
-            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-            InputStream inputStream = classLoader.getResource("en-US.properties").openStream();
-            ResourceBundle bundle = new PropertyResourceBundle(inputStream);
-            FXMLLoader fxmlLoader = new FXMLLoader(this.getClass().getClassLoader().getResource("createGame/CreateGame.fxml"), bundle);
-            Parent parent = fxmlLoader.load();
-            CreateGameController createGameController = fxmlLoader.getController();
-            createGameController.setBase(base);
-            createGameController.setParent(parent);
-            base.getChildren().add(parent);
-            AnchorPane.setRightAnchor(parent, 0d);
-            AnchorPane.setBottomAnchor(parent, 0d);
-            AnchorPane.setLeftAnchor(parent, 0d);
-            AnchorPane.setTopAnchor(parent, 0d);
-            //base.getChildren().addAll(parent.getChildrenUnmodifiable());
-        } catch (Exception e1) {
-            e1.printStackTrace();
-        }
+
+        FXMLLoad newGame = new FXMLLoad("/createGame/CreateGame.fxml", new CreateGameController(model));
+        Parent parent = newGame.getParent();
+        CreateGameController createGameController = newGame.getController(CreateGameController.class);
+        createGameController.setBase(base);
+        createGameController.setParent(parent);
+        base.getChildren().add(parent);
+        AnchorPane.setRightAnchor(parent, 0d);
+        AnchorPane.setBottomAnchor(parent, 0d);
+        AnchorPane.setLeftAnchor(parent, 0d);
+        AnchorPane.setTopAnchor(parent, 0d);
+        //base.getChildren().addAll(parent.getChildrenUnmodifiable());
 
     }
 
@@ -95,6 +94,7 @@ public class LobbyScreenController {
      */
     public void optionsButtonClicked() {
         System.out.println("options");
+        optionsFXML.getController(OptionsController.class).show();
     }
 
     /**
@@ -103,7 +103,7 @@ public class LobbyScreenController {
     @SuppressWarnings("static-access")
     public void logoutButtonClicked() {
         boolean loggedOut = false;
-        HttpRequests hr = Model.getInstance().getPlayerHttpRequestsHashMap().get(Model.getInstance().getApp().getCurrentPlayer());
+        HttpRequests hr = model.getPlayerHttpRequestsHashMap().get(model.getApp().getCurrentPlayer());
         SynchronousUserCommunicator uComm = new SynchronousUserCommunicator(hr);
         try {
             loggedOut = uComm.logOut();
@@ -111,10 +111,13 @@ public class LobbyScreenController {
             e.printStackTrace();
         }
         if (loggedOut) {
-            Model.getInstance().setApp(null); // clear data model on logout
-            Model.getInstance().getWebSocketComponent().stopComponent();
+            model.setApp(null); // clear data model on logout
+            model.getWebSocketComponent().stopComponent();
             if (application != null) {
-                application.goToRegisterLogin();
+                //when logging out, primary stage gets restarted and the main FXMLs are reset
+                application.primaryStage.close();
+                application.resetFXML();
+                application.start(new Stage());
             } else {
                 System.out.println("failed showing LoginScreen");    // for test only
             }
@@ -133,7 +136,7 @@ public class LobbyScreenController {
      * load the chat-module into the lobbylayout
      */
     public void loadChat() {
-        chatFXML = new FXMLLoad("/lobby/LobbyChat.fxml");
+        chatFXML = new FXMLLoad("/lobby/LobbyChat.fxml", new LobbyChatController(model));
         AnchorPane.setBottomAnchor(chatFXML.getParent(), 3d);
         AnchorPane.setLeftAnchor(chatFXML.getParent(), 3d);
         AnchorPane.setTopAnchor(chatFXML.getParent(), 3d);
@@ -145,33 +148,18 @@ public class LobbyScreenController {
      * load the playerlist-module into the lobbylayout
      */
     public void loadPlayerlist() {
-        try {
-            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-            InputStream inputStream = classLoader.getResource("en-US.properties").openStream();
-            ResourceBundle bundle = new PropertyResourceBundle(inputStream);
-            FXMLLoader fxmlLoader = new FXMLLoader(this.getClass().getClassLoader().getResource("playerList/PlayerList.fxml"), bundle);
-            Parent parent = fxmlLoader.load();
-            playerview.getChildren().addAll(parent.getChildrenUnmodifiable());
-        } catch (Exception e1) {
-            e1.printStackTrace();
-        }
+        FXMLLoad playerlist = new FXMLLoad("/playerList/PlayerList.fxml", new PlayerListController(model));
+        Parent parent = playerlist.getParent();
+        playerview.getChildren().addAll(parent.getChildrenUnmodifiable());
     }
 
     /**
      * load the gamelist-module into the lobbylayout
      */
     public void loadGamelist() {
-
-        try {
-            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-            InputStream inputStream = classLoader.getResource("en-US.properties").openStream();
-            ResourceBundle bundle = new PropertyResourceBundle(inputStream);
-            FXMLLoader fxmlLoader = new FXMLLoader(this.getClass().getClassLoader().getResource("gameList/GameList.fxml"), bundle);
-            Parent parent = fxmlLoader.load();
-            gamesview.getChildren().addAll(parent.getChildrenUnmodifiable());
-        } catch (Exception e1) {
-            e1.printStackTrace();
-        }
+        FXMLLoad gamelist = new FXMLLoad("/gameList/GameList.fxml", new GameListController(model));
+        Parent parent = gamelist.getParent();
+        gamesview.getChildren().addAll(parent.getChildrenUnmodifiable());
 
     }
 
@@ -193,8 +181,8 @@ public class LobbyScreenController {
         return chatFXML.getController(LobbyChatController.class);
     }
 
-    public void loadManager(){
-        armymanagerFXML = new FXMLLoad("/armyManager/ArmyManager.fxml","en-US.properties", new ArmyManagerController());
+    public void loadManager() {
+        armymanagerFXML = new FXMLLoad("/armyManager/ArmyManager.fxml", "en-US.properties", new ArmyManagerController(model));
         base.getChildren().add(armymanagerFXML.getParent());
         AnchorPane.setRightAnchor(armymanagerFXML.getParent(), 0d);
         AnchorPane.setBottomAnchor(armymanagerFXML.getParent(), 0d);
@@ -203,7 +191,20 @@ public class LobbyScreenController {
         armymanagerFXML.getController(ArmyManagerController.class).hide();
     }
 
-    public void managerButtonclicked(){
+    public void managerButtonclicked() {
         armymanagerFXML.getController(ArmyManagerController.class).show();
+    }
+
+    /**
+     * this methode loads the Optionsgui for the lobby
+     */
+    public void loadOptions() {
+        optionsFXML = new FXMLLoad("/lobby/Options.fxml", new OptionsController());
+        AnchorPane.setLeftAnchor(optionsFXML.getParent(), 0d);
+        AnchorPane.setTopAnchor(optionsFXML.getParent(), 0d);
+        AnchorPane.setRightAnchor(optionsFXML.getParent(), 0d);
+        AnchorPane.setBottomAnchor(optionsFXML.getParent(), 0d);
+        base.getChildren().add(optionsFXML.getParent());
+        optionsFXML.getController(OptionsController.class).hide();
     }
 }

@@ -1,16 +1,15 @@
 package playerList;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.junit.Assert;
-import org.junit.Test;
-import org.testfx.framework.junit.ApplicationTest;
-
 import javafx.scene.control.Labeled;
 import javafx.scene.control.ListView;
 import javafx.stage.Stage;
 import main.AdvancedWarsApplication;
 import model.Model;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.junit.Assert;
+import org.junit.Test;
+import org.testfx.framework.junit.ApplicationTest;
 import registerLogin.LoginRegisterTestUtils;
 import testUtils.JSONTestUtils;
 
@@ -20,15 +19,18 @@ public class PlayerListOfflineTest extends ApplicationTest {
 
     private ListView<String> playerList;
     private Labeled numberOfPlayersLabel;
+    private Model model;
 
     /**
      * Setup stage and start application.
-     * 
+     *
      * @param primaryStage the stage to display the GUI.
      */
     @Override
     public void start(Stage primaryStage) throws InterruptedException {
-	new AdvancedWarsApplication().start(primaryStage);
+        AdvancedWarsApplication awa = new AdvancedWarsApplication();
+        awa.start(primaryStage);
+        model = awa.model;
     }
 
     /**
@@ -38,42 +40,42 @@ public class PlayerListOfflineTest extends ApplicationTest {
      */
     @Test
     public void testPlayerList_getListOnLogin() {
-	/*
-	 * =============== SITUATION ===============
-	 */
+        /*
+         * =============== SITUATION ===============
+         */
 
-	// Bob has logged in and waits in the lobby.
+        // Bob has logged in and waits in the lobby.
 
-	// ---- Test evaluation with Web Socket Mock, so no need to login Bob ----
+        // ---- Test evaluation with Web Socket Mock, so no need to login Bob ----
 
-	// The Lobby view is open
-	// The lobby view contains the player list.
+        // The Lobby view is open
+        // The lobby view contains the player list.
 
-	// ---- done on Application startup ----
+        // ---- done on Application startup ----
 
-	/*
-	 * =============== ACTION ===============
-	 */
+        /*
+         * =============== ACTION ===============
+         */
 
-	// Alice logs in.
+        // Alice logs in.
 
-	LoginRegisterTestUtils.loginForOfflineTest(this, new JSONArray().put("BobTeamD"), new JSONArray());
+        LoginRegisterTestUtils.loginForOfflineTest(this, new JSONArray().put("BobTeamD"), new JSONArray(), new JSONArray(), model);
 
-	this.loadLobbyUIElements();
+        this.loadLobbyUIElements();
 
-	/*
-	 * =============== RESULT ===============
-	 */
+        /*
+         * =============== RESULT ===============
+         */
 
-	// The Player List in Alice's view displays Bob's username.
+        // The Player List in Alice's view displays Bob's username.
 
-	this.performWhileNotPresent();
+        this.performWhileNotPresent();
 
-	// The Player Count updates
+        // The Player Count updates
 
-	int actual = Model.getApp().getAllPlayers().size();
-	int expected = Integer.parseInt(this.numberOfPlayersLabel.getText());
-	Assert.assertEquals("Wrong number of players displayed", actual, expected);
+        int actual = model.getApp().getAllPlayers().size();
+        int expected = Integer.parseInt(this.numberOfPlayersLabel.getText());
+        Assert.assertEquals("Wrong number of players displayed", actual, expected);
     }
 
     /**
@@ -83,42 +85,42 @@ public class PlayerListOfflineTest extends ApplicationTest {
      */
     @Test
     public void testPlayerList_updateListOnPlayerJoined() {
-	/*
-	 * =============== SITUATION ===============
-	 */
+        /*
+         * =============== SITUATION ===============
+         */
 
-	// Alice has logged in and waits in the lobby.
+        // Alice has logged in and waits in the lobby.
 
-	LoginRegisterTestUtils.loginForOfflineTest(this);
+        LoginRegisterTestUtils.loginForOfflineTest(this, model);
 
-	this.loadLobbyUIElements();
+        this.loadLobbyUIElements();
 
-	// The Lobby view is open
-	// The lobby view contains the player list.
+        // The Lobby view is open
+        // The lobby view contains the player list.
 
-	// ---- done on Application startup ----
+        // ---- done on Application startup ----
 
-	/*
-	 * =============== ACTION ===============
-	 */
+        /*
+         * =============== ACTION ===============
+         */
 
-	// Bob enters his username and password into his own Login / Register screen and
-	// clicks Login.
+        // Bob enters his username and password into his own Login / Register screen and
+        // clicks Login.
 
-	JSONObject userJoined = new JSONObject();
-	userJoined.put("action", "userJoined");
-	JSONObject userJoinedData = new JSONObject();
-	userJoinedData.put("name", "BobTeamD");
-	userJoined.put("data", userJoinedData);
-	Model.getWebSocketComponent().getSystemClient().onMessage(userJoined.toString());
+        JSONObject userJoined = new JSONObject();
+        userJoined.put("action", "userJoined");
+        JSONObject userJoinedData = new JSONObject();
+        userJoinedData.put("name", "BobTeamD");
+        userJoined.put("data", userJoinedData);
+        model.getWebSocketComponent().getSystemClient().onMessage(userJoined.toString());
 
-	/*
-	 * =============== RESULT ===============
-	 */
+        /*
+         * =============== RESULT ===============
+         */
 
-	// The Player List in Alice's view displays Bob's username.
+        // The Player List in Alice's view displays Bob's username.
 
-	this.performWhileNotPresent();
+        this.performWhileNotPresent();
     }
 
     /**
@@ -128,50 +130,50 @@ public class PlayerListOfflineTest extends ApplicationTest {
      */
     @Test
     public void testPlayerList_notifyServerOnLogin() {
-	/*
-	 * =============== SITUATION ===============
-	 */
+        /*
+         * =============== SITUATION ===============
+         */
 
-	// Bob has logged in and waits in the lobby.
+        // Bob has logged in and waits in the lobby.
 
-	// ---- Messages to Bob verified by JSON adapter ----
+        // ---- Messages to Bob verified by JSON adapter ----
 
-	// The Lobby view is open
-	// The lobby view contains the player list.
+        // The Lobby view is open
+        // The lobby view contains the player list.
 
-	// ---- done on Application startup ----
+        // ---- done on Application startup ----
 
-	/*
-	 * =============== ACTION ===============
-	 */
+        /*
+         * =============== ACTION ===============
+         */
 
-	// Alice enters her username and password into his own Login / Register screen and
-	// clicks Login.
+        // Alice enters her username and password into his own Login / Register screen and
+        // clicks Login.
 
-	JSONObject msg = LoginRegisterTestUtils.startupMessageSentTest(this, "/user/login", "POST");
-	
-	/*
-	 * =============== RESULT ===============
-	 */
+        JSONObject msg = LoginRegisterTestUtils.startupMessageSentTest(this, "/user/login", "POST", model);
 
-	// The Player List in Bob's view displays Alice's username.
+        /*
+         * =============== RESULT ===============
+         */
 
-	JSONTestUtils.assertJSON(msg, LoginRegisterTestUtils.getTestUserName(), "name");
-	JSONTestUtils.assertJSON(msg, LoginRegisterTestUtils.getTestUserPassword(), "password");
+        // The Player List in Bob's view displays Alice's username.
+
+        JSONTestUtils.assertJSON(msg, LoginRegisterTestUtils.getTestUserName(), "name");
+        JSONTestUtils.assertJSON(msg, LoginRegisterTestUtils.getTestUserPassword(), "password");
     }
 
     private void loadLobbyUIElements() {
-	this.playerList = this.lookup("#playerList").queryListView();
-	this.numberOfPlayersLabel = this.lookup("#numberOfPlayers").queryLabeled();
+        this.playerList = this.lookup("#playerList").queryListView();
+        this.numberOfPlayersLabel = this.lookup("#numberOfPlayers").queryLabeled();
     }
 
     private void performWhileNotPresent() {
-	while (!this.playerList.getItems().stream().anyMatch(e -> e.equals("BobTeamD"))) {
-	    try {
-		Thread.sleep(100);
-	    } catch (InterruptedException e) {
-		e.printStackTrace();
-	    }
-	}
+        while (!this.playerList.getItems().stream().anyMatch(e -> e.equals("BobTeamD"))) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

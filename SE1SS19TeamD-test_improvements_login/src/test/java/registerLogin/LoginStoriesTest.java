@@ -1,22 +1,21 @@
 package registerLogin;
 
-import static org.hamcrest.CoreMatchers.is;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextInputControl;
+import javafx.stage.Stage;
+import main.AdvancedWarsApplication;
+import org.junit.Assert;
+import org.junit.Test;
+import org.testfx.api.FxAssert;
+import org.testfx.framework.junit.ApplicationTest;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.testfx.api.FxAssert;
-import org.testfx.framework.junit.ApplicationTest;
-
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextInputControl;
-import javafx.stage.Stage;
-import main.AdvancedWarsApplication;
+import static org.hamcrest.CoreMatchers.is;
 
 /**
  * Tests the Login User Stories.
@@ -39,19 +38,19 @@ public class LoginStoriesTest extends ApplicationTest {
 
     /**
      * Setup stage and start application.
-     * 
+     *
      * @param primaryStage the stage to display the GUI.
      */
     @Override
     public void start(Stage primaryStage) throws IOException {
-	this.primaryStage = primaryStage;
+        this.primaryStage = primaryStage;
 
-	new AdvancedWarsApplication().start(primaryStage);
-	ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-	InputStream inputStream = classLoader.getResource("en-US.properties").openStream();
-	this.bundle = new PropertyResourceBundle(inputStream);
+        new AdvancedWarsApplication().start(primaryStage);
+        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+        InputStream inputStream = classLoader.getResource("en-US.properties").openStream();
+        this.bundle = new PropertyResourceBundle(inputStream);
 
-	this.loadLoginUIElements();
+        this.loadLoginUIElements();
     }
 
     /**
@@ -60,40 +59,40 @@ public class LoginStoriesTest extends ApplicationTest {
      */
     @Test
     public void testSuccessfulLogin() {
-	/*
-	 * =============== SITUATION ===============
-	 */
+        /*
+         * =============== SITUATION ===============
+         */
 
-	// Alice has typed in her username and password.
+        // Alice has typed in her username and password.
 
-	String name = LoginRegisterTestUtils.getTestUserName();
-	String password = LoginRegisterTestUtils.getTestUserPassword();
+        String name = LoginRegisterTestUtils.getTestUserName();
+        String password = LoginRegisterTestUtils.getTestUserPassword();
 
-	this.enterCredentials(name, password);
+        this.enterCredentials(name, password);
 
-	/*
-	 * =============== ACTION ===============
-	 */
+        /*
+         * =============== ACTION ===============
+         */
 
-	// Alice clicks the login button.
+        // Alice clicks the login button.
 
-	this.clickOn(this.loginButton);
+        this.clickOn(this.loginButton);
 
-	/*
-	 * =============== RESULT ===============
-	 */
+        /*
+         * =============== RESULT ===============
+         */
 
-	// The Game Client opens the lobby screen.
+        // The Game Client opens the lobby screen.
 
-	this.loadLobbyUIElements();
+        this.loadLobbyUIElements();
 
-	FxAssert.verifyThat(this.primaryStage.getScene(), is(AdvancedWarsApplication.getInstance().getLobbyScene()));
+        FxAssert.verifyThat(this.primaryStage.getScene(), is(AdvancedWarsApplication.getInstance().getLobbyScene()));
 
-	/*
-	 * =============== SHUTDOWN ===============
-	 */
+        /*
+         * =============== SHUTDOWN ===============
+         */
 
-	this.clickOn(this.logoutButton);
+        this.clickOn(this.logoutButton);
     }
 
     /**
@@ -103,52 +102,52 @@ public class LoginStoriesTest extends ApplicationTest {
     @Test
     public void testUnsuccessfulLogin() {
 
-	String name = LoginRegisterTestUtils.getTestUserName();
-	String password = LoginRegisterTestUtils.getTestUserPassword() + "__wrong";
+        String name = LoginRegisterTestUtils.getTestUserName();
+        String password = LoginRegisterTestUtils.getTestUserPassword() + "__wrong";
 
-	/*
-	 * =============== SITUATION ===============
-	 */
+        /*
+         * =============== SITUATION ===============
+         */
 
-	// Alice has typed in her username, but a wrong password.
+        // Alice has typed in her username, but a wrong password.
 
-	this.enterCredentials(name, password);
+        this.enterCredentials(name, password);
 
-	/*
-	 * =============== ACTION ===============
-	 */
+        /*
+         * =============== ACTION ===============
+         */
 
-	// Alice clicks the "Login" button.
+        // Alice clicks the "Login" button.
 
-	this.clickOn(this.loginButton);
+        this.clickOn(this.loginButton);
 
-	/*
-	 * =============== RESULT ===============
-	 */
+        /*
+         * =============== RESULT ===============
+         */
 
-	// An error message appears in the Login / Register View.
+        // An error message appears in the Login / Register View.
 
-	String expectedMsgPrefix = this.bundle.getString("regLog.FailedLogin");
-	String actualMsg = this.msgLabel.getText();
-	Assert.assertTrue("Wrong massage displayed", actualMsg.startsWith(expectedMsgPrefix));
+        String expectedMsgPrefix = this.bundle.getString("regLog.FailedLogin");
+        String actualMsg = this.msgLabel.getText();
+        Assert.assertTrue("Wrong massage displayed", actualMsg.startsWith(expectedMsgPrefix));
 
     }
 
     private void loadLoginUIElements() {
-	this.nameText = this.lookup("#nameTextfield").queryTextInputControl();
-	this.passwordText = this.lookup("#pwTextfield").queryTextInputControl();
-	this.msgLabel = this.lookup("#msgLabel").queryAs(Label.class);
-	this.loginButton = this.lookup("#logButton").queryButton();
+        this.nameText = this.lookup("#nameTextfield").queryTextInputControl();
+        this.passwordText = this.lookup("#pwTextfield").queryTextInputControl();
+        this.msgLabel = this.lookup("#msgLabel").queryAs(Label.class);
+        this.loginButton = this.lookup("#logButton").queryButton();
     }
 
     private void loadLobbyUIElements() {
-	this.logoutButton = this.lookup("#logout").queryButton();
+        this.logoutButton = this.lookup("#logout").queryButton();
     }
 
     private void enterCredentials(String name, String password) {
-	this.clickOn(this.nameText);
-	this.write(name);
-	this.clickOn(this.passwordText);
-	this.write(password);
+        this.clickOn(this.nameText);
+        this.write(name);
+        this.clickOn(this.passwordText);
+        this.write(password);
     }
 }

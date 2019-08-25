@@ -1,22 +1,21 @@
 package registerLogin;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.PropertyResourceBundle;
-import java.util.Random;
-import java.util.ResourceBundle;
-
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextInputControl;
+import javafx.stage.Stage;
+import main.AdvancedWarsApplication;
 import org.junit.Assert;
 import org.junit.Test;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.matcher.control.LabeledMatchers;
 import org.testfx.matcher.control.TextInputControlMatchers;
 
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextInputControl;
-import javafx.stage.Stage;
-import main.AdvancedWarsApplication;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.PropertyResourceBundle;
+import java.util.Random;
+import java.util.ResourceBundle;
 
 /**
  * Tests the Register User Stories.
@@ -31,17 +30,17 @@ public class RegisterStoriesTest extends ApplicationTest {
 
     /**
      * Setup stage and start application.
-     * 
+     *
      * @param primaryStage the stage to display the GUI.
      */
     @Override
     public void start(Stage primaryStage) throws IOException {
-	new AdvancedWarsApplication().start(primaryStage);
-	ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-	InputStream inputStream = classLoader.getResource("en-US.properties").openStream();
-	this.bundle = new PropertyResourceBundle(inputStream);
+        new AdvancedWarsApplication().start(primaryStage);
+        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+        InputStream inputStream = classLoader.getResource("en-US.properties").openStream();
+        this.bundle = new PropertyResourceBundle(inputStream);
 
-	this.loadUIElements();
+        this.loadUIElements();
     }
 
     /**
@@ -50,49 +49,49 @@ public class RegisterStoriesTest extends ApplicationTest {
      */
     @Test
     public void testSuccessfulRegistration() {
-	/*
-	 * =============== SITUATION ===============
-	 */
+        /*
+         * =============== SITUATION ===============
+         */
 
-	// Alice has started the game client.
+        // Alice has started the game client.
 
-	// ---- done by the start(Stage)-Method ----
+        // ---- done by the start(Stage)-Method ----
 
-	// The Login / Register screen is open.
+        // The Login / Register screen is open.
 
-	// ---- done on Application startup ----
+        // ---- done on Application startup ----
 
-	// Alice has typed in a username that is not present and a password.
+        // Alice has typed in a username that is not present and a password.
 
-	String name = "Alice" + new Random().nextInt();
-	String password = "myPassword";
+        String name = "Alice" + new Random().nextInt();
+        String password = "myPassword";
 
-	this.enterCredentials(name, password);
+        this.enterCredentials(name, password);
 
-	/*
-	 * =============== ACTION ===============
-	 */
+        /*
+         * =============== ACTION ===============
+         */
 
-	// Alice clicks the register button.
+        // Alice clicks the register button.
 
-	this.clickOn(this.registerButton);
+        this.clickOn(this.registerButton);
 
-	/*
-	 * =============== RESULT ===============
-	 */
+        /*
+         * =============== RESULT ===============
+         */
 
-	// The GUI shows a "User registered" message.
+        // The GUI shows a "User registered" message.
 
-	Assert.assertThat(this.msgLabel, LabeledMatchers.hasText(this.bundle.getString("regLog.SuccRegister")));
+        Assert.assertThat(this.msgLabel, LabeledMatchers.hasText(this.bundle.getString("regLog.SuccRegister")));
 
-	// The user / password fields are empty.
+        // The user / password fields are empty.
 
-	Assert.assertThat(this.nameText, TextInputControlMatchers.hasText(""));
-	Assert.assertThat(this.passwordText, TextInputControlMatchers.hasText(""));
+        Assert.assertThat(this.nameText, TextInputControlMatchers.hasText(""));
+        Assert.assertThat(this.passwordText, TextInputControlMatchers.hasText(""));
 
-	// Alice may now log in.
+        // Alice may now log in.
 
-	// ---- nothing to test here ----
+        // ---- nothing to test here ----
     }
 
     /**
@@ -102,47 +101,47 @@ public class RegisterStoriesTest extends ApplicationTest {
     @Test
     public void testUnsuccessfulRegistration() {
 
-	String name = LoginRegisterTestUtils.getTestUserName();
-	String password = LoginRegisterTestUtils.getTestUserPassword();
+        String name = LoginRegisterTestUtils.getTestUserName();
+        String password = LoginRegisterTestUtils.getTestUserPassword();
 
-	/*
-	 * =============== SITUATION ===============
-	 */
+        /*
+         * =============== SITUATION ===============
+         */
 
-	// Alice has typed in her username that still exists and a password.
+        // Alice has typed in her username that still exists and a password.
 
-	this.enterCredentials(name, password);
+        this.enterCredentials(name, password);
 
-	/*
-	 * =============== ACTION ===============
-	 */
+        /*
+         * =============== ACTION ===============
+         */
 
-	// Alice clicks the "Register" button.
+        // Alice clicks the "Register" button.
 
-	this.clickOn(this.registerButton);
+        this.clickOn(this.registerButton);
 
-	/*
-	 * =============== RESULT ===============
-	 */
+        /*
+         * =============== RESULT ===============
+         */
 
-	// An error message appears in the Login / Register View.
+        // An error message appears in the Login / Register View.
 
-	String expectedMsgPrefix = this.bundle.getString("regLog.FailedRegistration");
-	String actualMsg = this.msgLabel.getText();
-	Assert.assertTrue("Wrong massage displayed", actualMsg.startsWith(expectedMsgPrefix));
+        String expectedMsgPrefix = this.bundle.getString("regLog.FailedRegistration");
+        String actualMsg = this.msgLabel.getText();
+        Assert.assertTrue("Wrong massage displayed", actualMsg.startsWith(expectedMsgPrefix));
     }
 
     private void loadUIElements() {
-	this.nameText = this.lookup("#nameTextfield").queryTextInputControl();
-	this.passwordText = this.lookup("#pwTextfield").queryTextInputControl();
-	this.msgLabel = this.lookup("#msgLabel").queryAs(Label.class);
-	this.registerButton = this.lookup("#regButton").queryButton();
+        this.nameText = this.lookup("#nameTextfield").queryTextInputControl();
+        this.passwordText = this.lookup("#pwTextfield").queryTextInputControl();
+        this.msgLabel = this.lookup("#msgLabel").queryAs(Label.class);
+        this.registerButton = this.lookup("#regButton").queryButton();
     }
 
     private void enterCredentials(String name, String password) {
-	this.clickOn(this.nameText);
-	this.write(name);
-	this.clickOn(this.passwordText);
-	this.write(password);
+        this.clickOn(this.nameText);
+        this.write(name);
+        this.clickOn(this.passwordText);
+        this.write(password);
     }
 }

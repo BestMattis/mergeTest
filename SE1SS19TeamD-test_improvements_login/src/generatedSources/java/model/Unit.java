@@ -112,6 +112,111 @@ public class Unit
    }
 
 
+   public static final String PROPERTY_maxHp = "maxHp";
+
+   private int maxHp;
+
+   public int getMaxHp()
+   {
+      return maxHp;
+   }
+
+   public Unit setMaxHp(int value)
+   {
+      if (value != this.maxHp)
+      {
+         int oldValue = this.maxHp;
+         this.maxHp = value;
+         firePropertyChange("maxHp", oldValue, value);
+      }
+      return this;
+   }
+
+
+   public static final String PROPERTY_maxMp = "maxMp";
+
+   private int maxMp;
+
+   public int getMaxMp()
+   {
+      return maxMp;
+   }
+
+   public Unit setMaxMp(int value)
+   {
+      if (value != this.maxMp)
+      {
+         int oldValue = this.maxMp;
+         this.maxMp = value;
+         firePropertyChange("maxMp", oldValue, value);
+      }
+      return this;
+   }
+
+
+   public static final String PROPERTY_posX = "posX";
+
+   private int posX;
+
+   public int getPosX()
+   {
+      return posX;
+   }
+
+   public Unit setPosX(int value)
+   {
+      if (value != this.posX)
+      {
+         int oldValue = this.posX;
+         this.posX = value;
+         firePropertyChange("posX", oldValue, value);
+      }
+      return this;
+   }
+
+
+   public static final String PROPERTY_posY = "posY";
+
+   private int posY;
+
+   public int getPosY()
+   {
+      return posY;
+   }
+
+   public Unit setPosY(int value)
+   {
+      if (value != this.posY)
+      {
+         int oldValue = this.posY;
+         this.posY = value;
+         firePropertyChange("posY", oldValue, value);
+      }
+      return this;
+   }
+
+
+   public static final String PROPERTY_hasAttacked = "hasAttacked";
+
+   private boolean hasAttacked;
+
+   public boolean getHasAttacked()
+   {
+      return hasAttacked;
+   }
+
+   public Unit setHasAttacked(boolean value)
+   {
+      if (value != this.hasAttacked)
+      {
+         boolean oldValue = this.hasAttacked;
+         this.hasAttacked = value;
+         firePropertyChange("hasAttacked", oldValue, value);
+      }
+      return this;
+   }
+
+
    public static final String PROPERTY_selectedBy = "selectedBy";
 
    private Game selectedBy = null;
@@ -137,6 +242,68 @@ public class Unit
             value.setSelectedUnit(this);
          }
          firePropertyChange("selectedBy", oldValue, value);
+      }
+      return this;
+   }
+
+
+
+   public static final String PROPERTY_game = "game";
+
+   private Game game = null;
+
+   public Game getGame()
+   {
+      return this.game;
+   }
+
+   public Unit setGame(Game value)
+   {
+      if (this.game != value)
+      {
+         Game oldValue = this.game;
+         if (this.game != null)
+         {
+            this.game = null;
+            oldValue.withoutAllUnits(this);
+         }
+         this.game = value;
+         if (value != null)
+         {
+            value.withAllUnits(this);
+         }
+         firePropertyChange("game", oldValue, value);
+      }
+      return this;
+   }
+
+
+
+   public static final String PROPERTY_player = "player";
+
+   private Player player = null;
+
+   public Player getPlayer()
+   {
+      return this.player;
+   }
+
+   public Unit setPlayer(Player value)
+   {
+      if (this.player != value)
+      {
+         Player oldValue = this.player;
+         if (this.player != null)
+         {
+            this.player = null;
+            oldValue.withoutCurrentUnits(this);
+         }
+         this.player = value;
+         if (value != null)
+         {
+            value.withCurrentUnits(this);
+         }
+         firePropertyChange("player", oldValue, value);
       }
       return this;
    }
@@ -199,37 +366,6 @@ public class Unit
             value.setOccupiedBy(this);
          }
          firePropertyChange("occupiesField", oldValue, value);
-      }
-      return this;
-   }
-
-
-
-   public static final String PROPERTY_currentField = "currentField";
-
-   private Field currentField = null;
-
-   public Field getCurrentField()
-   {
-      return this.currentField;
-   }
-
-   public Unit setCurrentField(Field value)
-   {
-      if (this.currentField != value)
-      {
-         Field oldValue = this.currentField;
-         if (this.currentField != null)
-         {
-            this.currentField = null;
-            oldValue.setCurrentUnitOnField(null);
-         }
-         this.currentField = value;
-         if (value != null)
-         {
-            value.setCurrentUnitOnField(this);
-         }
-         firePropertyChange("currentField", oldValue, value);
       }
       return this;
    }
@@ -301,9 +437,10 @@ public class Unit
    public void removeYou()
    {
       this.setSelectedBy(null);
+      this.setGame(null);
+      this.setPlayer(null);
       this.setArmyConfiguration(null);
       this.setOccupiesField(null);
-      this.setCurrentField(null);
 
    }
 

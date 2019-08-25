@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:id="base" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+            minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="moretransparent-pane"
+            stylesheets="@../screen.css" xmlns="http://javafx.com/javafx/8">
+    <children>
+        <GridPane layoutX="227.0" layoutY="168.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                  AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                <ColumnConstraints fillWidth="false" halignment="RIGHT" hgrow="SOMETIMES" maxWidth="200.0"
+                                   minWidth="10.0" percentWidth="50.0" prefWidth="100.0"/>
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints fillHeight="false" maxHeight="500.0" minHeight="10.0" percentHeight="75.0"
+                                prefHeight="30.0" valignment="BOTTOM" vgrow="SOMETIMES"/>
+            </rowConstraints>
+            <children>
+                <VBox prefWidth="250.0" styleClass="blackpaneborder" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                    <children>
+                        <VBox alignment="CENTER" styleClass="compltransparent-pane">
+                            <children>
+                                <Label text="%options.moveSpeed"/>
+                                <Slider id="mSpeedSlider" fx:id="mSpeed" blockIncrement="1.0" majorTickUnit="4.0"
+                                        max="16.0" minorTickCount="2" showTickLabels="true" showTickMarks="true"
+                                        value="4.0">
+                                    <padding>
+                                        <Insets bottom="20.0" left="20.0" right="20.0"/>
+                                    </padding>
+                                </Slider>
+                                <Label text="%options.aiSpeed"/>
+                                <Slider id="aiSpeedSlider" showTickLabels="true" showTickMarks="true">
+                                    <padding>
+                                        <Insets bottom="20.0" left="20.0" right="20.0"/>
+                                    </padding>
+                                </Slider>
+                            </children>
+                            <VBox.margin>
+                                <Insets top="10.0"/>
+                            </VBox.margin>
+                        </VBox>
+                        <VBox alignment="CENTER" styleClass="compltransparent-pane">
+                            <children>
+                                <Button id="optionsBack" fx:id="leave" maxWidth="120.0" mnemonicParsing="false"
+                                        prefHeight="60.0" styleClass="trueredButton" text="%options.leave">
+                                    <VBox.margin>
+                                        <Insets bottom="10.0" top="30.0"/>
+                                    </VBox.margin>
+                                </Button>
+                            </children>
+                        </VBox>
+                    </children>
+                </VBox>
+            </children>
+        </GridPane>
+    </children>
+</AnchorPane>

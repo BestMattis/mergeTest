@@ -25,23 +25,23 @@ public class HTTPGameTest {
         String gameName = "My Game";
         int noOfNeededPlayers = 4;
 
-	HttpRequests req = new HttpRequests();
-	req.setJsonAdapter((method, url, json) -> {
-	    JSONTestUtils.assertJSON(json, gameName, "name");
-	    JSONTestUtils.assertJSON(json, noOfNeededPlayers, "neededPlayer");
-	    JSONObject responseData = new JSONObject();
-	    responseData.put("gameId", "my-game-id");
-	    req.injectResponse(new JSONObject().put("status", "success").put("data", responseData));
-	});
-	SynchronousGameCommunicator gameCommunicator = new SynchronousGameCommunicator(req);
-	String result = null;
-	try {
-	    result = gameCommunicator.openGame(gameName, noOfNeededPlayers);
-	} catch (GameLobbyCreationFailedException | LoginFailedException e) {
-	    e.printStackTrace();
-	}
-	Assert.assertTrue("Game creation was successful but openGame() returned no userkey",
-		result != null && !result.equals(""));
+        HttpRequests req = new HttpRequests();
+        req.setJsonAdapter((method, url, json) -> {
+            JSONTestUtils.assertJSON(json, gameName, "name");
+            JSONTestUtils.assertJSON(json, noOfNeededPlayers, "neededPlayer");
+            JSONObject responseData = new JSONObject();
+            responseData.put("gameId", "my-game-id");
+            req.injectResponse(new JSONObject().put("status", "success").put("data", responseData));
+        });
+        SynchronousGameCommunicator gameCommunicator = new SynchronousGameCommunicator(req);
+        String result = null;
+        try {
+            result = gameCommunicator.openGame(gameName, noOfNeededPlayers);
+        } catch (GameLobbyCreationFailedException | LoginFailedException e) {
+            e.printStackTrace();
+        }
+        Assert.assertTrue("Game creation was successful but openGame() returned no userkey",
+                result != null && !result.equals(""));
     }
 
     /**
@@ -55,7 +55,7 @@ public class HTTPGameTest {
         SynchronousGameCommunicator gameCommunicator = new SynchronousGameCommunicator(req);
         boolean result = false;
         try {
-            result = gameCommunicator.joinGame(gameID);
+            result = gameCommunicator.joinGame(gameID, false);
         } catch (GameIdNotFoundException | LoginFailedException e) {
             e.printStackTrace();
         }
@@ -85,12 +85,12 @@ public class HTTPGameTest {
      */
     @Test
     public void testGetAllGames() {
-	String gameID = "123456789";
-	HttpRequests req = new HttpRequests();
-	req.setJsonAdapter((method, url, json) -> {
-	    req.injectResponse(new JSONObject().put("data", new JSONArray().put(new JSONObject().put("id", gameID)))
-		    .put("status", "success"));
-	});
+        String gameID = "123456789";
+        HttpRequests req = new HttpRequests();
+        req.setJsonAdapter((method, url, json) -> {
+            req.injectResponse(new JSONObject().put("data", new JSONArray().put(new JSONObject().put("id", gameID)))
+                    .put("status", "success"));
+        });
 
         SynchronousGameCommunicator gameCommunicator = new SynchronousGameCommunicator(req);
         ArrayList<JSONObject> result = null;
@@ -104,9 +104,9 @@ public class HTTPGameTest {
     }
 
     private HttpRequests setupHTTPRequests(String gameID) {
-	final AtomicBoolean alreadyCalled = new AtomicBoolean(false);
-	HttpRequests req = new HttpRequests();
-	req.setJsonAdapter((method, url, json) -> {
+        final AtomicBoolean alreadyCalled = new AtomicBoolean(false);
+        HttpRequests req = new HttpRequests();
+        req.setJsonAdapter((method, url, json) -> {
 
             if (!alreadyCalled.get()) {
                 req.injectResponse(new JSONObject().put("data", new JSONArray().put(new JSONObject().put("id", gameID)))

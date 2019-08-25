@@ -20,13 +20,18 @@ import static org.junit.Assert.assertEquals;
 
 public class GetReadyTest extends ApplicationTest {
 
+    private Model model;
+
     /**
      * Setup stage and start application
+     *
      * @param primaryStage the stage to display
      */
     @Override
-    public void start(Stage primaryStage)throws IOException {
-        new AdvancedWarsApplication().start(primaryStage);
+    public void start(Stage primaryStage) throws IOException {
+        AdvancedWarsApplication awa = new AdvancedWarsApplication();
+        awa.start(primaryStage);
+        model = awa.model;
     }
 
     /**
@@ -34,7 +39,7 @@ public class GetReadyTest extends ApplicationTest {
      * <a href="https://jira.uniks.de/browse/TD-194">TD-194</a>.
      */
     @Test
-    public void testGetReady(){
+    public void testGetReady() {
         /*
          * =============== SITUATION ===============
          */
@@ -51,7 +56,7 @@ public class GetReadyTest extends ApplicationTest {
                         .put("id", "69")
                         .put("neededPlayer", 2));
 
-        LoginRegisterTestUtils.loginForOfflineTest(this, new JSONArray(), initialGames);
+        LoginRegisterTestUtils.loginForOfflineTest(this, new JSONArray(), initialGames, new JSONArray(), model);
 
         Label gamename = this.lookup("#gameName").queryAs(Label.class);
         this.clickOn(gamename);
@@ -66,7 +71,7 @@ public class GetReadyTest extends ApplicationTest {
         gameInitData.put("id", "Player@1");
         gameInitData.put("currentGame", "69");
         gameInit.put("data", gameInitData);
-        Model.getWebSocketComponent().getGameClient().onMessage(gameInit.toString());
+        model.getWebSocketComponent().getGameClient().onMessage(gameInit.toString());
 
         //TODO fix problem with first players name label
         Label player1 = this.lookup("#pl1").queryAs(Label.class);
@@ -77,7 +82,7 @@ public class GetReadyTest extends ApplicationTest {
         assertEquals("other player is displayed as ready", Color.WHITE, player2.getTextFill());
 
         //check if other player has connected properly
-        assertEquals("player shouldn't be ready here", false, Model.getApp().getCurrentPlayer().getGame().getPlayers().get(1).getIsReady());
+        assertEquals("player shouldn't be ready here", false, model.getApp().getCurrentPlayer().getGame().getPlayers().get(1).getIsReady());
 
         /*
          * =============== ACTION ===============
@@ -105,11 +110,11 @@ public class GetReadyTest extends ApplicationTest {
         gameChangeData.put("fieldName", "isReady");
         gameChangeData.put("id", "Player@1");
         gameChange.put("data", gameChangeData);
-        Model.getWebSocketComponent().getGameClient().onMessage(gameChange.toString());
+        model.getWebSocketComponent().getGameClient().onMessage(gameChange.toString());
 
         //check if both players are ready now
-        assertEquals("other player should be ready here", true, Model.getApp().getCurrentPlayer().getGame().getPlayers().get(1).getIsReady());
-        assertEquals("you should be ready here", true, Model.getApp().getCurrentPlayer().getIsReady());
+        assertEquals("other player should be ready here", true, model.getApp().getCurrentPlayer().getGame().getPlayers().get(1).getIsReady());
+        assertEquals("you should be ready here", true, model.getApp().getCurrentPlayer().getIsReady());
 
         //check if players are shown as ready
         assertEquals("you aren't displayed as ready", Color.LIGHTGREEN, player1.getTextFill());

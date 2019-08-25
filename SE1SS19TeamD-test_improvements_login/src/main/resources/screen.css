@@ -21,6 +21,14 @@
     -fx-background-color: #201c22;
 }
 
+.pane-grey-border {
+        -fx-background-color: rgba(255,255,255,0.2);
+        -fx-background-radius: 0px;
+        -fx-border-color: #DEDDFF;
+        -fx-border-width: 2px;
+        -fx-border-radius: 0px;
+}
+
 .button {
     -fx-text-fill: white;
     -fx-background-color: rgba(255,255,255,0.1);
@@ -358,4 +366,32 @@
 }
 #back:pressed {
     -fx-background-color: rgba(255,20,20,0.3);
+}
+
+.minimap {
+    -fx-background-color: rgba(130,203,40,1);
+    -fx-border-color: #FFFFFF;
+    -fx-border-width: 1px;
+}
+
+.trueredButton {
+    -fx-background-color: rgba(255,0,0,0.4);
+}
+.trueredButton:pressed {
+    -fx-background-color: rgba(255,20,20,0.6);
+}
+
+.blackpaneborder {
+    -fx-background-color: rgba(0,0,0,1);
+    -fx-background-radius: 0px;
+    -fx-border-color: #DEDDFF;
+    -fx-border-width: 2px;
+    -fx-border-radius: 0px;
+}
+
+.purpleButton {
+    -fx-background-color: rgba(255,20,255,0.4);
+}
+.purpleButton:pressed {
+    -fx-background-color: rgba(255,40,255,0.6);
 }

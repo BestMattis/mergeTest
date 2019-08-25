@@ -2,7 +2,6 @@ package lobby;
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -16,18 +15,15 @@ import model.ChatMessage;
 import model.Model;
 import msgToAllPlayers.WSChatEndpoint;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.PropertyResourceBundle;
-import java.util.ResourceBundle;
 
 public class LobbyChatController {
 
     private static LobbyChatMessageListController allController;
     @FXML
     public TextField message;
+    private Model model;
     @FXML
     private Button chatAll;
     @FXML
@@ -37,7 +33,13 @@ public class LobbyChatController {
     @FXML
     private Button send;
     private LobbyChatSingleTabsController singleController;
-	private FXMLLoad all;
+    private FXMLLoad all;
+
+
+    public LobbyChatController(Model model) {
+        this.model = model;
+    }
+
     /**
      * the get-method for the allcontroller
      *
@@ -55,7 +57,7 @@ public class LobbyChatController {
         loadAll();
         loadPlayers();
         if (!AdvancedWarsApplication.getInstance().offtesting) {
-            WSChatEndpoint.getInstance().setLobbyChatListeners();
+            WSChatEndpoint.getInstance(model).setLobbyChatListeners();
         }
         chatAll.setOnAction(t -> setToAll());
         chatPlayers.setOnAction(t -> setToPlayers());
@@ -79,41 +81,35 @@ public class LobbyChatController {
         return singleController;
     }
 
-	/**
-	 * This method loads the fxml for the chat with all players
-	 */
-	public void loadAll() {
-		all = new FXMLLoad("/lobby/LobbyChatMessageList.fxml", new LobbyChatMessageListController());
-		allController = all.getController(LobbyChatMessageListController.class);
+    /**
+     * This method loads the fxml for the chat with all players
+     */
+    public void loadAll() {
+        all = new FXMLLoad("/lobby/LobbyChatMessageList.fxml", new LobbyChatMessageListController());
+        allController = all.getController(LobbyChatMessageListController.class);
         messageView.getChildren().add(all.getParent());
         AnchorPane.setBottomAnchor(all.getParent(), 0d);
         AnchorPane.setLeftAnchor(all.getParent(), 0d);
         AnchorPane.setTopAnchor(all.getParent(), 0d);
         AnchorPane.setRightAnchor(all.getParent(), 0d);
         messageView.getChildren().get(0).setVisible(true);
-	}
+    }
 
     /**
      * similar to the loadAll-method just for the fxml for chating with a specific
      * player
      */
     public void loadPlayers() {
-        try {
-            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-            InputStream inputStream = classLoader.getResource("en-US.properties").openStream();
-            ResourceBundle bundle = new PropertyResourceBundle(inputStream);
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("LobbyChatSingleTabs.fxml"), bundle);
-            Parent parent = fxmlLoader.load();
-            singleController = fxmlLoader.getController();
-            messageView.getChildren().add(parent);
-            AnchorPane.setBottomAnchor(parent, 0d);
-            AnchorPane.setLeftAnchor(parent, 0d);
-            AnchorPane.setTopAnchor(parent, 0d);
-            AnchorPane.setRightAnchor(parent, 0d);
-            messageView.getChildren().get(1).setVisible(false);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        FXMLLoad playerpane = new FXMLLoad("/lobby/LobbyChatSingleTabs.fxml", new LobbyChatSingleTabsController(model));
+        singleController = playerpane.getController(LobbyChatSingleTabsController.class);
+        Parent parent = playerpane.getParent();
+        messageView.getChildren().add(parent);
+        AnchorPane.setBottomAnchor(parent, 0d);
+        AnchorPane.setLeftAnchor(parent, 0d);
+        AnchorPane.setTopAnchor(parent, 0d);
+        AnchorPane.setRightAnchor(parent, 0d);
+        messageView.getChildren().get(1).setVisible(false);
+
     }
 
     /**
@@ -155,7 +151,7 @@ public class LobbyChatController {
      */
     @SuppressWarnings("static-access")
     public void sendToAll(String text) {
-        App app = Model.getApp();
+        App app = model.getApp();
         ChatMessage chatToSend = new ChatMessage().setChannel("all").setMessage(text)
                 .setSender(app.getCurrentPlayer());
         chatToSend.setDate(new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime()));

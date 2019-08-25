@@ -2,49 +2,60 @@ package model;
 
 
 import asyncCommunication.WebSocketComponent;
+import asyncCommunication.WebSocketConfigurator;
+import gameScreen.GameFieldController;
 import syncCommunication.HttpRequests;
 
 import java.util.HashMap;
 
 public class Model {
 
-    private static Model instance;
-    private static App app;
-    private static HashMap<Player, HttpRequests> playerHttpRequestsHashMap;
-    private static WebSocketComponent wSC;
+    private  App app;
+    private  HashMap<Player, HttpRequests> playerHttpRequestsHashMap;
+    private  WebSocketComponent wSC;
+    private  WebSocketConfigurator webSocketConfigurator;
+    private GameFieldController gameFieldController;
 
 
-    public static Model getInstance() {
-        if (instance == null) {
-            instance = new Model();
-        }
-        return instance;
+    public GameFieldController getGameFieldController() {
+        return gameFieldController;
     }
 
-    public static App getApp() {
+    public void setGameFieldController(GameFieldController gameFieldController) {
+        this.gameFieldController = gameFieldController;
+    }
+
+
+    public App getApp() {
         if (app == null) {
             app = new App();
         }
         return app;
     }
 
-    public static void setApp(App app) {
-        Model.app = app;
+    public void setApp(App app) {
+        this.app = app;
     }
 
-    public static WebSocketComponent getWebSocketComponent() {
+    public WebSocketComponent getWebSocketComponent() {
         return wSC;
     }
 
-    public static void setWebSocketComponent(WebSocketComponent component) {
-        wSC = component;
+    public void setWebSocketComponent(WebSocketComponent component) {
+        this.wSC = component;
     }
 
-    public static HashMap<Player, HttpRequests> getPlayerHttpRequestsHashMap() {
+    public HashMap<Player, HttpRequests> getPlayerHttpRequestsHashMap() {
         if (playerHttpRequestsHashMap == null) {
             playerHttpRequestsHashMap = new HashMap<>();
         }
         return playerHttpRequestsHashMap;
     }
 
+    public WebSocketConfigurator getWebSocketConfigurator() {
+        if (webSocketConfigurator == null){
+            webSocketConfigurator = new WebSocketConfigurator();
+        }
+        return webSocketConfigurator;
+    }
 }

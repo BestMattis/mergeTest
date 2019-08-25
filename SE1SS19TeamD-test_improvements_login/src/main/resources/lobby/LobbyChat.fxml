@@ -4,8 +4,7 @@
 <?import javafx.scene.layout.*?>
 <SplitPane xmlns:fx="http://javafx.com/fxml/1" dividerPositions="0.25, 0.8" maxHeight="-Infinity" maxWidth="-Infinity"
            minHeight="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefHeight="250.0" prefWidth="200.0"
-           stylesheets="@../screen.css" xmlns="http://javafx.com/javafx/8"
-           fx:controller="lobby.LobbyChatController">
+           stylesheets="@../screen.css" xmlns="http://javafx.com/javafx/8">
     <items>
         <SplitPane id="chatpane" dividerPositions="0.5" prefHeight="66.0" prefWidth="298.0"
                    SplitPane.resizableWithParent="false">

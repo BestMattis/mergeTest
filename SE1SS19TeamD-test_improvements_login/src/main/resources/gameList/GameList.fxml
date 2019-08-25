@@ -4,8 +4,7 @@
 <?import javafx.scene.layout.*?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
             minWidth="-Infinity"
-            prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8"
-            fx:controller="gameList.GameListController">
+            prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8">
     <children>
         <HBox alignment="TOP_CENTER" fillHeight="false" maxHeight="20.0" maxWidth="600.0" minHeight="20.0"
               minWidth="600.0" prefHeight="20.0" prefWidth="600.0" spacing="100.0" styleClass="pane"

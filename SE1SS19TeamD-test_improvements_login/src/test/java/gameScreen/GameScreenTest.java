@@ -1,6 +1,5 @@
 package gameScreen;
 
-import com.sun.javafx.css.StyleCache;
 import javafx.application.Platform;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
@@ -13,9 +12,6 @@ import model.Player;
 import org.junit.Test;
 import org.testfx.api.FxAssert;
 import org.testfx.framework.junit.ApplicationTest;
-import syncCommunication.RESTExceptions.GameIdNotFoundException;
-
-import javax.swing.tree.TreeCellEditor;
 
 import static org.hamcrest.CoreMatchers.is;
 
@@ -24,14 +20,26 @@ public class GameScreenTest extends ApplicationTest {
     FXMLLoad gameFXML;
     Game testgame;
     Stage pri;
+    private Model model;
 
-    public void start(Stage stage){
+    public void start(Stage stage) {
 
+        AdvancedWarsApplication.offtesting = true;
+        AdvancedWarsApplication awa = new AdvancedWarsApplication();
+        awa.start(stage);
+        model = awa.model;
         App app = new App();
-        Model.setApp(app);
-        new AdvancedWarsApplication().start(stage);
+        model.setApp(app);
         AdvancedWarsApplication.getInstance().offtesting = true;
         pri = stage;
+        testgame = new Game();
+        testgame.setCapacity(2);
+        testgame.setName("testgame0");
+        Player player = new Player();
+        player.setName("Player0");
+        testgame.withPlayers(player);
+        app.setCurrentPlayer(player);
+        model.getApp().withAllGames(testgame);
 
         Game game = new Game();
 
@@ -39,17 +47,12 @@ public class GameScreenTest extends ApplicationTest {
         stage.setScene(gameFXML.getScene());
         stage.setFullScreen(true);
         stage.show();
-        testgame = new Game();
-        testgame.setCapacity(2);
-        testgame.setName("testgame0");
-        Player player = new Player();
-        player.setName("Player0");
-        testgame.withPlayers(player);
+
         gameFXML.getController(GameScreenController.class).getGameLobbyController().update(testgame);
     }
 
     @Test
-    public void gameFullTest(){
+    public void gameFullTest() {
         FxAssert.verifyThat(gameFXML.getController(GameScreenController.class).getGameLobbyController().base.isVisible(), is(true));
         Platform.runLater(new Runnable() {
             @Override
@@ -69,7 +72,7 @@ public class GameScreenTest extends ApplicationTest {
     }
 
     @Test
-    public void chatTest(){
+    public void chatTest() {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -77,7 +80,7 @@ public class GameScreenTest extends ApplicationTest {
             }
         });
         try {
-            Thread.sleep(1000);
+            Thread.sleep(2000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -86,6 +89,15 @@ public class GameScreenTest extends ApplicationTest {
         moveTo("#border");
         clickOn("#chat");
         FxAssert.verifyThat(gameFXML.getController(GameScreenController.class).chatFXML.getParent().isVisible(), is(true));
+        clickOn("#message");
+        push(KeyCode.ENTER);
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        FxAssert.verifyThat(gameFXML.getController(GameScreenController.class).chatFXML.getParent().isVisible(), is(true));
+
         clickOn("#message");
         push(KeyCode.ENTER);
         try {
@@ -105,7 +117,5 @@ public class GameScreenTest extends ApplicationTest {
             e.printStackTrace();
         }
         FxAssert.verifyThat(gameFXML.getController(GameScreenController.class).chatFXML.getParent().isVisible(), is(false));
-
     }
-
 }

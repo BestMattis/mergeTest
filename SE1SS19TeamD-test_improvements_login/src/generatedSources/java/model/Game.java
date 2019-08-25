@@ -91,6 +91,69 @@ public class Game
    }
 
 
+   public static final String PROPERTY_activePlayer = "activePlayer";
+
+   private String activePlayer;
+
+   public String getActivePlayer()
+   {
+      return activePlayer;
+   }
+
+   public Game setActivePlayer(String value)
+   {
+      if (value == null ? this.activePlayer != null : ! value.equals(this.activePlayer))
+      {
+         String oldValue = this.activePlayer;
+         this.activePlayer = value;
+         firePropertyChange("activePlayer", oldValue, value);
+      }
+      return this;
+   }
+
+
+   public static final String PROPERTY_currentPhase = "currentPhase";
+
+   private String currentPhase;
+
+   public String getCurrentPhase()
+   {
+      return currentPhase;
+   }
+
+   public Game setCurrentPhase(String value)
+   {
+      if (value == null ? this.currentPhase != null : ! value.equals(this.currentPhase))
+      {
+         String oldValue = this.currentPhase;
+         this.currentPhase = value;
+         firePropertyChange("currentPhase", oldValue, value);
+      }
+      return this;
+   }
+
+
+   public static final String PROPERTY_started = "started";
+
+   private boolean started;
+
+   public boolean getStarted()
+   {
+      return started;
+   }
+
+   public Game setStarted(boolean value)
+   {
+      if (value != this.started)
+      {
+         boolean oldValue = this.started;
+         this.started = value;
+         firePropertyChange("started", oldValue, value);
+      }
+      return this;
+   }
+
+
    public static final String PROPERTY_winner = "winner";
 
    private String winner;
@@ -268,6 +331,68 @@ public class Game
    }
 
 
+   public static final String PROPERTY_selectedUnit = "selectedUnit";
+
+   private Unit selectedUnit = null;
+
+   public Unit getSelectedUnit()
+   {
+      return this.selectedUnit;
+   }
+
+   public Game setSelectedUnit(Unit value)
+   {
+      if (this.selectedUnit != value)
+      {
+         Unit oldValue = this.selectedUnit;
+         if (this.selectedUnit != null)
+         {
+            this.selectedUnit = null;
+            oldValue.setSelectedBy(null);
+         }
+         this.selectedUnit = value;
+         if (value != null)
+         {
+            value.setSelectedBy(this);
+         }
+         firePropertyChange("selectedUnit", oldValue, value);
+      }
+      return this;
+   }
+
+
+
+   public static final String PROPERTY_selectedField = "selectedField";
+
+   private Field selectedField = null;
+
+   public Field getSelectedField()
+   {
+      return this.selectedField;
+   }
+
+   public Game setSelectedField(Field value)
+   {
+      if (this.selectedField != value)
+      {
+         Field oldValue = this.selectedField;
+         if (this.selectedField != null)
+         {
+            this.selectedField = null;
+            oldValue.setSelectedBy(null);
+         }
+         this.selectedField = value;
+         if (value != null)
+         {
+            value.setSelectedBy(this);
+         }
+         firePropertyChange("selectedField", oldValue, value);
+      }
+      return this;
+   }
+
+
+
    public static final String PROPERTY_turnPlayer = "turnPlayer";
 
    private Player turnPlayer = null;
@@ -299,35 +424,82 @@ public class Game
 
 
 
-   public static final String PROPERTY_selectedUnit = "selectedUnit";
+   public static final java.util.ArrayList<Unit> EMPTY_allUnits = new java.util.ArrayList<Unit>()
+   { @Override public boolean add(Unit value){ throw new UnsupportedOperationException("No direct add! Use xy.withAllUnits(obj)"); }};
 
-   private Unit selectedUnit = null;
 
-   public Unit getSelectedUnit()
+   public static final String PROPERTY_allUnits = "allUnits";
+
+   private java.util.ArrayList<Unit> allUnits = null;
+
+   public java.util.ArrayList<Unit> getAllUnits()
    {
-      return this.selectedUnit;
+      if (this.allUnits == null)
+      {
+         return EMPTY_allUnits;
+      }
+
+      return this.allUnits;
    }
 
-   public Game setSelectedUnit(Unit value)
+   public Game withAllUnits(Object... value)
    {
-      if (this.selectedUnit != value)
+      if(value==null) return this;
+      for (Object item : value)
       {
-         Unit oldValue = this.selectedUnit;
-         if (this.selectedUnit != null)
+         if (item == null) continue;
+         if (item instanceof java.util.Collection)
          {
-            this.selectedUnit = null;
-            oldValue.setSelectedBy(null);
+            for (Object i : (java.util.Collection) item)
+            {
+               this.withAllUnits(i);
+            }
          }
-         this.selectedUnit = value;
-         if (value != null)
+         else if (item instanceof Unit)
          {
-            value.setSelectedBy(this);
+            if (this.allUnits == null)
+            {
+               this.allUnits = new java.util.ArrayList<Unit>();
+            }
+            if ( ! this.allUnits.contains(item))
+            {
+               this.allUnits.add((Unit)item);
+               ((Unit)item).setGame(this);
+               firePropertyChange("allUnits", null, item);
+            }
          }
-         firePropertyChange("selectedUnit", oldValue, value);
+         else throw new IllegalArgumentException();
       }
       return this;
    }
 
+
+
+   public Game withoutAllUnits(Object... value)
+   {
+      if (this.allUnits == null || value==null) return this;
+      for (Object item : value)
+      {
+         if (item == null) continue;
+         if (item instanceof java.util.Collection)
+         {
+            for (Object i : (java.util.Collection) item)
+            {
+               this.withoutAllUnits(i);
+            }
+         }
+         else if (item instanceof Unit)
+         {
+            if (this.allUnits.contains(item))
+            {
+               this.allUnits.remove((Unit)item);
+               ((Unit)item).setGame(null);
+               firePropertyChange("allUnits", item, null);
+            }
+         }
+      }
+      return this;
+   }
 
 
    public static final String PROPERTY_app = "app";
@@ -449,6 +621,8 @@ public class Game
 
       result.append(" ").append(this.getName());
       result.append(" ").append(this.getGameId());
+      result.append(" ").append(this.getActivePlayer());
+      result.append(" ").append(this.getCurrentPhase());
       result.append(" ").append(this.getWinner());
 
 
@@ -457,8 +631,9 @@ public class Game
 
    public void removeYou()
    {
-      this.setTurnPlayer(null);
       this.setSelectedUnit(null);
+      this.setSelectedField(null);
+      this.setTurnPlayer(null);
       this.setApp(null);
       this.setGameField(null);
 
@@ -466,6 +641,9 @@ public class Game
 
 
       this.withoutIngameMessages(this.getIngameMessages().clone());
+
+
+      this.withoutAllUnits(this.getAllUnits().clone());
 
 
    }

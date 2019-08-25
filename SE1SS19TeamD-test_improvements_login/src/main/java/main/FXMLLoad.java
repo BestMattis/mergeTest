@@ -19,9 +19,10 @@ public class FXMLLoad {
     private FXMLLoader fxmlLoader = null;
     private Parent parent;
     private String path;
+    private ResourceBundle resourceBundle;
 
 
-    public FXMLLoad(String fxmlpath, Object controller, boolean list){
+    public FXMLLoad(String fxmlpath, Object controller, boolean list) {
         loadFXML(fxmlpath, defaultprop, controller);
         if (list) {
             fxmlLoads.add(this);
@@ -115,6 +116,7 @@ public class FXMLLoad {
         try {
             inputStream = classLoader.getResource(propertiespath).openStream();
             bundle = new PropertyResourceBundle(inputStream);
+            resourceBundle = bundle;
             loc = getClass().getResource(fxmlpath);
         } catch (IOException e) {
             e.printStackTrace();
@@ -179,9 +181,12 @@ public class FXMLLoad {
     /**
      * @return the fxmlpath
      */
-    public String getPath(){
+    public String getPath() {
         return path;
     }
 
 
+    public ResourceBundle getResourceBundle() {
+        return resourceBundle;
+    }
 }

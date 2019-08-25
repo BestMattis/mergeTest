@@ -24,9 +24,14 @@ import static org.hamcrest.CoreMatchers.is;
 public class GameLobbyTest extends ApplicationTest {
 
     static Stage pri;
+    private Model model;
 
     public void start(Stage stage) throws Exception {
 
+        AdvancedWarsApplication awa = new AdvancedWarsApplication();
+        awa.start(stage);
+        model = awa.model;
+        AdvancedWarsApplication.getInstance().offtesting = true;
         App app = new App();
 
         ArrayList<Game> games = new ArrayList<>();
@@ -46,9 +51,8 @@ public class GameLobbyTest extends ApplicationTest {
             index = index + 2;
         }
 
-        Model.setApp(app);
-        new AdvancedWarsApplication().start(stage);
-        AdvancedWarsApplication.getInstance().offtesting = true;
+        model.setApp(app);
+
         pri = stage;
         //AdvancedWarsApplication.getInstance().goToLobby();
 
@@ -59,7 +63,7 @@ public class GameLobbyTest extends ApplicationTest {
         return (T) lookup(query).queryAll().iterator().next();
     }
 
-    public void login(){
+    public void login() {
         clickOn("#nameTextfield");
         write("testname");
         clickOn("#pwTextfield");
@@ -72,9 +76,9 @@ public class GameLobbyTest extends ApplicationTest {
         write("testpw");
         clickOn("#logButton");
     }
-	
+
     @Test
-    public void waitTest(){
+    public void waitTest() {
         login();
         FxAssert.verifyThat(AdvancedWarsApplication.getInstance().primaryStage.getScene(), is(AdvancedWarsApplication.getInstance().getLobbyScene()));
         clickOn("#gameName");
@@ -87,11 +91,11 @@ public class GameLobbyTest extends ApplicationTest {
     }
 
     @Test
-    public void addingPlayerTest(){
+    public void addingPlayerTest() {
         login();
         clickOn("#gameName");
         Label name = find("#gameName");
-        FxAssert.verifyThat(name.getText(), is(Model.getApp().getAllGames().get(0).getName()));
+        FxAssert.verifyThat(name.getText(), is(model.getApp().getAllGames().get(0).getName()));
         Label count = find("#count");
         FxAssert.verifyThat(count.getText(), is("2/4"));
         Player player = new Player();
@@ -101,7 +105,7 @@ public class GameLobbyTest extends ApplicationTest {
         final FutureTask query = new FutureTask(new Callable() {
             @Override
             public Object call() throws Exception {
-                Model.getApp().getAllGames().get(0).withPlayers(player);
+                model.getApp().getAllGames().get(0).withPlayers(player);
                 return null;
             }
         });
@@ -120,13 +124,13 @@ public class GameLobbyTest extends ApplicationTest {
     }
 
     @Test
-    public void test(){
+    public void test() {
         login();
         clickOn("#gameName");
     }
 
     @Test
-    public void armyImplementationTest(){
+    public void armyImplementationTest() {
         login();
         FxAssert.verifyThat(AdvancedWarsApplication.getInstance().getLobbyCon().armymanagerFXML.getParent().isVisible(), is(false));
         clickOn("#armymanager");

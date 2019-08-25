@@ -3,20 +3,25 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.text.TextFlow?>
 <?import javafx.scene.web.WebView?>
-
-<AnchorPane id="trpane" fx:id="base2" styleClass="transparent-pane" stylesheets="@../screen.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lobby.LobbyGameInfoController">
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" id="trpane" fx:id="base2" styleClass="transparent-pane"
+            stylesheets="@../screen.css" xmlns="http://javafx.com/javafx/8"
+            fx:controller="lobby.LobbyGameInfoController">
     <children>
-        <TabPane id="credpane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="75.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="30.0">
+        <TabPane id="credpane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                 prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="75.0"
+                 AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="30.0">
             <tabs>
                 <Tab id="credits" closable="false" text="%credits.credits">
                     <content>
                         <AnchorPane id="credbox" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                             <children>
-                                <TextFlow fx:id="credits" layoutX="14.0" layoutY="14.0" prefHeight="343.0" prefWidth="571.0" textAlignment="CENTER" AnchorPane.bottomAnchor="3.0" AnchorPane.leftAnchor="3.0" AnchorPane.rightAnchor="3.0" AnchorPane.topAnchor="3.0" />
+                                <TextFlow fx:id="credits" layoutX="14.0" layoutY="14.0" prefHeight="343.0"
+                                          prefWidth="571.0" textAlignment="CENTER" AnchorPane.bottomAnchor="3.0"
+                                          AnchorPane.leftAnchor="3.0" AnchorPane.rightAnchor="3.0"
+                                          AnchorPane.topAnchor="3.0"/>
                             </children>
                         </AnchorPane>
                     </content>
@@ -25,16 +30,20 @@
                     <content>
                         <AnchorPane id="infoweb" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                             <children>
-                                <WebView fx:id="web" layoutX="151.0" layoutY="48.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="3.0" AnchorPane.leftAnchor="3.0" AnchorPane.rightAnchor="3.0" AnchorPane.topAnchor="3.0" />
+                                <WebView fx:id="web" layoutX="151.0" layoutY="48.0" prefHeight="200.0" prefWidth="200.0"
+                                         AnchorPane.bottomAnchor="3.0" AnchorPane.leftAnchor="3.0"
+                                         AnchorPane.rightAnchor="3.0" AnchorPane.topAnchor="3.0"/>
                             </children>
                         </AnchorPane>
                     </content>
                 </Tab>
             </tabs>
         </TabPane>
-        <VBox alignment="CENTER" layoutX="310.0" layoutY="477.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="310.0" AnchorPane.rightAnchor="310.0">
+        <VBox alignment="CENTER" layoutX="310.0" layoutY="477.0" AnchorPane.bottomAnchor="14.0"
+              AnchorPane.leftAnchor="310.0" AnchorPane.rightAnchor="310.0">
             <children>
-                <Button id="back" fx:id="back" mnemonicParsing="false" prefHeight="25.0" prefWidth="80.0" text="%credits.back" />
+                <Button id="back" fx:id="back" mnemonicParsing="false" prefHeight="25.0" prefWidth="80.0"
+                        text="%credits.back"/>
             </children>
         </VBox>
     </children>

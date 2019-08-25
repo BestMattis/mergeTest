@@ -2,18 +2,15 @@ package armyManager;
 
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
-import javafx.scene.image.ImageView;
+import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.PropertyResourceBundle;
-import java.util.ResourceBundle;
 
 
 public class UnitCardController {
@@ -23,54 +20,71 @@ public class UnitCardController {
     @FXML
     Label unitname;
     @FXML
-    ImageView picture;
+    Canvas picture;
 
     private String id;
     private Parent parent;
     private ArmyManagerController parentCon;
+    private int magnification = 2;
 
     /**
      * initialize the dragdrop
      */
-    public void initialize(){
+    public void initialize() {
         base.setOnDragDetected(t -> drag(t));
         base.setOnDragDone(t -> dragdone(t));
     }
 
-    /** gret the id of the unit of this card
+    /**
+     * gret the id of the unit of this card
+     *
      * @return the id of the unit this card has
      */
-    public String getID(){
+    public String getID() {
         return id;
     }
 
-    /** called when the dragdrop is finished
+    /**
+     * called when the dragdrop is finished
+     *
      * @param event of the dragged unitcard
      */
     private void dragdone(DragEvent event) {
-        if (event.isDropCompleted() == false){
+        if (event.isDropCompleted() == false) {
             base.setVisible(true);
         }
         event.consume();
     }
 
-    /** set the unit of this card
+    /**
+     * set the unit of this card
+     *
      * @param unitID the Id of the unit this card is going to have
      */
-    public void setUnit(String unitID, ArrayList<JSONObject> allDifferentUnitTypes){
+    public void setUnit(String unitID, ArrayList<JSONObject> allDifferentUnitTypes) {
 
         id = unitID;
 
-        for (JSONObject unitType:allDifferentUnitTypes){
-            if(unitID.equals(unitType.getString("id"))){
+        for (JSONObject unitType : allDifferentUnitTypes) {
+            if (unitID.equals(unitType.getString("id"))) {
                 String name = unitType.getString("type");
                 unitname.setText(name);
+                try {
+                    String name2 = name.replaceAll("\\s+", "");
+                    Image img = new Image(("/textures/units/Red/RED_" + name2 + ".png"), 64 * magnification, 128 * magnification, true, false);
+                    WritableImage wimg = new WritableImage(32 * magnification, 32 * magnification);
+                    wimg.getPixelWriter().setPixels(0, 0, 32 * magnification, 32 * magnification, img.getPixelReader(), 0, 0);
+                    picture.getGraphicsContext2D().drawImage((Image) wimg, (picture.getWidth() / 2) - (wimg.getWidth() / 2), (picture.getHeight() / 2) - (wimg.getHeight() / 2));
+                } catch (Exception e) {
+                }
                 break;
             }
         }
     }
 
-    /** method to start the dragdrop, set the icon
+    /**
+     * method to start the dragdrop, set the icon
+     *
      * @param t the event of the dragged card
      */
     private void drag(MouseEvent t) {
@@ -81,14 +95,16 @@ public class UnitCardController {
         content.putString(id);
         db.setContent(content);
 
-        if (parent.getClass() == AnchorPane.class){
+        if (parent.getClass() == AnchorPane.class) {
             base.setVisible(false);
         }
 
         t.consume();
     }
 
-    /** set the parent of this unitcard
+    /**
+     * set the parent of this unitcard
+     *
      * @param parent the parent of this card
      */
     public void setParent(Parent parent) {

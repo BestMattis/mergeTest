@@ -1,14 +1,15 @@
 package asyncCommunication;
 
+import main.AdvancedWarsApplication;
 import model.ChatMessage;
 import model.Model;
-import msgToAllPlayers.WSChatEndpoint;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -16,15 +17,14 @@ import java.util.concurrent.TimeUnit;
 import static asyncCommunication.Constants.*;
 
 public class WebSocketComponent {
-
     private WebSocketRequests chatClient;
     private WebSocketRequests systemClient;
     private WebSocketRequests gameClient;
     private boolean gameLobby = false;
     private boolean inGame = false;
     private boolean gameObserver = false;
-
     private boolean online;
+    private Model model;
 
     /**
      * creates a WebSocket component that starts a chat- and a system-client
@@ -32,8 +32,8 @@ public class WebSocketComponent {
      * @param userName the username of the user
      * @param userKey  the user-key of the user
      */
-    public WebSocketComponent(String userName, String userKey) {
-        this(userName, userKey, true);
+    public WebSocketComponent(String userName, String userKey, Model model) {
+        this(userName, userKey, true, model);
     }
 
     /**
@@ -43,11 +43,12 @@ public class WebSocketComponent {
      * @param userKey  the user-key of the user
      * @param online   whether this Requests component is used online
      */
-    public WebSocketComponent(String userName, String userKey, boolean online) {
+    public WebSocketComponent(String userName, String userKey, boolean online, Model model) {
+        this.model = model;
         this.online = online;
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> {
-            WebSocketConfigurator.userKey = userKey;
+            model.getWebSocketConfigurator().userKey = userKey;
             startChatSocket(userName);
             startSystemSocket();
         });
@@ -58,9 +59,9 @@ public class WebSocketComponent {
      *
      * @param userName the username of the user
      */
-    public WebSocketComponent(String userName, URI uri) {
+    public WebSocketComponent(String userName, URI uri, Model model) {
 
-        this.chatClient = new WebSocketRequests(uri);
+        this.chatClient = new WebSocketRequests(uri, model);
     }
 
     /**
@@ -76,7 +77,7 @@ public class WebSocketComponent {
      * Return the system client.
      *
      * @return the system client (a websocket requests object)
-     */
+     */ 
     public WebSocketRequests getSystemClient() {
         return systemClient;
     }
@@ -103,7 +104,7 @@ public class WebSocketComponent {
 
         if (this.chatClient == null || !this.chatClient.isOpen()) {
             try {
-                this.chatClient = new WebSocketRequests(new URI(BS_WS_URI + CHAT_WS + userName));
+                this.chatClient = new WebSocketRequests(new URI(BS_WS_URI + CHAT_WS + userName), model);
             } catch (URISyntaxException e) {
                 e.printStackTrace();
             }
@@ -115,8 +116,8 @@ public class WebSocketComponent {
 
     private void stopChatSocket() {
 
-        if (this.chatClient != null) {
-            try {
+        if (this.chatClient != null) { 
+            try { 
                 this.chatClient.stop();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -128,7 +129,7 @@ public class WebSocketComponent {
 
         if (this.systemClient == null || !this.systemClient.isOpen()) {
             try {
-                this.systemClient = new WebSocketRequests(new URI(BS_WS_URI + SYSTEM_WS));
+                this.systemClient = new WebSocketRequests(new URI(BS_WS_URI + SYSTEM_WS), model);
             } catch (URISyntaxException e) {
                 e.printStackTrace();
             }
@@ -156,38 +157,12 @@ public class WebSocketComponent {
      * @param armyID is the id of the army
      */
     public void joinGame(String gameID, String armyID) {
-
-        if (this.gameClient == null || !this.gameClient.isOpen()) {
-
-            if (this.inGame == false && this.gameLobby == false && this.gameObserver == false) {
-
-                // stop the game lobby socket
-                stopGameSocket();
-
+        if (this.gameClient != null || this.gameClient.isOpen()) {
+            if (!this.inGame && this.gameLobby && !this.gameObserver) {
                 this.gameLobby = false;
                 this.inGame = true;
-
-                WSChatEndpoint.getInstance().setIngameListeners();
-                ExecutorService executor = Executors.newSingleThreadExecutor();
-                executor.execute(() -> {
-
-                    try {
-                        this.gameClient = new WebSocketRequests(new URI(BS_WS_URI + GAME_WS + gameID
-                                + "&" + "" + "armyId=" + armyID));
-                        if (online) {
-                            this.gameClient.connect();
-                        }
-                    } catch (URISyntaxException e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        executor.awaitTermination(1, TimeUnit.SECONDS);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    while (this.gameClient.isOpen()) {
-                    }
-                });
+                AdvancedWarsApplication.getInstance().getGameScreenCon().getGameLobbyController().removeGameLobbyListeners();
+                AdvancedWarsApplication.getInstance().getGameScreenCon().setIngameListeners();
             }
         }
     }
@@ -195,14 +170,16 @@ public class WebSocketComponent {
     /**
      * Closes the main lobby chat client and opens a game-Socket for the game lobby.
      *
-     * @param gameID is the id of the game.
+     * @param gameID             is the id of the game.
+     * @param gameClientCallable the callable is called after gameClient is created
      */
-    public void joinGameLobby(String gameID) {
+    public void joinGameLobby(String gameID, Callable<Void> gameClientCallable) {
 
-        if ((this.gameClient == null || !this.gameClient.isOpen()) && this.inGame == false
-                && this.gameObserver == false && this.gameLobby == false) {
+        if ((this.gameClient == null || !this.gameClient.isOpen()) && !this.inGame
+                && !this.gameObserver && !this.gameLobby) {
 
             this.gameLobby = true;
+            AdvancedWarsApplication.getInstance().getGameScreenCon().getGameLobbyController().setGameLobbyListeners();
 
             if (this.chatClient.isOpen()) {
 
@@ -212,17 +189,24 @@ public class WebSocketComponent {
                     e.printStackTrace();
                 }
             }
+            if(this.systemClient.isOpen()) {
+            	try {
+                    this.systemClient.stop();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
 
-            WSChatEndpoint.getInstance().setIngameListeners();
             ExecutorService executor = Executors.newSingleThreadExecutor();
             executor.execute(() -> {
 
                 try {
-                    this.gameClient = new WebSocketRequests(new URI(BS_WS_URI + GAME_WS + gameID));
+                    this.gameClient = new WebSocketRequests(new URI(BS_WS_URI + GAME_WS + gameID), model);
                     if (online) {
                         this.gameClient.connect();
                     }
-                } catch (URISyntaxException e) {
+                    gameClientCallable.call();
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 try {
@@ -230,11 +214,11 @@ public class WebSocketComponent {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                while (this.gameClient.isOpen()) { //TODO sometimes throwing nullpointer exceptions
+                while (this.gameClient.isOpen()) {
                 }
             });
         } else {
-            System.out.println("you can't join game lobby");
+            System.out.println(this.getClass().getName() + ": you can't join game lobby");
         }
     }
 
@@ -247,8 +231,8 @@ public class WebSocketComponent {
 
         String observerKey = "&spectator=true";
 
-        if ((this.gameClient == null || !this.gameClient.isOpen()) && this.inGame == false
-                && this.gameObserver == false && this.gameLobby == false) {
+        if ((this.gameClient == null || !this.gameClient.isOpen()) && !this.inGame
+                && !this.gameObserver && !this.gameLobby) {
 
             this.gameObserver = true;
 
@@ -261,12 +245,14 @@ public class WebSocketComponent {
                 }
             }
 
-            WSChatEndpoint.getInstance().setIngameListeners();
             ExecutorService executor = Executors.newSingleThreadExecutor();
             executor.execute(() -> {
 
                 try {
-                    this.gameClient = new WebSocketRequests(new URI(BS_WS_URI + GAME_WS + gameID + observerKey));
+                    this.gameClient = new WebSocketRequests(new URI(BS_WS_URI + GAME_WS + gameID + observerKey), model);
+                    if (online) {
+                        this.gameClient.connect();
+                    }
                 } catch (URISyntaxException e) {
                     e.printStackTrace();
                 }
@@ -291,7 +277,7 @@ public class WebSocketComponent {
 
         // TODO: check if gameClient is not null, otherwise retry until then
 
-        if (this.gameClient != null && this.gameClient.isOpen() && this.gameLobby == true) {
+        if (this.gameClient != null && this.gameClient.isOpen() && this.gameLobby) {
             JSONObject jsonObject = new JSONObject().put("messageType", "command").put("action", "changeArmy").put("data", armyID);
             gameClient.sendGameMessage(jsonObject);
             System.out.println("selectArmyInGameLobby message sent");
@@ -302,9 +288,7 @@ public class WebSocketComponent {
      * Tells the game-Socket that the player is ready to play.
      */
     public void playerIsReadyForGame() {
-
-        if (this. gameClient != null && this.gameClient.isOpen() && this.gameLobby == true) { //TODO
-
+        if (this.gameClient != null && this.gameClient.isOpen() && this.gameLobby) {
             JSONObject jsonObject = new JSONObject().put("messageType", "command").put("action", "readyToPlay");
             gameClient.sendGameMessage(jsonObject);
             System.out.println("playerIsReadyForGame message sent");
@@ -314,12 +298,13 @@ public class WebSocketComponent {
     /**
      * Starts the game from the game lobby.
      */
-    public void startGameFromLobby() { //TODO
+    public void startGameFromLobby() {
 
-        if (this. gameClient != null && this.gameClient.isOpen() && this.gameLobby == true) {
+        if (this.gameClient != null && this.gameClient.isOpen() && this.gameLobby) {
 
             JSONObject jsonObject = new JSONObject().put("messageType", "command").put("action", "startGame");
             gameClient.sendGameMessage(jsonObject);
+            
             System.out.println("startGameFromLobby message sent");
         }
     }
@@ -331,8 +316,7 @@ public class WebSocketComponent {
      * @param path   contains a list of field-ids that build a path.
      */
     public void moveUnitIngame(String unitID, String[] path) {
-
-        if (this.gameClient.isOpen() && this.inGame == true) {
+        if (this.gameClient != null && (this.gameClient.isOpen() && this.inGame)) {
 
             JSONObject jsonObject = new JSONObject().put("messageType", "command").put("action", "moveUnit");
             JSONArray pathArray = new JSONArray(path);
@@ -351,7 +335,7 @@ public class WebSocketComponent {
      */
     public void attackUnitIngame(String unitID, String toAttackID) {
 
-        if (this.gameClient.isOpen() && this.inGame == true) {
+        if (this.gameClient != null && (this.gameClient.isOpen() && this.inGame)) {
 
             JSONObject jsonObject = new JSONObject().put("messageType", "command").put("action", "attackUnit");
             JSONArray idArray = new JSONArray().put(unitID).put(toAttackID);
@@ -363,12 +347,13 @@ public class WebSocketComponent {
      * Sends the game-Socket a message to start the next phase
      */
     public void nextPhase() {
-
-        if (this.gameClient.isOpen() && this.inGame == true) {
+       if(this.gameClient.isOpen() && this.inGame) {
 
             JSONObject jsonObject = new JSONObject().put("messageType", "command").put("action", "nextPhase");
-        }
+            gameClient.sendGameMessage(jsonObject);
+       }
     }
+
     public void joinGame(String gameID) {
 
         if (this.gameClient == null || !this.gameClient.isOpen()) {
@@ -379,24 +364,22 @@ public class WebSocketComponent {
             }
         }
     }
-    private void joinGame(URI uri){
 
+    private void joinGame(URI uri) {
 
-            WSChatEndpoint.getInstance().setIngameListeners();
-            ExecutorService executor = Executors.newSingleThreadExecutor();
-            executor.execute(() -> {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(() -> {
 
-                this.gameClient = new WebSocketRequests(uri);
+            this.gameClient = new WebSocketRequests(uri, model);
 
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                while (this.gameClient.isOpen()) {
-                }
-            });
-
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            while (this.gameClient.isOpen()) {
+            }
+        });
     }
 
     /**
@@ -407,11 +390,10 @@ public class WebSocketComponent {
 
         if (this.gameClient != null && (!online || this.gameClient.isOpen())) {
 
-            WSChatEndpoint.removeIngameListeners();
             JSONObject jsonObject = new JSONObject().put("messageType", "command").put("action", "leaveGame");
             gameClient.sendGameMessage(jsonObject);
             stopGameSocket();
-            startChatSocket(Model.getApp().getCurrentPlayer().getName());
+            startChatSocket(model.getApp().getCurrentPlayer().getName());
         }
     }
 
@@ -430,6 +412,7 @@ public class WebSocketComponent {
             this.inGame = false;
             this.gameObserver = false;
         }
+
     }
 
     /**
@@ -474,7 +457,29 @@ public class WebSocketComponent {
                 }
             }
         } else {
-            System.out.println("join a game first");
+            System.out.println(this.getClass().getName() + ": join a game first");
+        }
+    }
+
+    public boolean isIngame() {
+
+        return this.inGame;
+    }
+
+    public void setInGameForTest() {
+
+        if (AdvancedWarsApplication.offtesting) {
+            this.inGame = true;
+        }
+    }
+
+    public boolean isInGameLobby() {
+        return this.gameLobby;
+    }
+
+    public void setInGameLobbyForTest() {
+        if (AdvancedWarsApplication.offtesting) {
+            this.gameLobby = true;
         }
     }
 }

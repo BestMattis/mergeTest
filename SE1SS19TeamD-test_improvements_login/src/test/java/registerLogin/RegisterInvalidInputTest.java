@@ -1,19 +1,18 @@
 package registerLogin;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.PropertyResourceBundle;
-import java.util.ResourceBundle;
-
-import org.junit.Assert;
-import org.junit.Test;
-import org.testfx.framework.junit.ApplicationTest;
-
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextInputControl;
 import javafx.stage.Stage;
 import main.AdvancedWarsApplication;
+import org.junit.Assert;
+import org.junit.Test;
+import org.testfx.framework.junit.ApplicationTest;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.PropertyResourceBundle;
+import java.util.ResourceBundle;
 
 public class RegisterInvalidInputTest extends ApplicationTest {
 
@@ -25,17 +24,17 @@ public class RegisterInvalidInputTest extends ApplicationTest {
 
     /**
      * Setup stage and start application.
-     * 
+     *
      * @param primaryStage the stage to display the GUI.
      */
     @Override
     public void start(Stage primaryStage) throws IOException {
-	new AdvancedWarsApplication().start(primaryStage);
-	ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-	InputStream inputStream = classLoader.getResource("en-US.properties").openStream();
-	this.bundle = new PropertyResourceBundle(inputStream);
+        new AdvancedWarsApplication().start(primaryStage);
+        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+        InputStream inputStream = classLoader.getResource("en-US.properties").openStream();
+        this.bundle = new PropertyResourceBundle(inputStream);
 
-	this.loadUIElements();
+        this.loadUIElements();
     }
 
     /**
@@ -43,9 +42,9 @@ public class RegisterInvalidInputTest extends ApplicationTest {
      */
     @Test
     public void testUnsuccessfulRegistration_spaceInName() {
-	String actualMsg = this.tryRegistrationWith("test name", "unknown");
-	String expectedMsg = this.bundle.getString("regLog.SpaceErrorRegister");
-	Assert.assertEquals("Wrong error message", expectedMsg, actualMsg);
+        String actualMsg = this.tryRegistrationWith("test name", "unknown");
+        String expectedMsg = this.bundle.getString("regLog.SpaceErrorRegister");
+        Assert.assertEquals("Wrong error message", expectedMsg, actualMsg);
     }
 
     /**
@@ -53,9 +52,9 @@ public class RegisterInvalidInputTest extends ApplicationTest {
      */
     @Test
     public void testUnsuccessfulRegistration_spaceInPassword() {
-	String actualMsg = this.tryRegistrationWith("name", "not known");
-	String expectedMsg = this.bundle.getString("regLog.SpaceErrorRegister");
-	Assert.assertEquals("Wrong error message", expectedMsg, actualMsg);
+        String actualMsg = this.tryRegistrationWith("name", "not known");
+        String expectedMsg = this.bundle.getString("regLog.SpaceErrorRegister");
+        Assert.assertEquals("Wrong error message", expectedMsg, actualMsg);
     }
 
     /**
@@ -63,8 +62,8 @@ public class RegisterInvalidInputTest extends ApplicationTest {
      */
     @Test
     public void testUnsuccessfulRegistration_emptyName() {
-	String actualMsg = this.tryRegistrationWith("", "unknown");
-	Assert.assertEquals("Wrong error message", "", actualMsg);
+        String actualMsg = this.tryRegistrationWith("", "unknown");
+        Assert.assertEquals("Wrong error message", "", actualMsg);
     }
 
     /**
@@ -72,8 +71,8 @@ public class RegisterInvalidInputTest extends ApplicationTest {
      */
     @Test
     public void testUnsuccessfulRegistration_emptyPassword() {
-	String actualMsg = this.tryRegistrationWith("name", "");
-	Assert.assertEquals("Wrong error message", "", actualMsg);
+        String actualMsg = this.tryRegistrationWith("name", "");
+        Assert.assertEquals("Wrong error message", "", actualMsg);
     }
 
     /**
@@ -81,24 +80,24 @@ public class RegisterInvalidInputTest extends ApplicationTest {
      */
     @Test
     public void testUnsuccessfulRegistration_emptyNameAndPassword() {
-	String actualMsg = this.tryRegistrationWith("", "");
-	Assert.assertEquals("Wrong error message", "", actualMsg);
+        String actualMsg = this.tryRegistrationWith("", "");
+        Assert.assertEquals("Wrong error message", "", actualMsg);
     }
 
     private void loadUIElements() {
-	this.nameText = this.lookup("#nameTextfield").queryTextInputControl();
-	this.passwordText = this.lookup("#pwTextfield").queryTextInputControl();
-	this.msgLabel = this.lookup("#msgLabel").queryAs(Label.class);
-	this.registerButton = this.lookup("#regButton").queryButton();
+        this.nameText = this.lookup("#nameTextfield").queryTextInputControl();
+        this.passwordText = this.lookup("#pwTextfield").queryTextInputControl();
+        this.msgLabel = this.lookup("#msgLabel").queryAs(Label.class);
+        this.registerButton = this.lookup("#regButton").queryButton();
     }
 
     private String tryRegistrationWith(String name, String password) {
-	this.clickOn(this.nameText);
-	this.write(name);
-	this.clickOn(this.passwordText);
-	this.write(password);
-	this.clickOn(this.registerButton);
+        this.clickOn(this.nameText);
+        this.write(name);
+        this.clickOn(this.passwordText);
+        this.write(password);
+        this.clickOn(this.registerButton);
 
-	return this.msgLabel.getText();
+        return this.msgLabel.getText();
     }
 }

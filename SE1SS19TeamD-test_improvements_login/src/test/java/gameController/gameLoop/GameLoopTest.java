@@ -1,4 +1,4 @@
-package gameController;
+package gameController.gameLoop;
 
 import org.junit.Assert;
 import org.junit.Test;

@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import main.AdvancedWarsApplication;
+import model.Model;
 import model.Player;
 
 import java.util.ArrayList;
@@ -14,6 +15,11 @@ public class LobbyChatSingleTabsController {
     protected ArrayList<ChatTab> chatTabs = new ArrayList<>();
     @FXML
     protected TabPane singleTabPane;
+    private Model model;
+
+    public LobbyChatSingleTabsController(Model model) {
+        this.model = model;
+    }
 
     public void initialize() {
     }
@@ -34,7 +40,7 @@ public class LobbyChatSingleTabsController {
         }
         if (player != null && notopened) {
             Tab tab = new Tab(player.getName());
-            ChatTab chattab = new ChatTab(tab, player);
+            ChatTab chattab = new ChatTab(tab, player, model);
             tab.setOnCloseRequest(t -> chatTabs.remove(chattab));
             chatTabs.add(chattab);
             Platform.runLater(() -> singleTabPane.getTabs().add(chattab.getTab()));

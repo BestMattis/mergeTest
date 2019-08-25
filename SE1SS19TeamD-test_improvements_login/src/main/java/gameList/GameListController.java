@@ -21,6 +21,8 @@ import java.util.concurrent.TimeUnit;
 
 public class GameListController {
 
+    private Model model;
+
     @FXML
     private VBox list;
     @FXML
@@ -32,12 +34,16 @@ public class GameListController {
 
     private App app;
 
+    public GameListController(Model model) {
+        this.model = model;
+    }
+
     /**
      * Call setApp with the app from Model.
      */
     @FXML
     public void initialize() {
-        setApp(Model.getApp());
+        setApp(model.getApp());
 
         //load all games that are currently on the server
         try {
@@ -45,7 +51,7 @@ public class GameListController {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        HttpRequests httpReq = Model.getPlayerHttpRequestsHashMap().get(Model.getApp().getCurrentPlayer());
+        HttpRequests httpReq = model.getPlayerHttpRequestsHashMap().get(model.getApp().getCurrentPlayer());
         SynchronousGameCommunicator gameCommunicator = new SynchronousGameCommunicator(httpReq);
         ArrayList<JSONObject> list = null;
         try {
@@ -54,11 +60,12 @@ public class GameListController {
             e.printStackTrace();
         }
         for (JSONObject data : list) {
+        	System.out.println(data);
             int joinedplayers = data.getInt("joinedPlayer");
             String name = data.getString("name");
             String id = data.getString("id");
             int capacity = data.getInt("neededPlayer");
-            Model.getApp().withAllGames(new Game().setJoinedPlayers(joinedplayers).setName(name)
+            model.getApp().withAllGames(new Game().setJoinedPlayers(joinedplayers).setName(name)
                     .setGameId(id).setCapacity(capacity));
         }
         update();

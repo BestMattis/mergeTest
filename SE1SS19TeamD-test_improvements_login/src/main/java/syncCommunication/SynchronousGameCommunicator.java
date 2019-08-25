@@ -26,7 +26,7 @@ public class SynchronousGameCommunicator extends SynchronousCommunicator {
      * @param gameName  Name of the game
      * @param userCount Amount of users that are allowed. 2 or 4.
      * @return String of the opened game's id
-     * @throws LoginFailedException if the user was not logged in
+     * @throws LoginFailedException             if the user was not logged in
      * @throws GameLobbyCreationFailedException if no game was created
      */
     public String openGame(String gameName, int userCount)
@@ -49,11 +49,11 @@ public class SynchronousGameCommunicator extends SynchronousCommunicator {
      * @throws LoginFailedException    if the user was not logged in
      * @throws GameIdNotFoundException if no game was found with that id
      */
-    public boolean joinGame(String gameID)
+    public boolean joinGame(String gameID, boolean observer)
             throws GameIdNotFoundException, LoginFailedException {
 
         try {
-            return gHandler.joinGameLobby(gHandler.getUserKey(), gameID);
+            return gHandler.joinGameLobby(gHandler.getUserKey(), gameID, observer);
         } catch (JSONException e) {
             e.printStackTrace();
         }

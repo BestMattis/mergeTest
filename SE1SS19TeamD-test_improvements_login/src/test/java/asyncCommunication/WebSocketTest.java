@@ -5,7 +5,6 @@ import model.ChatMessage;
 import model.Game;
 import model.Model;
 import model.Player;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
@@ -28,6 +27,7 @@ public class WebSocketTest {
 
     private WebSocketRequests chatClient;
     private WebSocketRequests systemClient;
+    private Model model = new Model();
 
     /*
      * the user-key is necessary to put it in the header for the requests to the server.
@@ -44,9 +44,10 @@ public class WebSocketTest {
             uComm.logIn(userName, userPassword);
             String userKey = uComm.getUserKey();
             Assert.assertNotNull(userKey);
-            WebSocketConfigurator.userKey = userKey;
-            this.chatClient = new WebSocketRequests(new URI(BS_WS_URI + CHAT_WS + userName));
-            this.systemClient = new WebSocketRequests(new URI(BS_WS_URI + SYSTEM_WS));
+
+            // WebSocketConfigurator.userKey = userKey;
+            this.chatClient = new WebSocketRequests(new URI(BS_WS_URI + CHAT_WS + userName), model);
+            this.systemClient = new WebSocketRequests(new URI(BS_WS_URI + SYSTEM_WS), model);
             Thread.sleep(1000);
             this.chatClient.stop();
             this.systemClient.stop();
@@ -70,9 +71,11 @@ public class WebSocketTest {
             uComm.logIn(userName, userPassword);
             String userKey = uComm.getUserKey();
             Assert.assertNotNull(userKey);
-            WebSocketConfigurator.userKey = userKey;
-            this.chatClient = new WebSocketRequests(new URI(BS_WS_URI + CHAT_WS + userName));
-            this.systemClient = new WebSocketRequests(new URI(BS_WS_URI + SYSTEM_WS));
+
+            // WebSocketConfigurator.userKey = userKey;
+
+            this.chatClient = new WebSocketRequests(new URI(BS_WS_URI + CHAT_WS + userName), model);
+            this.systemClient = new WebSocketRequests(new URI(BS_WS_URI + SYSTEM_WS), model);
             int testDurationInSeconds = 30;
             long endTime = System.currentTimeMillis() + (testDurationInSeconds * 1000);
             while (System.currentTimeMillis() < endTime) ;
@@ -97,7 +100,7 @@ public class WebSocketTest {
         try {
             uComm.logIn(userName, userPassword);
             String userKey = uComm.getUserKey();
-            WebSocketComponent wsComponent = new WebSocketComponent(userName, userKey);
+            WebSocketComponent wsComponent = new WebSocketComponent(userName, userKey, model);
             Thread.sleep(5000);
             wsComponent.stopComponent();
         } catch (LoginFailedException | InterruptedException e) {
@@ -115,9 +118,11 @@ public class WebSocketTest {
         try {
             uComm.logIn(userName, userPassword);
             String userKey = uComm.getUserKey();
-            WebSocketConfigurator.userKey = userKey;
-            this.chatClient = new WebSocketRequests(new URI(BS_WS_URI + CHAT_WS + userName));
-            this.systemClient = new WebSocketRequests(new URI(BS_WS_URI + SYSTEM_WS));
+
+            // WebSocketConfigurator.userKey = userKey;
+
+            this.chatClient = new WebSocketRequests(new URI(BS_WS_URI + CHAT_WS + userName), model);
+            this.systemClient = new WebSocketRequests(new URI(BS_WS_URI + SYSTEM_WS), model);
             Thread.sleep(2000);
             this.chatClient.sendChatMessage("all", userName, "hello");
             this.chatClient.sendChatMessage("private", userName, "hi", "seb");
@@ -145,12 +150,12 @@ public class WebSocketTest {
         SynchronousArmyCommunicator aComm = new SynchronousArmyCommunicator(hr);
         String userName = "seb";
         String userPassword = "a";
-        Model.getApp().setCurrentPlayer(new Player().setName(userName));
+        model.getApp().setCurrentPlayer(new Player().setName(userName));
         WebSocketComponent wsComponent = null;
         try {
             uComm.logIn(userName, userPassword);
             String userKey = uComm.getUserKey();
-            wsComponent = new WebSocketComponent(userName, userKey);
+            wsComponent = new WebSocketComponent(userName, userKey, model);
             Thread.sleep(5000);
 
         } catch (LoginFailedException | InterruptedException e) {
@@ -175,33 +180,33 @@ public class WebSocketTest {
             e.printStackTrace();
         }
         Game game = new Game().setName("testTesttt2").setCapacity(2).setGameId(gameID);
-        Model.getApp().withAllGames(game);
-        Model.getApp().getCurrentPlayer().setGame(game);
+        model.getApp().withAllGames(game);
+        model.getApp().getCurrentPlayer().setGame(game);
         try {
-            successfull = gameComm.joinGame(gameID);
+            successfull = gameComm.joinGame(gameID, false);
         } catch (GameIdNotFoundException | LoginFailedException e) {
             e.printStackTrace();
         }
-        System.out.println("#" + gameID +"#" + armyID + "#");
+        System.out.println("#" + gameID + "#" + armyID + "#");
 
 
         wsComponent.joinGame(gameID, armyID);
         ChatMessage chatMessage = new ChatMessage().setMessage("hi").setChannel("all")
-                .setSender(Model.getApp().getCurrentPlayer());
+                .setSender(model.getApp().getCurrentPlayer());
         ChatMessage chatMessage2 = new ChatMessage().setMessage("hi").setChannel("private")
-                .setSender(Model.getApp().getCurrentPlayer()).setReceiver(Model.getApp().getCurrentPlayer());
+                .setSender(model.getApp().getCurrentPlayer()).setReceiver(model.getApp().getCurrentPlayer());
         int testDurationInSeconds = 30;
         long endTime = System.currentTimeMillis() + (testDurationInSeconds * 1000);
-        while (System.currentTimeMillis() < endTime);
+        while (System.currentTimeMillis() < endTime) ;
 
         //it looks like we can only send messages after the game initialisation is done
         wsComponent.sendGameChatMessage(chatMessage);
         wsComponent.sendGameChatMessage(chatMessage2);
 
         endTime = System.currentTimeMillis() + (testDurationInSeconds * 1000);
-        while (System.currentTimeMillis() < endTime);
+        while (System.currentTimeMillis() < endTime) ;
 
-        ArrayList<ChatMessage> messages = Model.getApp().getCurrentPlayer().getGame().getIngameMessages();
+        ArrayList<ChatMessage> messages = model.getApp().getCurrentPlayer().getGame().getIngameMessages();
         System.out.println(messages.size() + "messages");
         for (ChatMessage msg : messages) {
             System.out.println(msg.toString());

@@ -112,6 +112,27 @@ public class Player
    }
 
 
+   public static final String PROPERTY_observer = "observer";
+
+   private boolean observer;
+
+   public boolean getObserver()
+   {
+      return observer;
+   }
+
+   public Player setObserver(boolean value)
+   {
+      if (value != this.observer)
+      {
+         boolean oldValue = this.observer;
+         this.observer = value;
+         firePropertyChange("observer", oldValue, value);
+      }
+      return this;
+   }
+
+
    public static final String PROPERTY_game = "game";
 
    private Game game = null;
@@ -501,6 +522,84 @@ public class Player
 
 
 
+   public static final java.util.ArrayList<Unit> EMPTY_currentUnits = new java.util.ArrayList<Unit>()
+   { @Override public boolean add(Unit value){ throw new UnsupportedOperationException("No direct add! Use xy.withCurrentUnits(obj)"); }};
+
+
+   public static final String PROPERTY_currentUnits = "currentUnits";
+
+   private java.util.ArrayList<Unit> currentUnits = null;
+
+   public java.util.ArrayList<Unit> getCurrentUnits()
+   {
+      if (this.currentUnits == null)
+      {
+         return EMPTY_currentUnits;
+      }
+
+      return this.currentUnits;
+   }
+
+   public Player withCurrentUnits(Object... value)
+   {
+      if(value==null) return this;
+      for (Object item : value)
+      {
+         if (item == null) continue;
+         if (item instanceof java.util.Collection)
+         {
+            for (Object i : (java.util.Collection) item)
+            {
+               this.withCurrentUnits(i);
+            }
+         }
+         else if (item instanceof Unit)
+         {
+            if (this.currentUnits == null)
+            {
+               this.currentUnits = new java.util.ArrayList<Unit>();
+            }
+            if ( ! this.currentUnits.contains(item))
+            {
+               this.currentUnits.add((Unit)item);
+               ((Unit)item).setPlayer(this);
+               firePropertyChange("currentUnits", null, item);
+            }
+         }
+         else throw new IllegalArgumentException();
+      }
+      return this;
+   }
+
+
+
+   public Player withoutCurrentUnits(Object... value)
+   {
+      if (this.currentUnits == null || value==null) return this;
+      for (Object item : value)
+      {
+         if (item == null) continue;
+         if (item instanceof java.util.Collection)
+         {
+            for (Object i : (java.util.Collection) item)
+            {
+               this.withoutCurrentUnits(i);
+            }
+         }
+         else if (item instanceof Unit)
+         {
+            if (this.currentUnits.contains(item))
+            {
+               this.currentUnits.remove((Unit)item);
+               ((Unit)item).setPlayer(null);
+               firePropertyChange("currentUnits", item, null);
+            }
+         }
+      }
+      return this;
+   }
+
+
    protected PropertyChangeSupport listeners = null;
 
    public boolean firePropertyChange(String propertyName, Object oldValue, Object newValue)
@@ -580,6 +679,9 @@ public class Player
 
 
       this.withoutArmyConfigurations(this.getArmyConfigurations().clone());
+
+
+      this.withoutCurrentUnits(this.getCurrentUnits().clone());
 
 
    }

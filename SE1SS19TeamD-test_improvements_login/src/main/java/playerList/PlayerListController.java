@@ -18,6 +18,8 @@ import java.util.List;
 
 public class PlayerListController {
 
+    private Model model;
+
     private int playerCount = 0;
 
     @FXML
@@ -25,39 +27,43 @@ public class PlayerListController {
     @FXML
     private Label numberOfPlayers;
 
+    public PlayerListController(Model model) {
+        this.model = model;
+    }
+
     /**
      * Adds Listener on App from Model and calls update().
      */
     @FXML
     public void initialize() {
 
-        HttpRequests httpReq = Model.getPlayerHttpRequestsHashMap()
-                .get(Model.getApp().getCurrentPlayer());
+        HttpRequests httpReq = model.getPlayerHttpRequestsHashMap()
+                .get(model.getApp().getCurrentPlayer());
         SynchronousUserCommunicator userComm = new SynchronousUserCommunicator(httpReq);
 
         try {
-            for(String s : userComm.getOnlineUsers()) {
-                if(!s.equals(Model.getApp().getCurrentPlayer().getName())) {
-                    new Player().setName(s).setApp(Model.getApp());
+            for (String s : userComm.getOnlineUsers()) {
+                if (!s.equals(model.getApp().getCurrentPlayer().getName())) {
+                    new Player().setName(s).setApp(model.getApp());
                 }
             }
         } catch (LoginFailedException e) {
             e.printStackTrace();
         }
-        Model.getApp().addPropertyChangeListener(App.PROPERTY_allPlayers, e -> {
+        model.getApp().addPropertyChangeListener(App.PROPERTY_allPlayers, e -> {
             if (e.getNewValue() != null) {
                 // new Player logged on
 
-                playerCount = Model.getApp().getAllPlayers().size();
+                playerCount = model.getApp().getAllPlayers().size();
                 Platform.runLater(() ->
                 {
-                    playerList.getItems().addAll(((Player)e.getNewValue()).getName());
+                    playerList.getItems().addAll(((Player) e.getNewValue()).getName());
                     numberOfPlayers.setText("" + playerCount);
                 });
             } else {
                 // Player logged off
 
-                playerCount = Model.getApp().getAllPlayers().size();
+                playerCount = model.getApp().getAllPlayers().size();
                 Platform.runLater(() ->
                 {
                     playerList.getItems().remove(((Player) e.getOldValue()).getName());
@@ -74,13 +80,13 @@ public class PlayerListController {
         playerList.getSelectionModel().clearSelection();
         Player selectedPlayer = null;
 
-        for (Player player : Model.getApp().getAllPlayers()) {
+        for (Player player : model.getApp().getAllPlayers()) {
             if (player.getName().equals(selectedName)) {
                 selectedPlayer = player;
                 break;
             }
         }
-        if (selectedPlayer == Model.getApp().getCurrentPlayer()) {
+        if (selectedPlayer == model.getApp().getCurrentPlayer()) {
             return;
         }
         AdvancedWarsApplication.getInstance().getLobbyCon()
@@ -95,13 +101,13 @@ public class PlayerListController {
         Platform.runLater(() -> playerList.getItems().clear());
 
         List<String> names = new ArrayList<>();
-        for (Player player : Model.getApp().getAllPlayers()) {
+        for (Player player : model.getApp().getAllPlayers()) {
             names.add(player.getName());
         }
         Platform.runLater(() ->
         {
             playerList.getItems().addAll(names);
-            playerCount = Model.getApp().getAllPlayers().size();
+            playerCount = model.getApp().getAllPlayers().size();
             numberOfPlayers.setText("" + playerCount);
         });
     }

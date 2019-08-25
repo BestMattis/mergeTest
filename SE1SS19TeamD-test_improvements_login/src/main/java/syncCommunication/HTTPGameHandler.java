@@ -57,9 +57,9 @@ public class HTTPGameHandler {
      * Throws JSONException and LoginFailedException
      */
     public ArrayList<JSONObject> getAllGameLobbies(String userKey) throws LoginFailedException, JSONException {
-	
+
         try {
-            JSONObject response = hr.getAsUser(userKey, "/game");
+            JSONObject response = hr.getJsonAsUser(userKey, "/game");
             if (response.getString("status").equals("success")) {
                 JSONArray jArray = response.getJSONArray("data");
                 ArrayList<JSONObject> lobbyList = new ArrayList<>();
@@ -85,15 +85,19 @@ public class HTTPGameHandler {
      * Returns true if successful.
      * Throws JSONException, GameIdNotFoundException and LoginFailedException
      */
-    public boolean joinGameLobby(String userKey, String gameID)
+    public boolean joinGameLobby(String userKey, String gameID, boolean observer)
             throws LoginFailedException, JSONException, GameIdNotFoundException {
 
         try {
             if (!checkID(userKey, gameID)) {
                 throw new GameIdNotFoundException("There is no game with that ID");
             }
-
-            JSONObject response = hr.getAsUser(userKey, "/game/" + gameID);
+            JSONObject response;
+            if (observer) {
+                response = hr.getJsonAsUser(userKey, "/game/" + gameID + "?spectator=true");
+            } else {
+                response = hr.getJsonAsUser(userKey, "/game/" + gameID);
+            }
 
             if (response.getString("status").equals("success")) {
                 return true;

@@ -68,7 +68,7 @@ public class TestREST {
         }
 
         try {
-            joinGameWithoutLogIn = gComm.joinGame("Login is checked before GameID");
+            joinGameWithoutLogIn = gComm.joinGame("Login is checked before GameID", false);
         } catch (LoginFailedException | GameIdNotFoundException e) {
             e.printStackTrace();
         }
@@ -172,7 +172,7 @@ public class TestREST {
             System.out.println("Joining game");
 
             try {
-                gameJoined = gComm.joinGame(gameID);
+                gameJoined = gComm.joinGame(gameID, false);
 
             } catch (GameIdNotFoundException | LoginFailedException e) {
                 e.printStackTrace();
@@ -411,15 +411,15 @@ public class TestREST {
         System.out.println("Joining games:");
 
         try {
-            firstJoin = gHandler.joinGameLobby(userKey, gameId);
-            secondJoin = gHandler.joinGameLobby(userKey, "No ID");
+            firstJoin = gHandler.joinGameLobby(userKey, gameId, false);
+            secondJoin = gHandler.joinGameLobby(userKey, "No ID", false);
 
         } catch (LoginFailedException | JSONException | GameIdNotFoundException e) {
             Assert.assertTrue(e instanceof GameIdNotFoundException);
             e.printStackTrace();
         }
         try {
-            thirdJoin = gHandler.joinGameLobby("No key", gameId);
+            thirdJoin = gHandler.joinGameLobby("No key", gameId, false);
 
         } catch (LoginFailedException | JSONException | GameIdNotFoundException e) {
             Assert.assertTrue(e instanceof LoginFailedException);

@@ -24,31 +24,37 @@ import static org.hamcrest.CoreMatchers.is;
 public class WaitingTest extends ApplicationTest {
 
     static Stage pri;
+    private Model model;
 
-    public void start (Stage stage) throws Exception {
+    public void start(Stage stage) throws Exception {
 
         App app = new App();
 
         ArrayList<Game> games = new ArrayList<>();
         ArrayList<Player> players = new ArrayList<>();
 
+        AdvancedWarsApplication awa = new AdvancedWarsApplication();
+        AdvancedWarsApplication.getInstance().offtesting = true;
+        awa.start(stage);
+        model = awa.model;
+
+
         for (int i = 0; i < 20; i++) {
-            games.add(new Game().setName("Game"+(i+1)).setCapacity(4).setApp(app));
+            games.add(new Game().setName("Game" + (i + 1)).setCapacity(4).setApp(app));
         }
         for (int i = 0; i < 40; i++) {
-            players.add(new Player().setName("Player"+ i).setApp(app));
+            players.add(new Player().setName("Player" + i).setApp(app));
         }
         int index = 0;
-        for (Game game:games) {
-            for (int i = index; i < index+2; i++) {
+        for (Game game : games) {
+            for (int i = index; i < index + 2; i++) {
                 game.withPlayers(players.get(i));
             }
-            index = index+2;
+            index = index + 2;
         }
 
-        Model.getInstance().setApp(app);
-        new AdvancedWarsApplication().start(stage);
-        AdvancedWarsApplication.getInstance().offtesting = true;
+        model.setApp(app);
+
         pri = stage;
         //AdvancedWarsApplication.getInstance().goToLobby();
 
@@ -61,7 +67,7 @@ public class WaitingTest extends ApplicationTest {
 
 
     @Test
-    public void waitTest(){
+    public void waitTest() {
         clickOn("#nameTextfield");
         write("testname");
         clickOn("#pwTextfield");
@@ -78,7 +84,7 @@ public class WaitingTest extends ApplicationTest {
     }
 
     @Test
-    public void addingPlayerTest(){
+    public void addingPlayerTest() {
         clickOn("#nameTextfield");
         write("testname");
         clickOn("#pwTextfield");
@@ -86,7 +92,7 @@ public class WaitingTest extends ApplicationTest {
         clickOn("#logButton");
         clickOn("#gameName");
         Label name = find("#gameName");
-        FxAssert.verifyThat(name.getText(), is(Model.getApp().getAllGames().get(0).getName()));
+        FxAssert.verifyThat(name.getText(), is(model.getApp().getAllGames().get(0).getName()));
         Label count = find("#count");
         FxAssert.verifyThat(count.getText(), is("2/4"));
         Player player = new Player();
@@ -96,7 +102,7 @@ public class WaitingTest extends ApplicationTest {
         final FutureTask query = new FutureTask(new Callable() {
             @Override
             public Object call() throws Exception {
-                Model.getApp().getAllGames().get(0).withPlayers(player);
+                model.getApp().getAllGames().get(0).withPlayers(player);
                 return null;
             }
         });
@@ -115,7 +121,7 @@ public class WaitingTest extends ApplicationTest {
     }
 
     @Test
-    public void nameTest(){
+    public void nameTest() {
         clickOn("#nameTextfield");
         write("testname");
         clickOn("#pwTextfield");
@@ -128,7 +134,7 @@ public class WaitingTest extends ApplicationTest {
     }
 
     @Test
-    public void test(){
+    public void test() {
         clickOn("#nameTextfield");
         write("testname");
         clickOn("#pwTextfield");

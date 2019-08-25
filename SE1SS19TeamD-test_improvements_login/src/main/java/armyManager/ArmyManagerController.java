@@ -30,10 +30,14 @@ import syncCommunication.SynchronousArmyCommunicator;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.PropertyResourceBundle;
+import java.util.ResourceBundle;
 
 public class ArmyManagerController {
 
+    private final int neededArmySize = 10;
+    private final int maxConfigs = 7;
     @FXML
     protected ListView unitlist;
     @FXML
@@ -60,19 +64,20 @@ public class ArmyManagerController {
     GridPane base;
     @FXML
     Button back;
-
+    ObservableList<String> configs;
+    ObservableList<Parent> units;
+    UnitCardController[] unitCardControllers = new UnitCardController[15];
+    private Model model;
     private Player currentPlayer;
     private HttpRequests httpReq;
     private SynchronousArmyCommunicator armyCommunicator;
     private ResourceBundle bundle;
-    private final int neededArmySize = 10;
-    private final int maxConfigs = 7;
     private String currentConfigName;
-
     private ArrayList<JSONObject> allDifferentUnitTypes;
-    ObservableList<String> configs;
-    ObservableList<Parent> units;
-    UnitCardController[] unitCardControllers = new UnitCardController[15];
+
+    public ArmyManagerController(Model model) {
+        this.model = model;
+    }
 
     /**
      * initialize the drag and drop and ArmyConfigurations
@@ -89,15 +94,15 @@ public class ArmyManagerController {
         }
 
         //initialize Player and syncCommunication
-        currentPlayer = Model.getApp().getCurrentPlayer();
-        httpReq = Model.getPlayerHttpRequestsHashMap().get(currentPlayer);
+        currentPlayer = model.getApp().getCurrentPlayer();
+        httpReq = model.getPlayerHttpRequestsHashMap().get(currentPlayer);
         armyCommunicator = new SynchronousArmyCommunicator(httpReq);
 
         //initialize units, unitlist
         units = FXCollections.observableArrayList();
         unitlist.setItems(units);
 
-        if (!AdvancedWarsApplication.getInstance().offtesting) {
+        if (!AdvancedWarsApplication.offtesting) {
             //initialize configs
             configs = FXCollections.observableArrayList();
             //ON EVERY LOGIN
@@ -116,11 +121,13 @@ public class ArmyManagerController {
             }
         }
 
-        //initialize UnitCards
-        for(JSONObject jsonUnit: allDifferentUnitTypes) {
-            String unitID = jsonUnit.getString("id");
-            newUnitCard(unitID);
-         }
+        if (!AdvancedWarsApplication.offtesting) {
+            //initialize UnitCards
+            for (JSONObject jsonUnit : allDifferentUnitTypes) {
+                String unitID = jsonUnit.getString("id");
+                newUnitCard(unitID);
+            }
+        }
 
         //EventListener
         droppane.setOnDragOver(t -> dragOver(t));
@@ -429,9 +436,9 @@ public class ArmyManagerController {
         if (configs.size() == 0) {//if should never be false!
             currentConfigName = "config1";
             ArrayList<String> sUnitList = new ArrayList<String>();
-            for(int i = 0; i < 10; ++i){
-                 JSONObject unitType = allDifferentUnitTypes.get(i % allDifferentUnitTypes.size());
-                 sUnitList.add(unitType.getString("id"));
+            for (int i = 0; i < 10; ++i) {
+                JSONObject unitType = allDifferentUnitTypes.get(i % allDifferentUnitTypes.size());
+                sUnitList.add(unitType.getString("id"));
             }
 
             configs.add(currentConfigName);
@@ -451,7 +458,7 @@ public class ArmyManagerController {
     public boolean saveConfiguration(String configurationName, ArrayList<String> unitIDs,
                                      Player player) {
         if (unitIDs.size() == neededArmySize) {
-            if(configlist.getSelectionModel().getSelectedItem().length()>0) {
+            if (configlist.getSelectionModel().getSelectedItem().length() > 0) {
                 ArmyConfiguration armyConfiguration;
                 ArrayList<String> oldConfigs = configurationNames(currentPlayer);
                 boolean isOld = false;
@@ -536,7 +543,7 @@ public class ArmyManagerController {
                     showError(bundle.getString("manager.exists"));
                     return false;
                 }
-            }else{
+            } else {
                 showError(bundle.getString("manager.emptyname"));
                 return false;
             }
@@ -650,36 +657,6 @@ public class ArmyManagerController {
         return successfullyDeleted;
     }
 
-    /**
-     * Method to load a single ArmyConfiguration from the server
-     * !ONLY USED IN TESTS CURRENTLY!
-     *
-     * @param id the id of the config to load
-     * @return ArmyConfiguration that was loaded
-     */
-    public ArmyConfiguration getSingleArmyConfiguration(String id) {
-        try {
-            JSONObject jsonArmyConfiguration = armyCommunicator.getArmyByID(id);
-            ArmyConfiguration armyConfiguration = new ArmyConfiguration();
-            armyConfiguration.setName(jsonArmyConfiguration.getString("name"));
-            armyConfiguration.setId(jsonArmyConfiguration.getString("id"));
-
-            //create units for data model
-            ArrayList<String> unitIDs = new ArrayList<>();
-            JSONArray jArray = jsonArmyConfiguration.getJSONArray("units");
-            if (jArray != null) {
-                for (int i = 0; i < jArray.length(); ++i) {
-                    unitIDs.add(jArray.get(i).toString());
-                }
-            }
-            armyConfiguration.withUnits(createUnitsFromJSON(unitIDs, allDifferentUnitTypes));
-            return armyConfiguration;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     public ComboBox<String> getConfiglist() {
         return configlist;
     }
@@ -691,4 +668,5 @@ public class ArmyManagerController {
     public ArrayList<JSONObject> getAllDifferentUnitTypes() {
         return allDifferentUnitTypes;
     }
+
 }

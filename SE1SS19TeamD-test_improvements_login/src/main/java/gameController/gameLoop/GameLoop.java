@@ -1,10 +1,11 @@
-package gameController;
+package gameController.gameLoop;
 
-import java.util.ArrayList;
+import gameController.gameLoop.sprites.Sprite;
+import javafx.scene.canvas.Canvas;
 
 public class GameLoop {
 
-    private GameLoopAnimationTimer gameLoop;
+    private GameLoopAnimationTimer gameLoop = new GameLoopAnimationTimer();
 
     private boolean currentlyRunning = false;
 
@@ -12,9 +13,6 @@ public class GameLoop {
      * Starts the gameLoop and sets currentlyRunning to true.
      */
     public void startLoop() {
-        if (gameLoop == null) {
-            gameLoop = new GameLoopAnimationTimer();
-        }
         gameLoop.start();
         currentlyRunning = true;
     }
@@ -23,9 +21,6 @@ public class GameLoop {
      * Stops the gameLoop and sets currentlyRunning to false.
      */
     public void stopLoop() {
-        if (gameLoop == null) {
-            gameLoop = new GameLoopAnimationTimer();
-        }
         gameLoop.stop();
         currentlyRunning = false;
     }
@@ -65,6 +60,56 @@ public class GameLoop {
      */
     public boolean isTaskRunning(GameLoopTask task) {
         return gameLoop.tasks.contains(task);
+    }
+
+    /**
+     * @return The canvas where all sprites will be drawn on.
+     */
+    public Canvas getSpriteCanvas() {
+        return gameLoop.spriteCanvas;
+    }
+
+    /**
+     * Set the canvas where all sprites will be drawn on.
+     * Clears and redraws all units at 60 fps.
+     *
+     * @param canvas The canvas that all sprites will be drawn upon
+     */
+    public void setSpriteCanvas(Canvas canvas) {
+        gameLoop.spriteCanvas = canvas;
+    }
+
+    /**
+     * Adds an sprite to the list of sprites.
+     * Each will be drawn 60 times per second by the loop.
+     *
+     * @param sprite A sprite that can be shown
+     */
+    public void addSprite(Sprite sprite) {
+        gameLoop.sprites.add(sprite);
+    }
+
+    /**
+     * Removes a sprite of the list of shown sprites
+     *
+     * @param sprite A sprite that can be shown
+     * @return Returns whether it was successfully removed from the sprites list
+     */
+    public boolean removeSprite(Sprite sprite) {
+        if (gameLoop.sprites.contains(sprite)) {
+            return gameLoop.sprites.remove(sprite);
+        }
+        return false;
+    }
+
+    /**
+     * Check whether a sprite is currently being shown.
+     *
+     * @param sprite A sprite that can be shown
+     * @return Returns true if the sprite is currently being shown
+     */
+    public boolean containsSprite(Sprite sprite) {
+        return gameLoop.sprites.contains(sprite);
     }
 
     /**

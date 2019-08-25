@@ -8,9 +8,9 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<AnchorPane fx:id="pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="75.0" prefWidth="150.0" styleClass="compltransparent-pane" stylesheets="@../screen.css" xmlns="http://javafx.com/javafx/1.8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gameScreen.GameLittleUnitController">
+<AnchorPane fx:id="pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMousePressed="#selectTarget" prefHeight="75.0" prefWidth="150.0" styleClass="compltransparent-pane" stylesheets="@../screen.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gameScreen.GameLittleUnitController">
     <children>
-        <GridPane fx:id="gridPane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <GridPane fx:id="gridPane" onMousePressed="#selectTarget" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <columnConstraints>
                 <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             </columnConstraints>
@@ -20,17 +20,17 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             </rowConstraints>
             <children>
-                <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" GridPane.rowIndex="1">
+                <HBox alignment="CENTER_LEFT" onMousePressed="#selectTarget" prefHeight="100.0" prefWidth="200.0" GridPane.rowIndex="1">
                     <children>
-                        <Label text="HP" />
-                        <ProgressBar fx:id="hp" prefWidth="100.0" progress="0.79" styleClass="progress-bar-borderless" />
+                        <Label onMousePressed="#selectTarget" text="HP" />
+                        <ProgressBar fx:id="hp" onMousePressed="#selectTarget" prefWidth="100.0" progress="0.79" styleClass="progress-bar-borderless" />
                     </children>
                 </HBox>
-                <Label fx:id="type" text="Label" />
-                <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" GridPane.rowIndex="2">
+                <Label fx:id="type" onMousePressed="#selectTarget" text="Label" />
+                <HBox alignment="CENTER_LEFT" onMousePressed="#selectTarget" prefHeight="100.0" prefWidth="200.0" GridPane.rowIndex="2">
                     <children>
-                        <Label text="MP" />
-                        <ProgressBar fx:id="mp" prefWidth="100.0" progress="0.45" styleClass="progress-bar-borderless" />
+                        <Label onMousePressed="#selectTarget" text="MP" />
+                        <ProgressBar fx:id="mp" onMousePressed="#selectTarget" prefWidth="100.0" progress="0.45" styleClass="progress-bar-borderless" />
                     </children>
                 </HBox>
             </children>

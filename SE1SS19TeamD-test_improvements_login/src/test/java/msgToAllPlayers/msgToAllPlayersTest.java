@@ -10,8 +10,9 @@ public class msgToAllPlayersTest {
     @SuppressWarnings("static-access")
     @Test
     public void addMsgToModel() {
-        MsgToAllPlayers msgTAP = new MsgToAllPlayers();
-        App app = Model.getApp();
+        Model model = new Model();
+        MsgToAllPlayers msgTAP = new MsgToAllPlayers(model);
+        App app = model.getApp();
         String msg = "testMsg";
         app.setCurrentPlayer(new Player());
 
@@ -23,13 +24,14 @@ public class msgToAllPlayersTest {
     @SuppressWarnings("static-access")
     @Test
     public void getMsgFromAllChat() {
-        MsgToAllPlayers msgTAP = new MsgToAllPlayers();
-        App app = Model.getApp();
+        Model model = new Model();
+        MsgToAllPlayers msgTAP = new MsgToAllPlayers(model);
+        App app = model.getApp();
         Player testPlayer = new Player().setName("TestPlayer");
         String msg = "testMsg";
         app.setCurrentPlayer(testPlayer);
 
-        WSChatEndpoint.getInstance().setLobbyChatListeners();
+        WSChatEndpoint.getInstance(model).setLobbyChatListeners();
 
         msgTAP.sendToAll(msg);
     }

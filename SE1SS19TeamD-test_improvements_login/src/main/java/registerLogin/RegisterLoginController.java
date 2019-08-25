@@ -25,6 +25,7 @@ import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
 public class RegisterLoginController {
+
     @SuppressWarnings("static-access")
     static AdvancedWarsApplication app = new AdvancedWarsApplication().getInstance();
     @FXML
@@ -35,6 +36,7 @@ public class RegisterLoginController {
     public PasswordField pwTextfield;
     @FXML
     public Button regButton;
+    private Model model;
     @FXML
     private AnchorPane basePane;
     @FXML
@@ -45,6 +47,10 @@ public class RegisterLoginController {
     private Label pwLabel;
     @FXML
     private Button logButton;
+
+    public RegisterLoginController(Model model) {
+        this.model = model;
+    }
 
     /*
      * called when the registerLogin scene is loaded. set the methods for clicking
@@ -70,7 +76,7 @@ public class RegisterLoginController {
                 e1.printStackTrace();
             }
         });
-        
+
         pwTextfield.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent ke) {
@@ -95,7 +101,7 @@ public class RegisterLoginController {
             // TODO Auto-generated catch block
             e1.printStackTrace();
         }
-        
+
         String username = this.nameTextfield.getText();
         String password = this.pwTextfield.getText();
 
@@ -106,22 +112,19 @@ public class RegisterLoginController {
                 msgLabel.setText(bundle.getString("regLog.SpaceErrorRegister"));
             }
         }
-        
+
         boolean success = false;
-        Player currentPlayer = Model.getApp().getCurrentPlayer();
-        HttpRequests httpRequests = Model.getPlayerHttpRequestsHashMap().get(currentPlayer);
+        Player currentPlayer = model.getApp().getCurrentPlayer();
+        HttpRequests httpRequests = model.getPlayerHttpRequestsHashMap().get(currentPlayer);
         String userKey = "";
-        if(httpRequests != null)
-        {
+        if (httpRequests != null) {
             success = true;
-        }
-        else
-        {
+        } else {
             httpRequests = new HttpRequests();
         }
         SynchronousUserCommunicator synchronousUserCommunicator =
                 new SynchronousUserCommunicator(httpRequests);
-        
+
         try {
             success = synchronousUserCommunicator.logIn(username, password);
         } catch (LoginFailedException e) {
@@ -129,24 +132,22 @@ public class RegisterLoginController {
         }
 
         userKey = synchronousUserCommunicator.getUserKey();
-        
+
         if (!success) {
             msgLabel.setTextFill(Color.RED); // registrierung unsuccessful
             msgLabel.setText(bundle.getString("regLog.FailedLogin"));
         } else {
-            if(currentPlayer == null)
-            {
-        	currentPlayer = new Player().setName(username)
-                    .setPassword(password).setApp(Model.getApp());
-        	Model.getApp().setCurrentPlayer(currentPlayer);
-        	Model.getPlayerHttpRequestsHashMap()
-                    .put(currentPlayer, httpRequests);
+            if (currentPlayer == null) {
+                currentPlayer = new Player().setName(username)
+                        .setPassword(password).setApp(model.getApp());
+                model.getApp().setCurrentPlayer(currentPlayer);
+                model.getPlayerHttpRequestsHashMap()
+                        .put(currentPlayer, httpRequests);
             }
             AdvancedWarsApplication.getInstance().goToLobby();
             //start WS-component
-            if(Model.getWebSocketComponent() == null)
-            {
-        	Model.setWebSocketComponent(new WebSocketComponent(username, userKey));
+            if (model.getWebSocketComponent() == null) {
+                model.setWebSocketComponent(new WebSocketComponent(username, userKey, model));
             }
         }
 

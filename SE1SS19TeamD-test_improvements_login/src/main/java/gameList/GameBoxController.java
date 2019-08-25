@@ -7,9 +7,13 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import main.AdvancedWarsApplication;
 import model.Game;
 import model.GameField;
+import syncCommunication.RESTExceptions.GameIdNotFoundException;
+import syncCommunication.RESTExceptions.LoginFailedException;
+import syncCommunication.SynchronousGameCommunicator;
 
 public class GameBoxController {
 
@@ -18,12 +22,19 @@ public class GameBoxController {
 
     @FXML
     private Label playerCounter;
+    @FXML
+    private VBox progressBarBox;
+    @FXML
+    private VBox nameBox;
 
     @FXML
     private ProgressBar progressBar;
 
     @FXML
     private HBox gameCard;
+
+    @FXML
+    private VBox observerBox;
 
     private Game game;
 
@@ -35,20 +46,48 @@ public class GameBoxController {
      */
     @FXML
     public void initialize() {
-        gameCard.addEventHandler(MouseEvent.ANY, event -> {
+        nameBox.addEventHandler(MouseEvent.ANY, event -> {
             if (game.getCapacity() > game.getJoinedPlayers()) {
-                /*game is not full*/
+                /* game is not full */
                 if (event.getEventType().equals(MouseEvent.MOUSE_ENTERED)) {
-                    /*Mouse entered -> setBorder*/
+                    /* Mouse entered -> setBorder */
                     gameCard.setStyle("-fx-background-color: #38353a");
-
+                    observerBox.setStyle("-fx-background-color: #38353a");
                 } else if (event.getEventType().equals(MouseEvent.MOUSE_EXITED)) {
-                    /*Mouse exited -> resetBorder*/
+                    /* Mouse exited -> resetBorder */
                     gameCard.setStyle("-fx-background-color: #2f2c31");
-                } else if (event.getEventType().equals(MouseEvent.MOUSE_CLICKED) || event.getEventType().equals(MouseEvent.MOUSE_PRESSED)) {
-                    /*Clicked/Pressed -> Show GameLobby*/
+                    observerBox.setStyle("-fx-background-color: #2f2c31");
+                } else if (event.getEventType().equals(MouseEvent.MOUSE_CLICKED)) {
+                    /* Clicked/Pressed -> Show GameLobby */
                     nameClicked();
                 }
+            }
+        });
+        progressBarBox.addEventHandler(MouseEvent.ANY, event -> {
+            if (game.getCapacity() > game.getJoinedPlayers()) {
+                /* game is not full */
+                if (event.getEventType().equals(MouseEvent.MOUSE_ENTERED)) {
+                    /* Mouse entered -> setBorder */
+                    gameCard.setStyle("-fx-background-color: #38353a");
+                    observerBox.setStyle("-fx-background-color: #38353a");
+                } else if (event.getEventType().equals(MouseEvent.MOUSE_EXITED)) {
+                    /* Mouse exited -> resetBorder */
+                    gameCard.setStyle("-fx-background-color: #2f2c31");
+                    observerBox.setStyle("-fx-background-color: #2f2c31");
+                } else if (event.getEventType().equals(MouseEvent.MOUSE_CLICKED)) {
+                    /* Clicked/Pressed -> Show GameLobby */
+                    nameClicked();
+                }
+            }
+        });
+        observerBox.addEventHandler(MouseEvent.ANY, evt -> {
+            if (evt.getEventType().equals(MouseEvent.MOUSE_CLICKED)) {
+                observerClicked();
+                System.out.println("clicked on observer");
+            } else if (evt.getEventType().equals(MouseEvent.MOUSE_ENTERED)) {
+                observerBox.setStyle("-fx-background-color: #38353a");
+            } else if (evt.getEventType().equals(MouseEvent.MOUSE_EXITED)) {
+                observerBox.setStyle("-fx-background-color: #2f2c31");
             }
         });
     }
@@ -63,30 +102,50 @@ public class GameBoxController {
         playerCounter.setText(playerCount + "/" + maxPlayers);
         progressBar.setProgress((double) playerCount / maxPlayers);
         if (game.getJoinedPlayers() == game.getCapacity()) {
-            /*Game is full -> set Disable true*/
-            gameCard.setDisable(true);
+            /* Game is full -> set Disable true */
+            nameBox.setDisable(true);
+            progressBarBox.setDisable(true);
             gameCard.setStyle("-fx-background-color: #972805");
         } else {
-            /*Game is open -> set Disable false*/
-            gameCard.setDisable(false);
+            /* Game is open -> set Disable false */
+            nameBox.setDisable(false);
+            progressBarBox.setDisable(false);
             gameCard.setStyle("-fx-background-color: #2f2c31");
         }
     }
 
     /**
-     * Adds Listener on GameListController.scrollPane
-     * so that it fills the ScrollPane.
+     * Adds Listener on GameListController.scrollPane so that it fills the
+     * ScrollPane.
      *
      * @param scrollPane ScrollPane to set Listener on.
      */
     public void addWidthListener(ScrollPane scrollPane) {
         gameCard.setMinWidth(scrollPane.getWidth());
-        scrollPane.widthProperty().addListener((observable, oldValue, newValue) -> gameCard.setMinWidth(newValue.doubleValue()));
+        scrollPane.widthProperty()
+                .addListener((observable, oldValue, newValue) -> gameCard.setMinWidth(newValue.doubleValue()));
     }
 
     /**
-     * Sets Game for GameBox.
-     * Adds Listener on Game.
+     * For Tests.
+     *
+     * @return gameName
+     */
+    public Label getGameName() {
+        return gameName;
+    }
+
+    /**
+     * For Tests.
+     *
+     * @return game
+     */
+    public Game getGame() {
+        return game;
+    }
+
+    /**
+     * Sets Game for GameBox. Adds Listener on Game.
      *
      * @param game game to set Listener on
      */
@@ -97,15 +156,58 @@ public class GameBoxController {
     }
 
     /**
+     * For Tests.
+     *
+     * @return playerCounter
+     */
+    public Label getPlayerCounter() {
+        return playerCounter;
+    }
+
+    /**
      * call the methodes to show the gameLobby and join the game
      */
     public void nameClicked() {
         game.setGameField(new GameField());
         AdvancedWarsApplication.getInstance().goToGame(game);
+        if (!AdvancedWarsApplication.getInstance().offtesting) {
+            SynchronousGameCommunicator synchronousGameCommunicator = new SynchronousGameCommunicator(AdvancedWarsApplication.getInstance().getHttpRequests());
+            try {
+                synchronousGameCommunicator.joinGame(game.getGameId(), false);
+            } catch (GameIdNotFoundException e) {
+                e.printStackTrace();
+            } catch (LoginFailedException e) {
+                e.printStackTrace();
+            }
+            AdvancedWarsApplication.getInstance().getGameScreenCon().getGameLobbyController().joinGameLobby(game.getGameId());
+        }
         AdvancedWarsApplication.getInstance().getGameScreenCon().getGameLobbyController().update(game);
         AdvancedWarsApplication.getInstance().getGameScreenCon().getGameLobbyController().show();
-        if (!AdvancedWarsApplication.getInstance().offtesting) {
-            AdvancedWarsApplication.getInstance().getGameScreenCon().getGameLobbyController().joinGameLobby(game);
-        }
+
     }
+
+    /**
+     * call the methodes to show the gameLobby and join Game as a Observer
+     */
+    public void observerClicked() {
+        game.setGameField(new GameField());
+        AdvancedWarsApplication.getInstance().goToGameAsObserver(game);
+        AdvancedWarsApplication.getInstance().getGameScreenCon().getGameLobbyController().observerModeGameLobby();
+        AdvancedWarsApplication.getInstance().getGameScreenCon().observerModeGameScreen();
+
+        if (!AdvancedWarsApplication.getInstance().offtesting) {
+            SynchronousGameCommunicator synchronousGameCommunicator = new SynchronousGameCommunicator(AdvancedWarsApplication.getInstance().getHttpRequests());
+            try {
+                synchronousGameCommunicator.joinGame(game.getGameId(), true);
+            } catch (GameIdNotFoundException e) {
+                e.printStackTrace();
+            } catch (LoginFailedException e) {
+                e.printStackTrace();
+            }
+        }
+        AdvancedWarsApplication.getInstance().getGameScreenCon().getGameLobbyController().joinGameAsObserver(game);
+        AdvancedWarsApplication.getInstance().getGameScreenCon().getGameLobbyController().update(game);
+        AdvancedWarsApplication.getInstance().getGameScreenCon().getGameLobbyController().show();
+    }
+
 }

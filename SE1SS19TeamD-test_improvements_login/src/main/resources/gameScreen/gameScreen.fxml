@@ -5,43 +5,50 @@
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane fx:id="base" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="root" stylesheets="@../screen.css" xmlns="http://javafx.com/javafx/1.8" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0" styleClass="pane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <children>
-            <ScrollPane fx:id="gamefield" hbarPolicy="NEVER" hvalue="0.5" pannable="true" prefHeight="200.0" prefWidth="200.0" vbarPolicy="NEVER" vvalue="0.5" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-               <content>
-                  <VBox fx:id="loadingVBox" alignment="CENTER" prefHeight="398.0" prefWidth="599.0">
-                     <children>
-                        <ProgressBar fx:id="loadingProgress" prefWidth="200.0" progress="0.0" />
-                        <Label fx:id="loadingLabel" text="Textures are loading..." />
-                     </children>
-                  </VBox>
-               </content></ScrollPane>
-         </children>
-      </AnchorPane>
-    <AnchorPane fx:id="changePane" minHeight="0.0" minWidth="0.0" prefHeight="240.0" styleClass="compltransparent-pane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="240.0" AnchorPane.rightAnchor="0.0" />
-    <AnchorPane fx:id="mappane" minHeight="0.0" minWidth="0.0" prefHeight="240.0" prefWidth="240.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">
-         <children>
-            <VBox alignment="CENTER" layoutX="103.0" layoutY="100.0" styleClass="pane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+<AnchorPane fx:id="base" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="root" stylesheets="@../screen.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0" styleClass="pane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <ScrollPane id="scrollgame" fx:id="gamefield" hbarPolicy="NEVER" hvalue="0.5" pannable="true" prefHeight="200.0" prefWidth="200.0" vbarPolicy="NEVER" vvalue="0.5" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <content>
+                        <VBox fx:id="loadingVBox" alignment="CENTER" prefHeight="398.0" prefWidth="599.0">
+                            <children>
+                                <ProgressBar fx:id="loadingProgress" prefWidth="200.0" progress="0.0" />
+                                <Label fx:id="loadingLabel" text="Textures are loading..." />
+                            </children>
+                        </VBox>
+                    </content>
+                </ScrollPane>
+            </children>
+        </AnchorPane>
+        <AnchorPane fx:id="changePane" minHeight="0.0" minWidth="0.0" prefHeight="258.0" styleClass="compltransparent-pane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="258.0" AnchorPane.rightAnchor="0.0" />
+        <AnchorPane fx:id="mappane" minHeight="0.0" minWidth="0.0" prefHeight="258.0" prefWidth="258.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">
+            <children>
+                <VBox alignment="CENTER" layoutX="103.0" layoutY="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <children>
+                        <Pane prefHeight="258.0" prefWidth="258.0" styleClass="minimap" />
+                    </children>
+                </VBox>
+            </children>
+        </AnchorPane>
+        <AnchorPane id="border" fx:id="opmen" prefHeight="10.0" prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+        <AnchorPane fx:id="roundButtonPane" layoutX="15.0" layoutY="15.0" styleClass="transparent-pane" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="15.0">
+            <children>
+                <Button fx:id="basicRound" mnemonicParsing="false" prefHeight="64.0" styleClass="greenButton" text="Next Phase" />
+            </children>
+        </AnchorPane>
+        <AnchorPane layoutX="429.6432189941406" layoutY="15.0" styleClass="moretransparent-pane" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
+            <children>
+            <VBox>
                <children>
-                  <Label text="Minimap" />
+                  <Label fx:id="activePlayer" text="Active player:" />
+                      <Label fx:id="currentPhaseLabel" text="Next Phase:" />
                </children>
             </VBox>
-         </children>
-      </AnchorPane>
-      <AnchorPane id="border" fx:id="opmen" prefHeight="10.0" prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-      <AnchorPane layoutX="15.0" layoutY="15.0" styleClass="transparent-pane" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="15.0">
-         <children>
-            <Button fx:id="basicround" mnemonicParsing="false" prefHeight="64.0" prefWidth="96.0" styleClass="greenButton" text="Round" />
-         </children>
-      </AnchorPane>
-      <AnchorPane layoutX="429.6432189941406" layoutY="15.0" styleClass="moretransparent-pane" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
-         <children>
-            <Label layoutX="0.0234375" text="Active player: Player0" />
-         </children>
-      </AnchorPane>
-   </children>
+            </children>
+        </AnchorPane>
+    </children>
 </AnchorPane>

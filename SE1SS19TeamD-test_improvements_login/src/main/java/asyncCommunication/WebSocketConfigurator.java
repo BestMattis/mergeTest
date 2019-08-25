@@ -7,15 +7,21 @@ import java.util.Map;
 
 public class WebSocketConfigurator extends ClientEndpointConfig.Configurator {
 
-    public static String userKey = "";
+    public static String userKeytmp = "";
+    public String userKey = "";
 
     @Override
     public void beforeRequest(Map<String, List<String>> headers) {
 
         super.beforeRequest(headers);
         ArrayList<String> key = new ArrayList<>();
-        key.add(userKey);
+        key.add(userKeytmp);
         headers.put("userKey", key);
+    }
+
+
+    public void setToMine() {
+        userKeytmp = userKey;
     }
 }
 

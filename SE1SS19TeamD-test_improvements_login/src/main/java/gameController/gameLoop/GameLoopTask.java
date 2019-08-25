@@ -1,4 +1,4 @@
-package gameController;
+package gameController.gameLoop;
 
 @FunctionalInterface
 public interface GameLoopTask {
